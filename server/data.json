@@ -1,0 +1,14 @@
+{
+  "forumList": [
+    {
+      "id": 1,
+      "title": "论坛",
+      "content": "论坛内容"
+    },
+    {
+      "id": 2,
+      "title": "论坛2",
+      "content": "论坛内容2"
+    }
+  ]
+}
