@@ -1,0 +1,58 @@
+.card {
+  width: vw(1210);
+  // max-height: vw(1045);
+  background-color: #fff;
+  margin: 0 auto;
+  margin-bottom: vw(24);
+  padding: vw(49) vw(34) vw(0);
+  border-radius: 10px;
+
+  .card-header {
+    height: vw(115);
+  }
+
+  .card-footer {
+    height: vw(140);
+    padding: vw(45);
+    padding: vw(45);
+  }
+
+  // 限制标题为最大两行，超出显示省略号
+  .card-body-title {
+    font-size: vw(56);
+    font-weight: 600;
+    line-height: vw(72);
+    display: -webkit-box;
+    /* 必须：声明为 WebKit 弹性容器 */
+    -webkit-box-orient: vertical;
+    /* 必须：指定文本垂直排列 */
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    /* 限制行数 */
+    overflow: hidden;
+    /* 隐藏溢出内容 */
+    text-overflow: ellipsis;
+    /* 显示省略号 */
+    word-break: break-all;
+    /* 强制在任意字符间换行，对英文有效 */
+  }
+
+  .card-body-content {
+    font-size: vw(56);
+    line-height: vw(72);
+    border: 1px solid #000;
+    display: -webkit-box;
+    /* 必须：声明为 WebKit 弹性容器 */
+    -webkit-box-orient: vertical;
+    /* 必须：指定文本垂直排列 */
+    // -webkit-line-clamp: 5;
+    // line-clamp: 5;
+    /* 限制行数 */
+    overflow: hidden;
+    /* 隐藏溢出内容 */
+    text-overflow: ellipsis;
+    /* 显示省略号 */
+    word-break: break-all;
+    /* 强制在任意字符间换行，对英文有效 */
+  }
+}

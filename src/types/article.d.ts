@@ -11,3 +11,10 @@ export type Article = {
 };
 
 export type ArticleList = Article[];
+
+// 新增文章时用的类型
+export type ArticleAdd = {
+  title: string;
+  contentPreview?: string;
+  image?: string | null;
+};

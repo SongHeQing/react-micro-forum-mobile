@@ -52,6 +52,7 @@
     .card-body-content {
       font-size: vw(56);
       line-height: vw(72);
+      white-space: pre-line;
       border: 1px solid #000;
       display: -webkit-box;
       /* 必须：声明为 WebKit 弹性容器 */
