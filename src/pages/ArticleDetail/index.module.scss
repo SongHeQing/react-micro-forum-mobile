@@ -1,0 +1,24 @@
+.detailWrapper {
+  padding: 16px;
+
+  .title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .meta {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 16px;
+
+    span {
+      margin-right: 16px;
+    }
+  }
+
+  .content {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}

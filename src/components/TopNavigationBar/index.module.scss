@@ -1,0 +1,110 @@
+@use "sass:math";
+
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+.topBarContainer {
+  height: vw(154);
+  padding: 0 vw(40);
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+
+  .topBarLeft {
+    position: absolute;
+    left: vw(40);
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    .closeIcon {
+      font-size: vw(24);
+      font-weight: bold;
+      cursor: pointer;
+      color: #333;
+    }
+  }
+
+  .topBarCenter {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .tabItem {
+      font-size: vw(57);
+      color: #666;
+      padding: vw(12) vw(15);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+
+      &.active {
+        color: #333;
+        font-weight: bold;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: vw(8);
+          left: 50%;
+          transform: translateX(-50%);
+          width: vw(25);
+          height: vw(2);
+          background-color: #388bff;
+          border-radius: vw(1);
+        }
+      }
+
+      // 新增：只加粗文字，不显示下划线
+      &.boldTextOnly {
+        color: #333;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .topBarRight {
+    position: absolute;
+    right: vw(40);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .publishButton {
+      background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+      color: #fff;
+      font-weight: bold;
+      padding: vw(15) vw(30);
+      /* 调整内边距 */
+      border-radius: vw(50);
+      /* 大圆角 */
+      font-size: vw(40);
+      /* 调整字体大小 */
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      /* 添加文字发光效果 */
+      box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2);
+      /* 添加阴影 */
+      white-space: nowrap;
+      /* 防止文字换行 */
+
+      &.publishButtonDisabled {
+        background-image: linear-gradient(to right, #ccc 0%, #aaa 100%);
+        /* 灰色渐变背景 */
+        color: #999;
+        /* 灰色文字 */
+        text-shadow: none;
+        /* 移除文字发光 */
+        box-shadow: none;
+        /* 移除阴影 */
+        cursor: not-allowed;
+        /* 禁用鼠标样式 */
+      }
+    }
+  }
+}

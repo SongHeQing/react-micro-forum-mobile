@@ -19,10 +19,10 @@ export const responseInterceptors = {
       return Promise.reject(new Error(message));
     }
 
-    if (data === null || data === undefined) {
-      return Promise.reject(new Error('返回数据为空'));
-    }
-    return Promise.resolve(data);
+    // if (data === null || data === undefined) {
+    //   return Promise.reject(new Error('返回数据为空'));
+    // }
+    return Promise.resolve(data as T);
   },
 
   // 响应错误拦截器

@@ -1,19 +1,36 @@
 import { useEffect, useState } from "react";
-import { fetchChannelList } from "@/api/channelApi";
+import { fetchChannelList } from "@/apis/channelApi";
 import type { Channel } from "@/types/channel";
-import styles from "./ChannelList.module.css";
+import styles from "./ChannelList.module.scss";
+//导入图片
+import channelImage from "../../assets/默认频道图片.jpg";
+import clsx from "clsx";
 
-const ChannelList = () => {
+const ChannelList = ({ onChannelClick }: { onChannelClick: (id: number) => void }) => {
   const [channels, setChannels] = useState<Channel[]>([]);
+  const [activeId, setActiveId] = useState<number | string | null>(null);
   useEffect(() => {
     fetchChannelList().then(setChannels);
   }, []);
 
+  const handleClick = (id: number) => {
+    setActiveId(id);
+    if (onChannelClick) onChannelClick(id);
+
+  };
+
   return (
     <div className={styles.channelList}>
       {channels.map((c) => (
-        <div className={styles.channelItem} key={c.id}>
-          <img className={styles.channelImg} src={c.image || ''} alt={c.channelname} />
+        <div
+          className={
+            clsx(
+              styles.channelItem,
+              { [styles.active]: activeId === c.id })}
+          key={c.id}
+          onClick={() => handleClick(c.id)}
+        >
+          <img className={styles.channelImg} src={c.image || channelImage} alt={c.channelname} />
           <span className={styles.channelName}>{c.channelname}</span>
         </div>
       ))}

@@ -1,28 +1,65 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
 .channelList {
   display: flex;
-  gap: 1.9vw;
-  padding: 1.3vw;
+  gap: vw(25);
+  padding: 1.77vw;
+  overflow-x: auto;
 }
 
 .channelItem {
   display: flex;
   align-items: center;
-  background: #f5f7fa;
-  border-radius: 1.6vw;
-  padding: 0.5vw 1.4vw 0.5vw 0.5vw;
-  font-size: 1.4vw;
+
+  max-width: vw(402);
+  padding: vw(19) vw(37);
+
+  color: #141414;
+  font-size: 1.77vw;
+
+  background: #f7f7f8;
+
+  border-radius: vw(math.div(50 + 19 * 2, 2));
+
+  transition: background 0.2s, color 0.2s;
+  // ... 现有样式 ...
+  cursor: pointer;
+  /* 或者 default，取决于你的交互 */
+  // 禁止用户选中内容
+  -webkit-user-select: none;
+  /* Safari, Chrome */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Standard */
+
+  &.active {
+    background: #eaf1fe;
+    color: #3b72ff;
+  }
 }
 
 .channelImg {
-  width: 2.9vw;
-  height: 2.9vw;
-  border-radius: 50%;
-  margin-right: 0.6vw;
+  width: vw(50);
+  height: vw(50);
+  border-radius: math.div(20vw, 12.6);
+  margin-right: 0.82vw;
   object-fit: cover;
 }
 
 .channelName {
-  color: #4a90e2;
+  // color: #4a90e2;
   font-weight: 500;
-  font-size: 1.3vw;
+  font-size: vw(36);
+  line-height: vw(36);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

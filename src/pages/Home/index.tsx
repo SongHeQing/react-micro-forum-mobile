@@ -12,6 +12,7 @@ const staticArticles: Article[] = [
     userId: 1,
     title: "测试标题p标签换行<p>测试标题p标签换行</p>",
     contentPreview: "内容内容内\n容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
+    type: null,
     image: null,
     createTime: "",
     updateTime: ""
@@ -20,6 +21,7 @@ const staticArticles: Article[] = [
     id: 2,
     userId: 1,
     title: "body-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-titlebody-title",
+    type: null,
     contentPreview: "body-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbody-contentbo",
     image: null,
     createTime: "",
@@ -29,6 +31,7 @@ const staticArticles: Article[] = [
     id: 3,
     userId: 1,
     title: "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
+    type: null,
     contentPreview: "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
     image: null,
     createTime: "",

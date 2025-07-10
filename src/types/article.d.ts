@@ -4,8 +4,9 @@ export type Article = {
   id: number;
   userId: number;
   title: string;
+  type: null | number
   contentPreview: string;
-  image?: string | null;
+  image?: string | null | string[];
   createTime: string;
   updateTime: string;
 };
@@ -18,3 +19,4 @@ export type ArticleAdd = {
   contentPreview?: string;
   image?: string | null;
 };
+

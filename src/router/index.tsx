@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router';
 import Home from '@/pages/Home';
-import Detail from '@/pages/Detail';
+import Detail from '@/pages/ArticleDetail';
 import PublishArticle from '@/pages/PublishArticle';
 
 const Router = () => (

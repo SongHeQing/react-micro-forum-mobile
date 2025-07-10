@@ -9,3 +9,10 @@ export const getArticleList = (): Promise<ArticleList> => {
 export function addArticle(article: ArticleAdd) {
   return request.post("/articles", article);
 }
+
+// 获取文章详情
+export function getArticleDetail(id: number, type: null | number) {
+  return request.get(`/article/${id}/${type}`);
+}
+
+// 你可以在这里继续添加其他文章相关API
