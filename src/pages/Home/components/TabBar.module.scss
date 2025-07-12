@@ -1,0 +1,91 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+.TabBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: vw(177);
+  border-top: vw(4) solid #f7f7f8;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+
+.TabItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 13px;
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.TabItemActive {
+  color: #4e8cff;
+  font-weight: bold;
+}
+
+.TabItem .Icon {
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+
+.TabItem .Label {
+  font-size: 13px;
+}
+
+.TabAdd {
+  // 线性渐变，从左上到右下
+  background: linear-gradient(to bottom right, #a598fc, #5b7fff);
+  border-radius: vw(49);
+  width: vw(121);
+  height: vw(121);
+  margin-top: vw(-18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+
+  .AddIconWrapper {
+    width: vw(54);
+    height: vw(54);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .AddIcon {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+
+
+.Badge {
+  position: absolute;
+  top: 8px;
+  right: 22px;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 10px;
+  border-radius: 10px;
+  padding: 0 5px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 18px;
+}

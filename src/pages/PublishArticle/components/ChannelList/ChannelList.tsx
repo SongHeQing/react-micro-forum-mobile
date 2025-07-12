@@ -3,7 +3,7 @@ import { fetchChannelList } from "@/apis/channelApi";
 import type { Channel } from "@/types/channel";
 import styles from "./ChannelList.module.scss";
 //导入图片
-import channelImage from "../../assets/默认频道图片.jpg";
+import channelImage from "../../../../assets/默认频道图片.jpg";
 import clsx from "clsx";
 
 const ChannelList = ({ onChannelClick }: { onChannelClick: (id: number) => void }) => {

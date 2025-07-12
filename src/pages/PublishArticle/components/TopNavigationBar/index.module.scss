@@ -6,23 +6,22 @@
 
 .topBarContainer {
   height: vw(154);
-  padding: 0 vw(40);
+  // padding: 0 vw(40);
   background-color: #fff;
-  border-bottom: 1px solid #f0f0f0;
   position: relative;
 
   .topBarLeft {
     position: absolute;
-    left: vw(40);
+    // left: vw(40);
+    left: 0;
     height: 100%;
     display: flex;
     align-items: center;
 
-    .closeIcon {
-      font-size: vw(24);
-      font-weight: bold;
+    .closeIcon .icon {
+      width: vw(49);
+      height: vw(49);
       cursor: pointer;
-      color: #333;
     }
   }
 
@@ -31,32 +30,57 @@
     left: 50%;
     transform: translateX(-50%);
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    $side: 49*2 + 40*2;
+    max-width: calc(100vw - #{vw($side)});
+
+    >div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.overflow {
+        justify-content: flex-start;
+        overflow-x: auto;
+
+        // 隐藏所有浏览器的滚动条。
+        // 作用：隐藏Firefox 浏览器的滚动条。
+        // 只对 Firefox 有效。
+        scrollbar-width: none;
+        // 作用：隐藏IE 和 Edge（旧版）的滚动条。
+        // 只对旧版 IE/Edge 有效。
+        -ms-overflow-style: none;
+
+        // 作用：隐藏Chrome、Safari 和 Opera 的滚动条。
+        // 只对 Webkit/Blink 浏览器有效。
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+    }
 
     .tabItem {
       font-size: vw(57);
-      color: #666;
-      padding: vw(12) vw(15);
+      color: #515152;
+      padding: vw(12) vw(28);
       cursor: pointer;
       position: relative;
       transition: color 0.2s;
+      white-space: nowrap;
 
       &.active {
-        color: #333;
-        font-weight: bold;
+        color: #141414;
+        font-weight: 600;
 
         &::after {
           content: "";
           position: absolute;
-          bottom: vw(8);
+          bottom: vw(0);
           left: 50%;
           transform: translateX(-50%);
-          width: vw(25);
-          height: vw(2);
+          width: vw(49);
+          height: vw(12);
           background-color: #388bff;
-          border-radius: vw(1);
+          border-radius: vw(6);
         }
       }
 
@@ -70,14 +94,15 @@
 
   .topBarRight {
     position: absolute;
-    right: vw(40);
+    // right: vw(40);
+    right: 0;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
 
     .publishButton {
-      background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+      background-image: linear-gradient(to right, #3f71ff 0%, #00f2fe);
       color: #fff;
       font-weight: bold;
       padding: vw(15) vw(30);

@@ -1,0 +1,14 @@
+.publish-article-textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  /* 确保内边距和边框包含在元素的总宽度和高度内 */
+  /* 清除默认样式 */
+  border: none;
+  outline: none;
+  background: none;
+  resize: none;
+  box-shadow: none;
+  color: inherit;
+  font-family: inherit;
+}

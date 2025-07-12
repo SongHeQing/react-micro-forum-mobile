@@ -1,6 +1,5 @@
 import type { AxiosError, AxiosResponse } from 'axios';
-import type { ResType } from '@/types/api';
-
+import type { ErrorResponseType, ResType } from '@/types/api';
 
 /**
  * 响应拦截器配置
@@ -14,9 +13,9 @@ export const responseInterceptors = {
     }
 
     // 普通请求处理
-    const { code, message, data } = response.data;
+    const { code, msg, data } = response.data;
     if (code !== 200) {
-      return Promise.reject(new Error(message));
+      return Promise.reject(new Error(msg));
     }
 
     // if (data === null || data === undefined) {
@@ -32,6 +31,8 @@ export const responseInterceptors = {
       const { status, data } = error.response;
 
       switch (status) {
+        case 400:
+          return Promise.reject(data as ErrorResponseType);
         case 401:
           // 未授权，清除token并跳转到登录页
           localStorage.removeItem('token');
@@ -49,6 +50,8 @@ export const responseInterceptors = {
         default:
           console.error(`请求失败: ${(data as Record<string, unknown>)?.message as string || error.message}`);
       }
+
+
     } else if (error.request) {
       console.error('网络错误，请检查网络连接');
     } else {

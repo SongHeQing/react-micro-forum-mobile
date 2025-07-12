@@ -1,4 +1,31 @@
+@use "sass:math";
+
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
 .publishArticle {
   min-height: 100vh;
   background-color: #fff;
+  //设置左右边距
+  padding: 0 vw(40);
+
+  .titleInput {
+
+    // 输入框
+    input {
+
+      // 输入框样式
+      //设置输入框占位符样式
+      &::placeholder {
+        color: #b9b8be;
+        font-weight: 700;
+        font-size: vw(57);
+      }
+
+      // 输入字体样式
+      font-size: vw(57);
+      font-weight: 700;
+    }
+  }
 }

@@ -9,7 +9,21 @@
   display: flex;
   gap: vw(25);
   padding: 1.77vw;
+  // 溢出滚动
   overflow-x: auto;
+  // 隐藏所有浏览器的滚动条。
+  // 作用：隐藏Firefox 浏览器的滚动条。
+  // 只对 Firefox 有效。
+  scrollbar-width: none;
+  // 作用：隐藏IE 和 Edge（旧版）的滚动条。
+  // 只对旧版 IE/Edge 有效。
+  -ms-overflow-style: none;
+
+  // 作用：隐藏Chrome、Safari 和 Opera 的滚动条。
+  // 只对 Webkit/Blink 浏览器有效。
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .channelItem {
