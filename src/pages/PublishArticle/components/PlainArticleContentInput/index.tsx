@@ -20,7 +20,7 @@ const PlainArticleContentInput: React.FC<PlainArticleContentInputProps> = ({
       value={value}
       onChange={onChange}
       onFocus={onFocus}
-      placeholder={placeholder || "请输入文章内容"}
+      placeholder={placeholder}
     />
   );
 };

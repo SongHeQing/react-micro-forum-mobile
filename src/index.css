@@ -3,6 +3,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* 禁止双击放大和选择文本 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* 设置网页统一的字体大小、行高、字体系列相关属性 */
@@ -45,6 +52,11 @@ input {
   border: none;
   outline: none;
   color: #333;
+  /* 允许输入框选择文本 */
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 button {

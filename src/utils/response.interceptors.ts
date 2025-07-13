@@ -1,5 +1,6 @@
 import type { AxiosError, AxiosResponse } from 'axios';
 import type { ErrorResponseType, ResType } from '@/types/api';
+import { Toast } from 'antd-mobile';
 
 /**
  * 响应拦截器配置
@@ -46,6 +47,7 @@ export const responseInterceptors = {
           break;
         case 500:
           console.error('服务器内部错误');
+          Toast.show({ icon: 'fail', content: '服务器内部错误', });
           break;
         default:
           console.error(`请求失败: ${(data as Record<string, unknown>)?.message as string || error.message}`);

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>点击放大还原动画</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .demo-section {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    /* 方法1: CSS动画类 */
+    .clickable-item {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin: 0 auto;
+    }
+
+    .clickable-item:hover {
+      transform: scale(1.05);
+    }
+
+    .clickable-item:active {
+      transform: scale(0.95);
+    }
+
+    /* 方法2: CSS动画关键帧 */
+    .scale-animation {
+      animation: none;
+    }
+
+    .scale-animation.animate {
+      animation: scaleBounce 0.6s ease;
+    }
+
+    @keyframes scaleBounce {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* 方法3: 更复杂的弹性动画 */
+    .elastic-animation {
+      animation: none;
+    }
+
+    .elastic-animation.animate {
+      animation: elasticScale 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes elasticScale {
+      0% {
+        transform: scale(1);
+      }
+
+      30% {
+        transform: scale(1.3);
+      }
+
+      50% {
+        transform: scale(0.9);
+      }
+
+      70% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* 方法4: 带阴影的动画 */
+    .shadow-animation {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .shadow-animation.animate {
+      animation: scaleWithShadow 0.5s ease;
+    }
+
+    @keyframes scaleWithShadow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      50% {
+        transform: scale(1.2);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    /* 按钮样式 */
+    .demo-button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .demo-button:hover {
+      background: #5a6fd8;
+    }
+
+    .code-block {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      text-align: left;
+      overflow-x: auto;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>点击放大还原动画效果</h1>
+
+  <div class="method-grid">
+    <!-- 方法1: CSS transition -->
+    <div class="demo-section">
+      <div class="title">方法1: CSS Transition</div>
+      <div class="clickable-item" onclick="handleClick(this)">
+        点击我
+      </div>
+      <div class="code-block">
+        .clickable-item {
+        transition: transform 0.2s ease;
+        }
+
+        .clickable-item:active {
+        transform: scale(0.95);
+        }
+      </div>
+    </div>
+
+    <!-- 方法2: CSS动画 -->
+    <div class="demo-section">
+      <div class="title">方法2: CSS Animation</div>
+      <div class="clickable-item scale-animation" onclick="triggerAnimation(this, 'scale-animation')">
+        点击我
+      </div>
+      <div class="code-block">
+        @keyframes scaleBounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+        }
+
+        .scale-animation.animate {
+        animation: scaleBounce 0.6s ease;
+        }
+      </div>
+    </div>
+
+    <!-- 方法3: 弹性动画 -->
+    <div class="demo-section">
+      <div class="title">方法3: 弹性动画</div>
+      <div class="clickable-item elastic-animation" onclick="triggerAnimation(this, 'elastic-animation')">
+        点击我
+      </div>
+      <div class="code-block">
+        @keyframes elasticScale {
+        0% { transform: scale(1); }
+        30% { transform: scale(1.3); }
+        50% { transform: scale(0.9); }
+        70% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+        }
+      </div>
+    </div>
+
+    <!-- 方法4: 带阴影动画 -->
+    <div class="demo-section">
+      <div class="title">方法4: 带阴影动画</div>
+      <div class="clickable-item shadow-animation" onclick="triggerAnimation(this, 'shadow-animation')">
+        点击我
+      </div>
+      <div class="code-block">
+        @keyframes scaleWithShadow {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section" style="width: 100%; max-width: 800px;">
+    <div class="title">在你的React项目中使用</div>
+    <div class="code-block">
+      // 在你的SCSS文件中
+      .clickableIcon {
+      width: vw(48);
+      height: vw(48);
+      transition: transform 0.2s ease;
+      cursor: pointer;
+
+      &:active {
+      transform: scale(0.95);
+      }
+
+      // 或者使用动画类
+      &.animate {
+      animation: scaleBounce 0.6s ease;
+      }
+      }
+
+      @keyframes scaleBounce {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+      }
+
+      // 在你的React组件中
+      const [isAnimating, setIsAnimating] = useState(false);
+
+      const handleClick = () => {
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 600);
+      };
+
+      return (
+      &lt;svg
+      className={`icon ${isAnimating ? 'animate' : ''}`}
+      onClick={handleClick}
+      &gt;
+      // SVG内容
+      &lt;/svg&gt;
+      );
+    </div>
+  </div>
+
+  <script>
+    // 方法1: 简单的点击处理
+    function handleClick(element) {
+      console.log('点击了元素:', element);
+    }
+
+    // 方法2和3: 触发动画
+    function triggerAnimation(element, className) {
+      // 移除之前的动画类
+      element.classList.remove('animate');
+
+      // 强制重排
+      element.offsetHeight;
+
+      // 添加动画类
+      element.classList.add('animate');
+
+      // 动画结束后移除类
+      setTimeout(() => {
+        element.classList.remove('animate');
+      }, 800); // 根据动画时长调整
+    }
+
+    // 方法4: 更精确的动画控制
+    function preciseAnimation(element, className) {
+      return new Promise((resolve) => {
+        element.classList.remove('animate');
+        element.offsetHeight; // 强制重排
+        element.classList.add('animate');
+
+        // 监听动画结束
+        element.addEventListener('animationend', function handler() {
+          element.classList.remove('animate');
+          element.removeEventListener('animationend', handler);
+          resolve();
+        });
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -34,17 +34,21 @@
 }
 
 .TabItemActive {
+  fill: #4e8cff;
   color: #4e8cff;
   font-weight: bold;
 }
 
 .TabItem .Icon {
-  font-size: 22px;
-  margin-bottom: 2px;
+  width: vw(65);
+  height: vw(65);
+  margin-bottom: vw(2);
 }
 
 .TabItem .Label {
-  font-size: 13px;
+  font-size: vw(37);
+  line-height: 1;
+  margin-top: vw(15);
 }
 
 .TabAdd {

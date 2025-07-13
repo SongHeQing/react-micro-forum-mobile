@@ -1,0 +1,166 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+// 主容器
+.cardContainer {
+  width: vw(1210);
+  background-color: #fff;
+  margin: 0 auto;
+  margin-bottom: vw(24);
+  padding: vw(49) vw(34) vw(0);
+  border-radius: 10px;
+}
+
+// 卡片头部
+.cardHeader {
+  display: flex;
+  height: vw(115);
+  // border: 1px solid #000;
+  margin-bottom: vw(12);
+}
+
+.cardHeaderChannel {
+  display: flex;
+  align-items: start;
+  height: vw(115);
+}
+
+.cardHeaderChannelAvatarImg {
+  width: vw(110);
+  height: vw(110);
+  border-radius: vw(47);
+}
+
+.cardHeaderChannelText {
+  align-self: center;
+  width: vw(694);
+  height: vw(110);
+  margin-left: vw(32);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeaderChannelTextName {
+  margin-bottom: vw(10);
+  font-size: vw(47);
+  font-weight: 600;
+  line-height: vw(52);
+  color: #000;
+}
+
+.cardHeaderChannelTextDesc {
+  font-size: vw(38);
+  line-height: vw(42);
+  color: #a4a4a7;
+}
+
+// 关注按钮
+.cardHeaderButton {
+  align-self: flex-end;
+  width: vw(205);
+  height: vw(91);
+  background-color: #eff5fe;
+  color: #3f71fd;
+  border-radius: vw(45.5);
+  text-align: center;
+  line-height: vw(91);
+}
+
+// 卡片主体
+.cardBodyTitle {
+  font-size: vw(56);
+  font-weight: 600;
+  line-height: vw(72);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.cardBodyContent {
+  font-size: vw(56);
+  line-height: vw(72);
+  // border: 1px solid #000;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.cardBodyImg {
+  // 图片容器样式
+}
+
+// 卡片底部
+.cardFooter {
+  display: flex;
+  justify-content: space-around;
+  height: vw(140);
+  padding: vw(45);
+  color: #515152;
+
+  .cardFooterItem {
+    display: flex;
+    align-items: center;
+    gap: vw(21);
+  }
+
+  // 图标基础样式
+  .icon {
+    width: vw(48);
+    height: vw(48);
+    cursor: pointer;
+    fill: #515152;
+  }
+}
+
+// 动画类
+.iconAnimate {
+  animation: scaleBounce 0.3s ease-in-out;
+}
+
+// 动画关键帧
+@keyframes scaleBounce {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes elasticScale {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.3);
+  }
+
+  50% {
+    transform: scale(0.9);
+  }
+
+  70% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

@@ -10,22 +10,127 @@
   //设置左右边距
   padding: 0 vw(40);
 
-  .titleInput {
+
+
+  // 输入框容器
+  .titleInputContainer {
+    align-items: center;
+    border-bottom: vw(2) solid #ededee;
+    padding-top: vw(20);
+    padding-bottom: vw(20);
 
     // 输入框
-    input {
+    .titleInput {
+      // 输入字体样式
+      font-size: vw(53);
+      line-height: vw(73);
+      font-weight: 700;
+      color: #141414;
+      width: 100%;
+      /* 清除默认样式 */
+      border: none;
+      outline: none;
+      background: none;
+      resize: none;
+      box-shadow: none;
+      color: inherit;
+      font-family: inherit;
 
       // 输入框样式
       //设置输入框占位符样式
       &::placeholder {
         color: #b9b8be;
         font-weight: 700;
-        font-size: vw(57);
+        font-size: vw(53);
+        line-height: vw(73);
       }
+    }
 
+    // 标题字数
+    .titleCharCount {
+      display: flex;
+      justify-content: end;
+      align-items: center;
+      font-size: vw(53);
+      line-height: vw(73);
+      color: #b9b8be;
+
+      span.active {
+        color: #fd3b2d;
+      }
+    }
+  }
+
+  // 内容输入框容器
+  .contentInputContainer {
+    border-bottom: vw(2) solid #ededee;
+    padding-top: vw(20);
+    padding-bottom: vw(20);
+
+    // 输入框
+    .contentInput {
       // 输入字体样式
-      font-size: vw(57);
-      font-weight: 700;
+      font-size: vw(53);
+      line-height: vw(73);
+      color: #141414;
+      width: 100%;
+      /* 清除默认样式 */
+      border: none;
+      outline: none;
+      background: none;
+      resize: none;
+      box-shadow: none;
+      color: inherit;
+      font-family: inherit;
+
+      // 输入框样式
+      //设置输入框占位符样式
+      &::placeholder {
+        color: #b9b8be;
+        font-size: vw(53);
+        line-height: vw(73);
+      }
+    }
+
+    // 文章内容字数
+    .contentCharCount {
+      display: flex;
+      justify-content: end;
+      align-items: center;
+      font-size: vw(53);
+      line-height: vw(73);
+      color: #b9b8be;
+
+      span.active {
+        color: #fd3b2d;
+      }
+    }
+
+
+    // 图片上传容器
+    .imageUploadContainer {
+      display: flex;
+      justify-content: start;
+      align-items: start;
+      gap: vw(20);
+      flex-wrap: wrap;
+      margin-top: vw(20);
+
+      .imageUploadItem {
+        width: vw(378);
+        height: vw(378);
+        background-color: #f7f7f8;
+        border-radius: vw(19);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .icon {
+          width: vw(88);
+          height: vw(88);
+          fill: #a3a2a8;
+        }
+      }
     }
   }
 }
