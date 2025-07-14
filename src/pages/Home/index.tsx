@@ -18,12 +18,15 @@ const Home = () => {
   /**
  * @description 上拉加载
  */
-  const loadMore = () => {
-    getArticleList(pageNumber);
+  const loadMore = async () => {
+    await getArticleListFn(pageNumber);
   };
 
   useEffect(() => {
-    getArticleListFn(pageNumber);
+    getArticleList(1).then((res) => {
+      setArticleList(res);
+      setPageNumber(2);
+    });
   }, []);
 
   // 
