@@ -7,46 +7,54 @@
 
 .LoginPage {
   min-height: 100vh;
-  background: linear-gradient(180deg, #4e70f1 0%, #f5f5f5 math.div(600, 2800) * 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(180deg, #4e70f1 0%, #4e70f1 math.div(378, 2800 - 104) * 100%, #f5f5f5 math.div(623, 2800 - 104) * 100%, #f5f5f5 100%);
+  padding-top: vw(349);
 
   .Card {
+
+    margin-left: auto;
+    margin-right: auto;
     background: #fff;
-    border-radius: 28px;
+    height: vw(1820);
+    width: vw(1200);
+    padding: vw(125) vw(70) vw(512);
+    border-radius: vw(67);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    padding: 32px 20px 24px 20px;
-    width: 90vw;
-    max-width: 400px;
-    margin-top: 40px;
+
     display: flex;
     flex-direction: column;
     align-items: stretch;
 
     .Title {
       text-align: center;
-      font-size: 22px;
+      font-size: vw(75);
       font-weight: bold;
-      margin-bottom: 32px;
+      margin-bottom: vw(175);
       color: #222;
     }
 
+
     .InputGroup {
       position: relative;
-      margin-bottom: 18px;
+      margin-bottom: vw(61);
 
       .Input {
         width: 100%;
-        padding: 16px 16px 16px 44px;
+        height: vw(182);
+        padding: vw(60) vw(167);
         border: none;
-        border-radius: 24px;
+        border-radius: vw(math.div(182, 2));
         // 输入框背景色
         background: #f5f5f5;
-        font-size: 16px;
+        font-size: vw(61);
+        line-height: vw(61);
         // 移除默认轮廓
         outline: none;
+
+        // 占位符
+        &::placeholder {
+          color: #b9b9b9;
+        }
       }
 
       .EyeIcon {
@@ -66,48 +74,57 @@
     .Options {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
-      color: #888;
-      margin-bottom: 18px;
+      height: vw(57);
+
+      color: #111111;
+      margin-bottom: vw(95);
 
       .Link {
         cursor: pointer;
+        line-height: vw(57);
+        font-size: vw(48);
       }
     }
 
     .LoginBtn {
       width: 100%;
-      padding: 14px 0;
-      background: #4d6ff0;
+      height: vw(162);
+      margin-bottom: vw(80);
       border: none;
-      border-radius: 24px;
+      border-radius: vw(math.div(162, 2));
 
-      color: #fff;
-      font-size: 18px;
+      color: #fffff9;
+      font-size: vw(53);
+      line-height: vw(162);
       font-weight: bold;
-      margin-bottom: 16px;
       letter-spacing: 4px;
 
+      background: #4d6ff0;
+
       &.Disabled {
-        background: #b3cfff;
+        background: #c9d4fb;
         cursor: not-allowed;
       }
     }
 
     .SmsLogin {
       text-align: center;
-      color: #888;
-      font-size: 15px;
-      margin-bottom: 8px;
+      font-size: vw(43);
+      color: #1f1f1f;
     }
   }
 
   .BottomLinks {
+    position: fixed;
+    bottom: vw(82);
+    left: 0;
+    right: 0;
+
     display: flex;
     justify-content: center;
-    gap: 12px;
-    color: #bbb;
-    font-size: 15px;
-    margin-top: 32px;
+    gap: vw(50);
+
+    font-size: vw(49);
+    color: #858585;
   }
 }

@@ -5,20 +5,9 @@ import TopNavigationBar from '@/pages/PublishArticle/components/TopNavigationBar
 import ChannelList from '@/pages/PublishArticle/components/ChannelList/ChannelList'; // 修正导入路径
 import { addArticle } from '@/apis/articleApi';
 import styles from './index.module.scss';
-import { isErrorResponseType } from '@/utils/typeGuards';
 import { autoResizeTextarea } from '@/utils';
+import type { ArticleAdd } from '@/types';
 
-/**
- * @description 文章数据接口
- */
-interface ArticleData {
-  userId: number;
-  title: string;
-  content?: string;
-  videoUrl?: string;
-  articleType: number; // 仍然保留 articleType，但始终设为 1 (普通文章)
-  channelId: number | null;
-}
 
 /**
  * @description 发布文章页面
@@ -159,10 +148,6 @@ function PublishArticle() {
     handleFocusOrChange(); // 触发隐藏Tab
   }
 
-  /**
-   * @description 文章类型
-   */
-  const articleType = 1; // 强制设置为普通文章 (1)
 
   useEffect(() => {
     // // 初始化时调整textarea高度
@@ -188,12 +173,10 @@ function PublishArticle() {
    * @description 处理文章提交事件
    */
   const handleSubmit = async () => {
-    const article: ArticleData = {
-      userId: 1,
-      title,
-      articleType,
+    const article: ArticleAdd = {
       channelId,
-      content,
+      title,
+      content
     };
 
     // 前端验证标题长度
@@ -213,34 +196,10 @@ function PublishArticle() {
       Toast.show({ icon: '', content: '超过最大字数限制，最多可输入2000字', });
       return;
     }
+    await addArticle(article);
+    Toast.show({ icon: 'success', content: '发布成功', });
+    navigate('/'); // 发布成功后跳转到首页
 
-    try {
-      await addArticle(article);
-      Toast.show({ icon: 'success', content: '发布成功', });
-      navigate('/'); // 发布成功后跳转到首页
-    } catch (error: unknown) {
-      // 后端验证失败
-      if (isErrorResponseType(error)) {
-        const message = error.message;
-        Toast.show({ icon: 'fail', content: message, });
-        const errorCount = error.errorCount;
-        if (errorCount > 0) {
-          // 延时1秒后显示
-          setTimeout(() => {
-            Toast.show({ icon: 'fail', content: `请检查${errorCount}个字段`, });
-          }, 2000);
-        }
-        const fieldErrors = error.fieldErrors;
-        let n = 2;
-        for (const field in fieldErrors) {
-          // 延时2秒后显示
-          setTimeout(() => {
-            Toast.show({ icon: 'fail', content: `${field}: ${fieldErrors[field]}`, });
-          }, 2000 * n);
-          n++;
-        }
-      }
-    }
   };
   return (
     <div className={styles.publishArticle}>

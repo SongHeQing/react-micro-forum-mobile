@@ -3,37 +3,40 @@ import { useState } from 'react';
 import { login } from '@/apis/userApi';
 import { useNavigate } from 'react-router';
 import { Toast } from 'antd-mobile';
+import { useDispatch } from 'react-redux';
+import { setToken, setUserInfo } from '@/store/modules/user';
+import type { LoginInfo } from '@/types/user';
+
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(true);
+  const dispatch = useDispatch();
   const handleLogin = () => {
-    login({ username, password }).then(() => {
+    login({ username, password }).then((data: LoginInfo) => {
+      Toast.show({ icon: 'success', content: '登录成功', });
+      dispatch(setToken(data.token));
+      dispatch(setUserInfo(data));
       navigate('/');
     }).catch(err => {
-      console.log(err.message);
-      Toast.show(err.message);
+      Toast.show({ icon: 'fail', content: err.message, });
     });
-
-    // 如果输入了用户名和密码则切换登录按钮的禁用状态
-    if (username && password) {
-      setIsLoginButtonDisabled(false);
-    } else {
-      setIsLoginButtonDisabled(true);
-    }
-
   }
 
 
   return (
     <div className={styles.LoginPage}>
+      <div className={styles.Top}>
+        <div className={styles.Logo}>
+        </div>
+      </div>
       <div className={styles.Card}>
         <h2 className={styles.Title}>登录账号 体验完整功能</h2>
         <div className={styles.InputGroup}>
           <input className={styles.Input}
-            placeholder="请输入手机号"
+            placeholder="请输入用户名/邮箱"
             type="text"
             value={username}
             onChange={(e) => {

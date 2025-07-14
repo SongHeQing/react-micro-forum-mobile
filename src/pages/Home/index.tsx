@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { getArticleList } from "@/apis/articleApi";
 import type { Article } from "@/types";
 import Card from "@/components/Card";
 import TabBar from '@/pages/Home/components/TabBar';
-import { PullToRefresh } from "antd-mobile";
+import { InfiniteScroll, PullToRefresh } from "antd-mobile";
 
 const DESIGN_WIDTH = 1260;
 function vw(px: number) {
@@ -13,19 +13,40 @@ function vw(px: number) {
 
 const Home = () => {
   const [articleList, setArticleList] = useState<Article[]>([]);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  /**
+ * @description 上拉加载
+ */
+  const loadMore = () => {
+    getArticleList(pageNumber);
+  };
+
   useEffect(() => {
-    getArticleList().then((res) => {
-      setArticleList(res);
-    });
+    getArticleListFn(pageNumber);
   }, []);
 
-  const onRefresh = async () => {
-    await getArticleList().then((res) => {
-      setArticleList(res);
-    });
+  // 
+  const getArticleListFn = async (pageNumber: number) => {
+    const res = await getArticleList(pageNumber)
+    setArticleList([...articleList, ...res]);
+    setPageNumber(pageNumber + 1);
+  };
 
+  /**
+   * @description 下拉刷新
+   */
+  const onRefresh = async () => {
+    await getArticleList(1).then((res) => {
+      setArticleList(res);
+      setPageNumber(2);
+    });
     return Promise.resolve();
   };
+
+
+
+  const hasMore = true;
 
   return (
 
@@ -42,6 +63,7 @@ const Home = () => {
           <div>暂无文章</div>
         )}
       </PullToRefresh>
+      <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
       <TabBar />
     </div>
   );

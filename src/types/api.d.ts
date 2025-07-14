@@ -3,7 +3,7 @@
 // 响应体
 export type ResType<T> = {
   code: number
-  msg: string
+  message: string
   data?: T | null;
 }
 

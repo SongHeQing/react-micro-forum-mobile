@@ -1,8 +1,8 @@
 import request from "@/utils/request";
 import type { ArticleList, ArticleAdd } from "@/types";
 
-export const getArticleList = (): Promise<ArticleList> => {
-  return request.get<unknown, ArticleList>('/articles')
+export const getArticleList = (pageNumber: number): Promise<ArticleList> => {
+  return request.get<unknown, ArticleList>(`/articles?pageNumber=${pageNumber}`)
 }
 
 // 新增：添加文章

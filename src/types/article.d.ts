@@ -13,10 +13,14 @@ export type Article = {
 
 export type ArticleList = Article[];
 
-// 新增文章时用的类型
+/**
+ * @description 新增文章数据接口
+ * @param title 标题
+ * @param content 内容
+ * @param channelId 频道ID
+ */
 export type ArticleAdd = {
+  channelId: number | null;
   title: string;
-  contentPreview?: string;
-  image?: string | null;
-};
-
+  content: string;
+}

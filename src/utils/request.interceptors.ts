@@ -1,4 +1,6 @@
 import type { InternalAxiosRequestConfig, AxiosError } from 'axios';
+import { getToken } from './token';
+
 /**
  * 请求拦截器配置
  */
@@ -10,10 +12,10 @@ export const requestInterceptors: {
   // 请求成功拦截器
   onFulfilled: (config: InternalAxiosRequestConfig) => {
     // 在发送请求之前做些什么
-    // const token = localStorage.getItem('token');
-    // if (token && config.headers) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const token = getToken();
+    if (token && config.headers) {
+      config.headers.Authorization = token;
+    }
     return config;
   },
 

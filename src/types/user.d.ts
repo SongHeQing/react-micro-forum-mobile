@@ -3,3 +3,9 @@ export type LoginParams = {
   password: string;
 }
 
+export type LoginInfo = {
+  id: number;
+  username: string;
+  email: string;
+  token: string;
+}

@@ -1,6 +1,8 @@
 import type { AxiosError, AxiosResponse } from 'axios';
-import type { ErrorResponseType, ResType } from '@/types/api';
+import type { ResType } from '@/types/api';
 import { Toast } from 'antd-mobile';
+import { isErrorResponseType } from './typeGuards';
+
 
 /**
  * 响应拦截器配置
@@ -14,9 +16,10 @@ export const responseInterceptors = {
     }
 
     // 普通请求处理
-    const { code, msg, data } = response.data;
+    const { code, message, data } = response.data;
     if (code !== 200) {
-      return Promise.reject(new Error(msg));
+      // Toast.show({ icon: 'fail', content: message, });
+      return Promise.reject(new Error(message));
     }
 
     // if (data === null || data === undefined) {
@@ -27,17 +30,41 @@ export const responseInterceptors = {
 
   // 响应错误拦截器
   onRejected: (error: AxiosError) => {
+    console.log("响应错误拦截器");
+    console.log(error.status);
+    if (error.status === 401) {
+      // 未授权，清除token并跳转到登录页
+      localStorage.removeItem('token');
+      // 可以在这里添加路由跳转逻辑
+      window.location.href = '/login';
+    }
+
     // 对响应错误做点什么
     if (error.response) {
       const { status, data } = error.response;
-
       switch (status) {
         case 400:
-          return Promise.reject(data as ErrorResponseType);
-        case 401:
-          // 未授权，清除token并跳转到登录页
-          localStorage.removeItem('token');
-          // 可以在这里添加路由跳转逻辑
+          // return Promise.reject(data as ErrorResponseType);
+          if (isErrorResponseType(data)) {
+            const message = data.message;
+            Toast.show({ icon: 'fail', content: message, });
+            const errorCount = data.errorCount;
+            if (errorCount > 0) {
+              // 延时1秒后显示
+              setTimeout(() => {
+                Toast.show({ icon: 'fail', content: `请检查${errorCount}个字段`, });
+              }, 2000);
+            }
+            const fieldErrors = data.fieldErrors;
+            let n = 2;
+            for (const field in fieldErrors) {
+              // 延时2秒后显示
+              setTimeout(() => {
+                Toast.show({ icon: 'fail', content: `${field}: ${fieldErrors[field]}`, });
+              }, 2000 * n);
+              n++;
+            }
+          }
           break;
         case 403:
           console.error('没有权限访问该资源');
@@ -52,14 +79,11 @@ export const responseInterceptors = {
         default:
           console.error(`请求失败: ${(data as Record<string, unknown>)?.message as string || error.message}`);
       }
-
-
     } else if (error.request) {
-      console.error('网络错误，请检查网络连接');
+      Toast.show({ icon: 'fail', content: '网络错误，请检查网络连接', });
     } else {
       console.error('请求配置错误:', error.message);
     }
-
     return Promise.reject(error);
   }
 };
