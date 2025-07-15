@@ -17,20 +17,15 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true);
 
   /**
- * @description 上拉加载
- */
+   * @description 上拉加载
+   */
   const loadMore = async () => {
     await getArticleListFn(pageNumber);
   };
 
-  useEffect(() => {
-    getArticleList(1).then((res) => {
-      setArticleList(res);
-      setPageNumber(2);
-    });
-  }, []);
-
-  // 
+  /**
+   * @description 获取文章列表
+   */
   const getArticleListFn = async (pageNumber: number) => {
     const res = await getArticleList(pageNumber)
     if (res.length > 0) {
@@ -41,15 +36,18 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    getArticleList(1).then((res) => {
+      setArticleList(res);
+      setPageNumber(2);
+    });
+  }, [])
+
   /**
    * @description 下拉刷新
    */
   const onRefresh = async () => {
-    await getArticleList(1).then((res) => {
-      setArticleList(res);
-      setPageNumber(2);
-    });
-    return Promise.resolve();
+    await getArticleListFn(pageNumber)
   };
 
   return (
