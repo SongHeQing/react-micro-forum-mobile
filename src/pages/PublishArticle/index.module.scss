@@ -107,7 +107,7 @@
       }
     }
 
-
+    // 图片上传
     // 图片上传容器
     .imageUploadContainer {
       display: flex;
@@ -117,20 +117,68 @@
       flex-wrap: wrap;
       margin-top: vw(20);
 
-      .imageUploadItem {
-        width: vw(378);
-        height: vw(378);
-        background-color: #f7f7f8;
-        border-radius: vw(19);
+      .previewContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+      }
+
+      .imageWrapper {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: #f0f0f0;
+      }
 
-        .icon {
-          width: vw(88);
-          height: vw(88);
-          fill: #a3a2a8;
-        }
+      .thumbnail {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .removeButton {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background-color: rgba(255, 0, 0, 0.7);
+      color: white;
+      border: none;
+      border-radius: 50%; // 在 SCSS 中可以直接写数字，默认是 px
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8em;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1; // 确保按钮在图片上方
+    }
+
+
+
+    .imageUploadInput {
+      width: vw(378);
+      height: vw(378);
+      background-color: #f7f7f8;
+      border-radius: vw(19);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .icon {
+        width: vw(88);
+        height: vw(88);
+        fill: #a3a2a8;
       }
     }
   }

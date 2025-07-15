@@ -18,9 +18,11 @@ export type ArticleList = Article[];
  * @param title 标题
  * @param content 内容
  * @param channelId 频道ID
+ * @param images 图片
  */
 export type ArticleAdd = {
-  channelId: number | null;
+  channelId: number;
   title: string;
+  images: File[] | null;
   content: string;
 }

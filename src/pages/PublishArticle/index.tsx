@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
-import { Toast } from 'antd-mobile';
+import { ImageViewer, Toast } from 'antd-mobile';
 import TopNavigationBar from '@/pages/PublishArticle/components/TopNavigationBar';
 import ChannelList from '@/pages/PublishArticle/components/ChannelList/ChannelList'; // 修正导入路径
 import { addArticle } from '@/apis/articleApi';
 import styles from './index.module.scss';
 import { autoResizeTextarea } from '@/utils';
-import type { ArticleAdd } from '@/types';
+// import type { ArticleAdd } from '@/types';
 
 
 /**
@@ -133,6 +133,80 @@ function PublishArticle() {
     }
   }
 
+  /**
+ * @description 图片上传引用
+ */
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * @description 图片列表
+   */
+  const [images, setImages] = useState<File[]>([]);
+
+  /**
+   * @description 专门用于图片回显（预览）的 URL 列表
+   * 类型是 string[]，每个字符串都是一个临时的图片 URL
+   */
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  /**
+   * @description 处理图片上传事件
+   */
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files: FileList | null = e.target.files;
+
+    if (files && files.length === 0 || files === null) {
+      Toast.show({ icon: '', content: '用户取消上传', });
+      return;
+    }
+
+    if (images.length + files.length > 9) {
+      Toast.show({ icon: '', content: '最多上传9张图片', });
+      return;
+    }
+    // 创建新的文件列表和预览 URL 列表
+    const newFiles = Array.from(files);
+    const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
+
+    // 更新状态
+    setImages([...images, ...newFiles]);
+    setPreviewUrls([...previewUrls, ...newPreviewUrls]);
+  }
+  // 2. 当用户点击自定义的“上传区域”时调用这个函数
+  const handleUploadAreaClick = () => {
+    // 关键一步：通过 ref 触发隐藏 input 的点击事件，弹出文件选择框
+    fileInputRef.current?.click();
+  };
+
+  /**
+   * @description 处理图片删除事件
+   * @param indexToRemove 图片索引
+   */
+  // 2. **新增图片删除函数**
+  const handleRemoveImage = (indexToRemove: number) => {
+    // 确保索引有效
+    if (indexToRemove < 0 || indexToRemove >= images.length) {
+      console.warn('尝试删除的图片索引无效:', indexToRemove);
+      return;
+    }
+
+    // 获取要删除的图片的 URL，以便释放内存
+    const urlToRevoke = previewUrls[indexToRemove];
+
+    // 更新 images 状态：移除指定索引的 File 对象
+    setImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
+
+    // 更新 previewUrls 状态：移除指定索引的预览 URL
+    setPreviewUrls(prevPreviewUrls => {
+      const newUrls = prevPreviewUrls.filter((_, index) => index !== indexToRemove);
+      // **重要：释放被删除 URL 的内存**
+      URL.revokeObjectURL(urlToRevoke);
+      return newUrls;
+    });
+
+    Toast.show({ icon: 'success', content: '图片已删除', position: 'top' });
+  };
+
 
   /**
    * @description 频道ID
@@ -149,6 +223,9 @@ function PublishArticle() {
   }
 
 
+
+
+
   useEffect(() => {
     // // 初始化时调整textarea高度
     // if (titleTextareaRef.current) {
@@ -157,6 +234,11 @@ function PublishArticle() {
     // if (contentTextareaRef.current) {
     //   autoResizeTextarea(contentTextareaRef.current, 3);
     // }
+    return () => {
+      // 遍历所有存储的 URL，并释放它们
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      console.log('组件卸载或 previewUrls 变化，所有临时 URL 已被清理。');
+    };
   }, []);
 
   /**
@@ -173,12 +255,6 @@ function PublishArticle() {
    * @description 处理文章提交事件
    */
   const handleSubmit = async () => {
-    const article: ArticleAdd = {
-      channelId,
-      title,
-      content
-    };
-
     // 前端验证标题长度
     if (!isValidTitleLength) {
       Toast.show({ icon: '', content: '标题最多31个字哦~', });
@@ -196,7 +272,30 @@ function PublishArticle() {
       Toast.show({ icon: '', content: '超过最大字数限制，最多可输入2000字', });
       return;
     }
-    await addArticle(article);
+
+    // 前端验证图片是否上传
+    if (images.length > 9) {
+      Toast.show({ icon: '', content: '最多上传9张图片', });
+      return;
+    }
+
+    // const article: ArticleAdd = {
+    //   channelId,
+    //   title,
+    //   content,
+    //   images
+    // };
+    // **** 核心修改：使用 FormData ****
+    const formData = new FormData();
+    formData.append('channelId', String(channelId)); // 转换为字符串
+    formData.append('title', title);
+    formData.append('content', content);
+    images.forEach(image => {
+      formData.append('images', image);
+    });
+    await addArticle(formData);
+
+    // await addArticle(article);
     Toast.show({ icon: 'success', content: '发布成功', });
     navigate('/'); // 发布成功后跳转到首页
 
@@ -261,8 +360,48 @@ function PublishArticle() {
           <span className={!isValidContentLength ? styles.active : ''}>{contentCharCount}</span>/2000</div>}
         {/* 图片上传 */}
         <div className={styles.imageUploadContainer}>
-          <div className={styles.imageUploadItem}>
+          {/* 图片预览区域 - 仅显示回显 */}
+          {previewUrls.length > 0 && (
+            <div className={styles.previewContainer}>
+              {previewUrls.map((url, index) => (
+                <div key={index} className={styles.imageWrapper}>
+                  <img src={url} alt={`preview-${index}`} className={styles.thumbnail}
+                    // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
+                    onClick={() => ImageViewer.Multi.show({
+                      images: previewUrls,
+                      defaultIndex: index,
+                    })}
+                  />
+
+                  {/* 3. **添加删除按钮** */}
+                  <button
+                    className={styles.removeButton}
+                    onClick={(e) => {
+                      e.stopPropagation(); // 阻止事件冒泡到图片点击，避免同时触发预览
+                      handleRemoveImage(index);
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className={styles.imageUploadInput} onClick={handleUploadAreaClick}>
             <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" ><path d="M920 472H552V104c0-22.092-17.908-40-40-40s-40 17.908-40 40v368H104c-22.092 0-40 17.908-40 40 0 22.091 17.908 40 40 40h368v368c0 22.091 17.908 40 40 40s40-17.909 40-40V552h368c22.092 0 40-17.909 40-40 0-22.092-17.908-40-40-40z"  ></path></svg>
+            {/* 这个是真正的文件选择器，我们用 CSS 把它隐藏起来 */}
+            <input
+              type="file"
+              ref={fileInputRef}        // 将 ref 绑定到这个 input 上
+              onChange={handleFileChange} // 监听文件选择事件
+              // 脱离文档流，不会渲染
+              style={{ display: 'none' }} // 完全隐藏 input 元素
+              // 如果需要限制文件类型，可以添加 accept 属性
+              // 例如：只接受图片 accept="image/*"
+              // 或者接受图片和PDF accept="image/*,.pdf"
+              accept="image/*"
+              multiple
+            />
           </div>
         </div>
       </div>
