@@ -14,6 +14,7 @@ function vw(px: number) {
 const Home = () => {
   const [articleList, setArticleList] = useState<Article[]>([]);
   const [pageNumber, setPageNumber] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   /**
  * @description 上拉加载
@@ -32,8 +33,12 @@ const Home = () => {
   // 
   const getArticleListFn = async (pageNumber: number) => {
     const res = await getArticleList(pageNumber)
-    setArticleList([...articleList, ...res]);
-    setPageNumber(pageNumber + 1);
+    if (res.length > 0) {
+      setArticleList([...articleList, ...res]);
+      setPageNumber(pageNumber + 1);
+    } else {
+      setHasMore(false);
+    }
   };
 
   /**
@@ -46,10 +51,6 @@ const Home = () => {
     });
     return Promise.resolve();
   };
-
-
-
-  const hasMore = true;
 
   return (
 
