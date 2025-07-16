@@ -98,7 +98,7 @@ function PublishArticle() {
   /**
    * @description 文章内容长度是否合法
    */
-  const [isValidContentLength, setIsValidContentLength] = useState<boolean>(false);
+  const [isValidContentLength, setIsValidContentLength] = useState<boolean>(true);
 
   /**
    * @description 提示文章内容字数数量
@@ -182,7 +182,6 @@ function PublishArticle() {
    * @description 处理图片删除事件
    * @param indexToRemove 图片索引
    */
-  // 2. **新增图片删除函数**
   const handleRemoveImage = (indexToRemove: number) => {
     // 确保索引有效
     if (indexToRemove < 0 || indexToRemove >= images.length) {

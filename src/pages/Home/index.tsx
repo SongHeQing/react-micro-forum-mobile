@@ -37,10 +37,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getArticleList(1).then((res) => {
-      setArticleList(res);
-      setPageNumber(2);
-    });
+    // getArticleList(1).then((res) => {
+    //   setArticleList(res);
+    //   setPageNumber(2);
+    // });
   }, [])
 
   /**

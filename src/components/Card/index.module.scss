@@ -97,7 +97,30 @@
 }
 
 .cardBodyImg {
+
   // 图片容器样式
+  img {
+    width: vw(372);
+    height: vw(372);
+    object-fit: cover;
+  }
+
+  &.cardBodyImgThree {
+    display: flex;
+    flex-wrap: wrap;
+    gap: vw(12);
+
+    // 第一个图片为左边圆角，最后一个图片为右边圆角
+    img:first-child {
+      border-top-left-radius: vw(24);
+      border-bottom-left-radius: vw(24);
+    }
+
+    img:last-child {
+      border-top-right-radius: vw(24);
+      border-bottom-right-radius: vw(24);
+    }
+  }
 }
 
 // 卡片底部

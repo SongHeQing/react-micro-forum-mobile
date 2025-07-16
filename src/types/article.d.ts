@@ -1,16 +1,39 @@
 // 文章相关类型定义
 
+/**
+ * @description 图片
+ * @param imageUrl 图片URL
+ * @param orderNum 图片顺序
+ */
+export type ImageDTO = {
+  imageUrl: string;
+  orderNum: number;
+};
+
+/**
+ * @description 文章
+ * @param id 文章ID
+ * @param userId 用户ID
+ * @param channelId 频道ID
+ * @param title 标题
+ * @param contentPreview 内容预览
+ * @param coverImageUrl 封面图片
+ * @param createTime 创建时间
+ */
 export type Article = {
   id: number;
   userId: number;
+  channelId: number;
   title: string;
-  type: null | number
   contentPreview: string;
-  image?: string | null | string[];
+  coverImageUrl: ImageDTO[];
   createTime: string;
   updateTime: string;
 };
 
+/**
+ * @description 文章列表
+ */
 export type ArticleList = Article[];
 
 /**

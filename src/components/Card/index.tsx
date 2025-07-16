@@ -1,10 +1,11 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import type { Article } from "@/types";
 import { getLineCount } from "@/utils/lineCount";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import styles from './index.module.scss';
 import avatar from '@/assets/默认频道图片.jpg';
-
+import { ImageViewer } from "antd-mobile";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 interface CardProps {
   article: Article;
 }
@@ -33,7 +34,18 @@ const Card: React.FC<CardProps> = ({ article }) => {
     duration: 300
   });
 
+  // 图片预览数量
+  const [previewImagesCount, setPreviewImagesCount] = useState<number>(0);
 
+  // 用 useMemo 计算排序后的图片数组
+  const sortedImagesUrl = useMemo(() => {
+    // 判断是否为数组
+    if (!Array.isArray(article.coverImageUrl)) return [];
+    // 复制一份，避免原数组被排序,为每个image添加BASE_URL
+    const sortedImagesUrl = article.coverImageUrl.slice().sort((a, b) => a.orderNum - b.orderNum).map(img => BASE_URL + img.imageUrl);
+    // 返回排序后的图片数组
+    return sortedImagesUrl;
+  }, [article.coverImageUrl]);
 
   useEffect(() => {
     // 统计标题和内容当前行数
@@ -43,7 +55,14 @@ const Card: React.FC<CardProps> = ({ article }) => {
     //动态计算最大行数减去标题行数剩余的行数，根据剩余的行数限制内容行数
     const remainingLineCount: number = maxLineCount - titleLineCount;
     setContentLineCount(remainingLineCount);
-  }, []);
+    const previewImagesCount: number = article.coverImageUrl.length;
+    if (previewImagesCount > 3) {
+      // 设置图片预览数量
+      setPreviewImagesCount(3);
+    } else {
+      setPreviewImagesCount(previewImagesCount);
+    }
+  }, [article.coverImageUrl]);
 
   // 处理分享图标点击
   const handleClickShare = () => {
@@ -67,6 +86,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
 
   return (
     <div className={styles.cardContainer}>
+      {/* 头部 */}
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderChannel}>
           {/* 频道头像 */}
@@ -88,6 +108,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
           关注
         </div>
       </div>
+      {/* 内容 */}
       <div className={styles.cardBody}>
         {/* 限制标题为最大两行，超出显示省略号 */}
         <div className={styles.cardBodyTitle} ref={titleRef}>{article.title}</div>
@@ -99,8 +120,25 @@ const Card: React.FC<CardProps> = ({ article }) => {
         >
           {article.contentPreview}
         </div>
-        <div className={styles.cardBodyImg}></div>
+        <div className={`${styles.cardBodyImg} ${previewImagesCount === 3 ? styles.cardBodyImgThree : ''}`}>
+          {/* 封面图片 */}
+          {/* 
+          * 复制再排序是为了保证原始数据不被意外修改，避免副作用，符合 React 推荐的“不可变数据”理念。
+          * 这样代码更安全、可维护，尤其是在组件复用、状态管理等场景下。
+          */}
+          {sortedImagesUrl.slice(0, previewImagesCount).map(imgUrl => (
+            <img key={imgUrl}
+              src={imgUrl}
+              // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
+              onClick={() => ImageViewer.Multi.show({
+                images: sortedImagesUrl,
+                defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
+              })}
+              alt="cover" />
+          ))}
+        </div>
       </div>
+      {/* 底部 */}
       <div className={styles.cardFooter}>
         {/* 转发 */}
         <div className={styles.cardFooterItem} onClick={handleClickShare}>
