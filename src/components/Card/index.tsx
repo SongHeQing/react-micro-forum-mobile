@@ -120,7 +120,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
         >
           {article.contentPreview}
         </div>
-        <div className={`${styles.cardBodyImg} ${previewImagesCount === 3 ? styles.cardBodyImgThree : ''}`}>
+        <div className={`${styles.cardBodyImg} ${previewImagesCount >= 2 ? styles.cardBodyImgTwoOrThree : ''} ${previewImagesCount === 1 ? styles.cardBodyImgOne : ''}`}>
           {/* 封面图片 */}
           {/* 
           * 复制再排序是为了保证原始数据不被意外修改，避免副作用，符合 React 推荐的“不可变数据”理念。

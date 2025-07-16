@@ -99,16 +99,28 @@
 .cardBodyImg {
 
   // 图片容器样式
-  img {
-    width: vw(372);
-    height: vw(372);
-    object-fit: cover;
+
+  // 渲染的图片数量为1时
+  &.cardBodyImgOne {
+    img {
+      max-width: vw(756);
+      max-height: vw(1008);
+      border-radius: vw(24);
+    }
   }
 
-  &.cardBodyImgThree {
+
+  // 渲染的图片数量为2或3时
+  &.cardBodyImgTwoOrThree {
     display: flex;
     flex-wrap: wrap;
     gap: vw(12);
+
+    img {
+      width: vw(372);
+      height: vw(372);
+      object-fit: cover;
+    }
 
     // 第一个图片为左边圆角，最后一个图片为右边圆角
     img:first-child {
@@ -121,6 +133,7 @@
       border-bottom-right-radius: vw(24);
     }
   }
+
 }
 
 // 卡片底部

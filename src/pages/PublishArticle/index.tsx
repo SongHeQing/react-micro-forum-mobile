@@ -382,10 +382,13 @@ function PublishArticle() {
                   >
                     X
                   </button>
+
+
                 </div>
               ))}
             </div>
           )}
+          {/* 图片上传区域 */}
           <div className={styles.imageUploadInput} onClick={handleUploadAreaClick}>
             <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" ><path d="M920 472H552V104c0-22.092-17.908-40-40-40s-40 17.908-40 40v368H104c-22.092 0-40 17.908-40 40 0 22.091 17.908 40 40 40h368v368c0 22.091 17.908 40 40 40s40-17.909 40-40V552h368c22.092 0 40-17.909 40-40 0-22.092-17.908-40-40-40z"  ></path></svg>
             {/* 这个是真正的文件选择器，我们用 CSS 把它隐藏起来 */}
@@ -402,6 +405,7 @@ function PublishArticle() {
               multiple
             />
           </div>
+
         </div>
       </div>
       {/* 频道选择 */}
