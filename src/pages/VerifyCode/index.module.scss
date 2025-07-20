@@ -1,0 +1,97 @@
+@use "sass:math";
+
+.VerifyCodePage {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.Header {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 18px;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.Back {
+  font-size: 24px;
+  margin-right: 16px;
+  cursor: pointer;
+  color: #222;
+}
+
+.Title {
+  flex: 1;
+  text-align: center;
+  font-weight: 500;
+  color: #222;
+  font-size: 18px;
+}
+
+.Content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 48px;
+}
+
+.MainTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.SubTitle {
+  color: #888;
+  font-size: 16px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.Phone {
+  font-weight: bold;
+  color: #888;
+  letter-spacing: 2px;
+}
+
+.CodeInputGroup {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.CodeInput {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: none;
+  background: #f7f7f7;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  font-size: 28px;
+  text-align: center;
+  outline: none;
+  transition: box-shadow 0.2s, border 0.2s;
+  caret-color: #4e70f1;
+
+  &:focus {
+    background: #fff;
+    box-shadow: 0 4px 16px 0 rgba(78, 112, 241, 0.12);
+    border: 1.5px solid #4e70f1;
+  }
+}
+
+.Timer {
+  color: #bdbdbd;
+  font-size: 16px;
+  margin-top: 16px;
+  text-align: center;
+}

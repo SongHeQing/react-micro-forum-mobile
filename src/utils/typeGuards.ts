@@ -10,7 +10,7 @@ type ErrorLike = {
  * @param error 错误对象
  * @returns 是否是错误响应类型
  */
-export function isErrorResponseType(error: unknown): error is ErrorResponseType {
+export function isfieldErrorsResponseType(error: unknown): error is ErrorResponseType {
   if (typeof error === 'object' && error !== null) {
     const e = error as ErrorLike;
     return (
@@ -18,6 +18,14 @@ export function isErrorResponseType(error: unknown): error is ErrorResponseType 
       typeof e.message === 'string' &&
       typeof e.fieldErrors === 'object'
     );
+  }
+  return false;
+}
+
+export function isErrorMessageResponseType(error: unknown): error is ErrorResponseType {
+  if (typeof error === 'object' && error !== null) {
+    const e = error as ErrorLike;
+    return typeof e.message === 'string';
   }
   return false;
 } 

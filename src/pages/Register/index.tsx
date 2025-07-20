@@ -1,29 +1,46 @@
 import styles from './index.module.scss';
 import { useState } from 'react';
-import { login } from '@/apis/userApi';
+import { register } from '@/apis/userApi';
+// import { useNavigate } from 'react-router';
+import { Modal } from 'antd-mobile';
+// import { useDispatch } from 'react-redux';
+// import type { RegisterParams } from '@/types/user';
+import clsx from 'clsx';
+import { isfieldErrorsResponseType } from '@/utils/typeGuards';
 import { useNavigate } from 'react-router';
-import { Toast } from 'antd-mobile';
-import { useDispatch } from 'react-redux';
-import { setToken, setUserInfo } from '@/store/modules/user';
-import type { LoginInfo } from '@/types/user';
-
-const Login = () => {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+/**
+ * 注册页面
+ */
+const Register = () => {
+  // const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(true);
-  const dispatch = useDispatch();
-  const handleLogin = () => {
-    login({ username, password }).then((data: LoginInfo) => {
-      Toast.show({ icon: 'success', content: '登录成功', });
-      dispatch(setToken(data.token));
-      dispatch(setUserInfo(data));
-      navigate('/');
+  const navigate = useNavigate();
+
+  const handleRegister = () => {
+    console.log(email, password);
+    register({ email, password },).then(() => {
+      // setIsModalVisible(true);
+      navigate('/verify-code', { state: { value: email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' } });
     }).catch(err => {
-      Toast.show({ icon: 'fail', content: err.message, });
+      if (isfieldErrorsResponseType(err.response.data)) {
+        const { fieldErrors } = err.response.data;
+        setResponseErrorMessage([...Object.values(fieldErrors) as string[]]);
+      } else {
+        setResponseErrorMessage([err.response.data.message]);
+      }
     });
   }
+
+  const [responseErrorMessage, setResponseErrorMessage] = useState<string[]>([]);
+
+  // const dispatch = useDispatch();
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+
 
 
   return (
@@ -33,14 +50,14 @@ const Login = () => {
         </div>
       </div>
       <div className={styles.Card}>
-        <h2 className={styles.Title}>登录账号 体验完整功能</h2>
+        <h2 className={styles.Title}>欢迎注册微社区账号</h2>
         <div className={styles.InputGroup}>
           <input className={styles.Input}
-            placeholder="请输入用户名/邮箱"
+            placeholder="请输入邮箱"
             type="text"
-            value={username}
+            value={email}
             onChange={(e) => {
-              setUsername(e.target.value);
+              setEmail(e.target.value);
               if (e.target.value) {
                 setIsLoginButtonDisabled(false);
               } else {
@@ -77,26 +94,32 @@ const Login = () => {
             }}
           />
         </div>
+        {/* 错误提示 */}
+        <div className={clsx(styles.Error, responseErrorMessage.length > 0)}>
+          {responseErrorMessage.map((message, index) => (
+            <div className={styles.ErrorText} key={index}>{message}</div>
+          ))}
+        </div>
+        {/* 忘记密码 */}
         <div className={styles.Options}>
           {/* <span className={styles.Link}>更换设备登录</span> */}
           <span className={styles.Link}>忘记密码</span>
         </div>
         <button className={`${styles.LoginBtn} ${isLoginButtonDisabled ? styles.Disabled : ''}`}
-          onClick={handleLogin}
+          onClick={handleRegister}
           disabled={isLoginButtonDisabled}
-        >登 录</button>
-        <div className={styles.SmsLogin}>验证码登录</div>
+        >立即注册</button>
+        {/* <div className={styles.SmsLogin}>验证码登录</div> */}
       </div>
       <div className={styles.BottomLinks}>
-        {/* <span>换个账号</span> */}
-        {/* <span>|</span> */}
-        {/* 跳转到注册页面 */}
-        <span onClick={() => navigate('/register')}>注册</span>
-        <span>|</span>
-        <span>帮助</span>
       </div>
-    </div>
-  )
+      <Modal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        content="请输入邮箱验证码"
+      />
+    </div >
+  );
 }
 
-export default Login;
+export default Register;

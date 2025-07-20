@@ -29,8 +29,16 @@
 .channelItem {
   display: flex;
   align-items: center;
+  /**
+   * flex: 0 0 auto 让每个
+   * .channelItem 的宽度只由内容决定，不会被父容器拉伸（grow:0），
+   * 也不会被压缩（shrink:0），宽度就是内容的宽度（basis:auto）。
+   * 这样每个频道项不会互相“抢空间”，每个 item 都是“自适应内容宽度”，
+   * 不会因为别的 item 太长而被挤压变窄。
+   */
+  flex: 0 0 auto; // 关键：让宽度由内容决定，不被拉伸或压缩
 
-  max-width: vw(402);
+  // max-width: vw(402); 
   padding: vw(19) vw(37);
 
   color: #141414;
@@ -69,11 +77,12 @@
 }
 
 .channelName {
-  // color: #4a90e2;
   font-weight: 500;
   font-size: vw(36);
   line-height: vw(36);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 6em; // 改用 em 单位，大约能显示 6 个字符
+  // 移除 flex: 1度由内容决定
 }

@@ -38,6 +38,11 @@
       position: relative;
       margin-bottom: vw(61);
 
+      &:nth-last-of-type(1) {
+        // 第二个 InputGroup
+        margin-bottom: 0;
+      }
+
       .Input {
         width: 100%;
         height: vw(182);
@@ -71,9 +76,15 @@
       }
     }
 
+    .Error {
+      color: #ff3331;
+      font-size: vw(48);
+      margin-bottom: vw(13);
+    }
+
     .Options {
       display: flex;
-      justify-content: flex-end;
+      justify-content: end;
       height: vw(57);
 
       color: #111111;
@@ -89,6 +100,7 @@
     .LoginBtn {
       width: 100%;
       height: vw(162);
+      // margin-top: vw(92);
       margin-bottom: vw(80);
       border: none;
       border-radius: vw(math.div(162, 2));

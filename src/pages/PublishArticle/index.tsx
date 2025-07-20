@@ -359,53 +359,50 @@ function PublishArticle() {
           <span className={!isValidContentLength ? styles.active : ''}>{contentCharCount}</span>/2000</div>}
         {/* 图片上传 */}
         <div className={styles.imageUploadContainer}>
-          {/* 图片预览区域 - 仅显示回显 */}
-          {previewUrls.length > 0 && (
-            <div className={styles.previewContainer}>
-              {previewUrls.map((url, index) => (
-                <div key={index} className={styles.imageWrapper}>
-                  <img src={url} alt={`preview-${index}`} className={styles.thumbnail}
-                    // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
-                    onClick={() => ImageViewer.Multi.show({
-                      images: previewUrls,
-                      defaultIndex: index,
-                    })}
-                  />
+          {previewUrls.map((url, index) => (
+            <div key={index} className={styles.imageWrapper}>
+              <img src={url} alt={`preview-${index}`} className={styles.thumbnail}
+                // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
+                onClick={() => ImageViewer.Multi.show({
+                  images: previewUrls,
+                  defaultIndex: index,
+                })}
+              />
 
-                  {/* 3. **添加删除按钮** */}
-                  <button
-                    className={styles.removeButton}
-                    onClick={(e) => {
-                      e.stopPropagation(); // 阻止事件冒泡到图片点击，避免同时触发预览
-                      handleRemoveImage(index);
-                    }}
-                  >
-                    X
-                  </button>
+              {/* 3. **添加删除按钮** */}
+              <button
+                className={styles.removeButton}
+                onClick={(e) => {
+                  e.stopPropagation(); // 阻止事件冒泡到图片点击，避免同时触发预览
+                  handleRemoveImage(index);
+                }}
+              >
+                <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5891" ><path d="M387.082616 507.741938L25.019317 145.678639A85.331911 85.331911 0 0 1 145.678639 25.019316L507.741938 387.082615 869.719905 25.019316a85.331911 85.331911 0 0 1 120.744654 120.659323L628.40126 507.741938l362.063299 361.977967a85.331911 85.331911 0 0 1-120.744654 120.744654L507.741938 628.40126l-362.063299 362.063299a85.331911 85.331911 0 0 1-120.659322-120.744654L387.082616 507.741938z" p-id="5892"></path></svg>
+              </button>
 
 
-                </div>
-              ))}
+            </div>
+          ))}
+          {/* 渲染的图片上传选择器 */}
+          {/* 图片大于9张时，隐藏图片上传选择器 */}
+          {images.length < 9 && (
+            <div className={styles.imageUploadInput} onClick={handleUploadAreaClick}>
+              <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" ><path d="M920 472H552V104c0-22.092-17.908-40-40-40s-40 17.908-40 40v368H104c-22.092 0-40 17.908-40 40 0 22.091 17.908 40 40 40h368v368c0 22.091 17.908 40 40 40s40-17.909 40-40V552h368c22.092 0 40-17.909 40-40 0-22.092-17.908-40-40-40z"  ></path></svg>
+              {/* 这个是真正的文件选择器，我们用 CSS 把它隐藏起来 */}
+              <input
+                type="file"
+                ref={fileInputRef}        // 将 ref 绑定到这个 input 上
+                onChange={handleFileChange} // 监听文件选择事件
+                // 脱离文档流，不会渲染
+                style={{ display: 'none' }} // 完全隐藏 input 元素
+                // 如果需要限制文件类型，可以添加 accept 属性
+                // 例如：只接受图片 accept="image/*"
+                // 或者接受图片和PDF accept="image/*,.pdf"
+                accept="image/*"
+                multiple
+              />
             </div>
           )}
-          {/* 图片上传区域 */}
-          <div className={styles.imageUploadInput} onClick={handleUploadAreaClick}>
-            <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" ><path d="M920 472H552V104c0-22.092-17.908-40-40-40s-40 17.908-40 40v368H104c-22.092 0-40 17.908-40 40 0 22.091 17.908 40 40 40h368v368c0 22.091 17.908 40 40 40s40-17.909 40-40V552h368c22.092 0 40-17.909 40-40 0-22.092-17.908-40-40-40z"  ></path></svg>
-            {/* 这个是真正的文件选择器，我们用 CSS 把它隐藏起来 */}
-            <input
-              type="file"
-              ref={fileInputRef}        // 将 ref 绑定到这个 input 上
-              onChange={handleFileChange} // 监听文件选择事件
-              // 脱离文档流，不会渲染
-              style={{ display: 'none' }} // 完全隐藏 input 元素
-              // 如果需要限制文件类型，可以添加 accept 属性
-              // 例如：只接受图片 accept="image/*"
-              // 或者接受图片和PDF accept="image/*,.pdf"
-              accept="image/*"
-              multiple
-            />
-          </div>
-
         </div>
       </div>
       {/* 频道选择 */}

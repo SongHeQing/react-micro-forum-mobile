@@ -2,7 +2,7 @@ import request from "@/utils/request";
 import type { ArticleList } from "@/types";
 
 export const getArticleList = (pageNumber: number): Promise<ArticleList> => {
-  return request.get<unknown, ArticleList>(`/articles?pageNumber=${pageNumber}`)
+  return request.get("/articles", { params: { pageNumber } })
 }
 
 // // 新增：添加文章

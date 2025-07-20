@@ -9,3 +9,8 @@ export type LoginInfo = {
   email: string;
   token: string;
 }
+
+export type RegisterParams = {
+  email: string;
+  password: string;
+}

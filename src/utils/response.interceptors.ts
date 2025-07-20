@@ -1,7 +1,7 @@
 import type { AxiosError, AxiosResponse } from 'axios';
 import type { ResType } from '@/types/api';
 import { Toast } from 'antd-mobile';
-import { isErrorResponseType } from './typeGuards';
+import { isErrorMessageResponseType, isfieldErrorsResponseType } from './typeGuards';
 
 
 /**
@@ -45,25 +45,29 @@ export const responseInterceptors = {
       switch (status) {
         case 400:
           // return Promise.reject(data as ErrorResponseType);
-          if (isErrorResponseType(data)) {
+          if (isfieldErrorsResponseType(data)) {
             const message = data.message;
             Toast.show({ icon: 'fail', content: message, });
-            const errorCount = data.errorCount;
-            if (errorCount > 0) {
-              // 延时1秒后显示
-              setTimeout(() => {
-                Toast.show({ icon: 'fail', content: `请检查${errorCount}个字段`, });
-              }, 2000);
-            }
-            const fieldErrors = data.fieldErrors;
-            let n = 2;
-            for (const field in fieldErrors) {
-              // 延时2秒后显示
-              setTimeout(() => {
-                Toast.show({ icon: 'fail', content: `${field}: ${fieldErrors[field]}`, });
-              }, 2000 * n);
-              n++;
-            }
+            // const errorCount = data.errorCount;
+            // if (errorCount > 0) {
+            //   // 延时1秒后显示
+            //   setTimeout(() => {
+            //     Toast.show({ icon: 'fail', content: `请检查${errorCount}个字段`, });
+            //   }, 2000);
+            // }
+            // const fieldErrors = data.fieldErrors;
+            // let n = 2;
+            // for (const field in fieldErrors) {
+            //   // 延时2秒后显示
+            //   setTimeout(() => {
+            //     Toast.show({ icon: 'fail', content: `${field}: ${fieldErrors[field]}`, });
+            //   }, 2000 * n);
+            //   n++;
+            // }
+          }
+          if (isErrorMessageResponseType(data)) {
+            const message = data.message;
+            Toast.show({ icon: 'fail', content: message, });
           }
           break;
         case 403:
