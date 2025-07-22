@@ -5,13 +5,24 @@
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+
+
+
 .TabBar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  height: vw(177);
-  border-top: vw(4) solid #f7f7f8;
+  height: rfs(177);
+  border-top: rfs(4) solid #f7f7f8;
   background: #fff;
   display: flex;
   justify-content: space-around;
@@ -40,32 +51,32 @@
 }
 
 .TabItem .Icon {
-  width: vw(65);
-  height: vw(65);
-  margin-bottom: vw(2);
+  width: rfs(65);
+  height: rfs(65);
+  margin-bottom: rfs(2);
 }
 
 .TabItem .Label {
-  font-size: vw(37);
+  font-size: rfs(37);
   line-height: 1;
-  margin-top: vw(15);
+  margin-top: rfs(15);
 }
 
 .TabAdd {
   // 线性渐变，从左上到右下
   background: linear-gradient(to bottom right, #a598fc, #5b7fff);
-  border-radius: vw(49);
-  width: vw(121);
-  height: vw(121);
-  margin-top: vw(-18);
+  border-radius: rfs(49);
+  width: rfs(121);
+  height: rfs(121);
+  margin-top: rfs(-18);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 28px;
 
   .AddIconWrapper {
-    width: vw(54);
-    height: vw(54);
+    width: rfs(54);
+    height: rfs(54);
     display: flex;
     align-items: center;
     justify-content: center;

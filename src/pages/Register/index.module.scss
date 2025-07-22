@@ -5,38 +5,54 @@
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
 .LoginPage {
   min-height: 100vh;
-  background: linear-gradient(180deg, #4e70f1 0%, #4e70f1 math.div(378, 2800 - 104) * 100%, #f5f5f5 math.div(623, 2800 - 104) * 100%, #f5f5f5 100%);
-  padding-top: vw(349);
+  // background: linear-gradient(180deg, #4e70f1 0%, #4e70f1 math.div(378, 2800 - 104) * 100%, #f5f5f5 math.div(623, 2800 - 104) * 100%, #f5f5f5 100%);
+
+  background: linear-gradient(180deg,
+      #4e70f1 0%,
+      #5d7cf3 10%,
+      /* 浅一点的蓝色过渡 */
+      #7c90f5 17%,
+      /* 再浅一些作为缓冲色 */
+      #dcdff0 25%,
+      /* 从蓝灰过渡到灰色中间色 */
+      #f5f5f5 35%,
+      #f5f5f5 100%);
+  padding-top: rfs(349);
 
   .Card {
-
     margin-left: auto;
     margin-right: auto;
     background: #fff;
-    height: vw(1820);
-    width: vw(1200);
-    padding: vw(125) vw(70) vw(512);
-    border-radius: vw(67);
+    height: rfs(1820);
+    width: rfs(1200);
+    padding: rfs(125) rfs(70) rfs(512);
+    border-radius: rfs(67);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-
     display: flex;
     flex-direction: column;
     align-items: stretch;
 
     .Title {
       text-align: center;
-      font-size: vw(75);
+      font-size: rfs(75);
       font-weight: bold;
-      margin-bottom: vw(175);
+      margin-bottom: rfs(175);
       color: #222;
     }
 
-
     .InputGroup {
       position: relative;
-      margin-bottom: vw(61);
+      margin-bottom: rfs(61);
 
       &:nth-last-of-type(1) {
         // 第二个 InputGroup
@@ -45,32 +61,33 @@
 
       .Input {
         width: 100%;
-        height: vw(182);
-        padding: vw(60) vw(167);
+        height: rfs(182);
+        padding: rfs(60) rfs(167);
         border: none;
-        border-radius: vw(math.div(182, 2));
+        border-radius: rfs(91);
         // 输入框背景色
         background: #f5f5f5;
-        font-size: vw(61);
-        line-height: vw(61);
+        font-size: rfs(61);
+        line-height: rfs(61);
         // 移除默认轮廓
         outline: none;
 
         // 占位符
         &::placeholder {
           color: #b9b9b9;
+          text-align: center;
         }
       }
 
       .EyeIcon {
         position: absolute;
-        left: 16px;
+        left: rfs(66);
         top: 50%;
         transform: translateY(-50%);
 
         .icon {
-          width: vw(26);
-          height: vw(26);
+          width: rfs(52);
+          height: rfs(52);
           fill: #b9b8be;
         }
       }
@@ -78,39 +95,36 @@
 
     .Error {
       color: #ff3331;
-      font-size: vw(48);
-      margin-bottom: vw(13);
+      font-size: rfs(48);
+      margin-bottom: rfs(13);
     }
 
     .Options {
       display: flex;
       justify-content: end;
-      height: vw(57);
-
+      height: rfs(57);
       color: #111111;
-      margin-bottom: vw(95);
+      margin-bottom: rfs(95);
 
       .Link {
         cursor: pointer;
-        line-height: vw(57);
-        font-size: vw(48);
+        line-height: rfs(57);
+        font-size: rfs(48);
       }
     }
 
     .LoginBtn {
       width: 100%;
-      height: vw(162);
-      // margin-top: vw(92);
-      margin-bottom: vw(80);
+      height: rfs(162);
+      // margin-top: rfs(92);
+      margin-bottom: rfs(80);
       border: none;
-      border-radius: vw(math.div(162, 2));
-
+      border-radius: rfs(81);
       color: #fffff9;
-      font-size: vw(53);
-      line-height: vw(162);
+      font-size: rfs(53);
+      line-height: rfs(162);
       font-weight: bold;
       letter-spacing: 4px;
-
       background: #4d6ff0;
 
       &.Disabled {
@@ -121,22 +135,22 @@
 
     .SmsLogin {
       text-align: center;
-      font-size: vw(43);
+      font-size: rfs(43);
       color: #1f1f1f;
     }
   }
 
   .BottomLinks {
-    position: fixed;
-    bottom: vw(82);
-    left: 0;
-    right: 0;
-
+    // position: fixed;
+    // bottom: rfs(82);
+    // left: 0;
+    // right: 0;
+    margin-top: rfs(396);
+    margin-bottom: rfs(82);
     display: flex;
     justify-content: center;
-    gap: vw(50);
-
-    font-size: vw(49);
+    gap: rfs(50);
+    font-size: rfs(49);
     color: #858585;
   }
 }

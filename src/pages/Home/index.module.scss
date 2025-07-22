@@ -5,6 +5,15 @@
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+
 .home {
   width: 100%;
   height: 100%;
@@ -12,8 +21,8 @@
 
   // 线性渐变
   background: linear-gradient(#f2fdff 0%, #F2F2F3 math.div(175, 2800)*100%);
-  padding-bottom: vw(177);
-  padding-top: vw(26);
+  padding-bottom: rfs(177);
+  padding-top: rfs(26);
 
 
 }

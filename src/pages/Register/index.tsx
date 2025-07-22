@@ -1,10 +1,6 @@
 import styles from './index.module.scss';
 import { useState } from 'react';
 import { register } from '@/apis/userApi';
-// import { useNavigate } from 'react-router';
-import { Modal } from 'antd-mobile';
-// import { useDispatch } from 'react-redux';
-// import type { RegisterParams } from '@/types/user';
 import clsx from 'clsx';
 import { isfieldErrorsResponseType } from '@/utils/typeGuards';
 import { useNavigate } from 'react-router';
@@ -22,8 +18,9 @@ const Register = () => {
   const handleRegister = () => {
     console.log(email, password);
     register({ email, password },).then(() => {
-      // setIsModalVisible(true);
-      navigate('/verify-code', { state: { value: email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' } });
+      // navigate('/verify-code', { state: { value: email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' } });
+      sessionStorage.setItem('verifyCode', JSON.stringify({ email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' }));
+      navigate('/verify-code');
     }).catch(err => {
       if (isfieldErrorsResponseType(err.response.data)) {
         const { fieldErrors } = err.response.data;
@@ -35,11 +32,6 @@ const Register = () => {
   }
 
   const [responseErrorMessage, setResponseErrorMessage] = useState<string[]>([]);
-
-  // const dispatch = useDispatch();
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
 
 
 
@@ -113,11 +105,6 @@ const Register = () => {
       </div>
       <div className={styles.BottomLinks}>
       </div>
-      <Modal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        content="请输入邮箱验证码"
-      />
     </div >
   );
 }

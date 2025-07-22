@@ -5,76 +5,86 @@
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+
 // 主容器
 .cardContainer {
-  width: vw(1210);
+  width: rfs(1210);
   background-color: #fff;
   margin: 0 auto;
-  margin-bottom: vw(24);
-  padding: vw(49) vw(34) vw(0);
+  margin-bottom: rfs(24);
+  padding: rfs(49) rfs(34) rfs(0);
   border-radius: 10px;
 }
 
 // 卡片头部
 .cardHeader {
   display: flex;
-  height: vw(115);
+  height: rfs(115);
   // border: 1px solid #000;
-  margin-bottom: vw(12);
+  margin-bottom: rfs(12);
 }
 
 .cardHeaderChannel {
   display: flex;
   align-items: start;
-  height: vw(115);
+  height: rfs(115);
 }
 
 .cardHeaderChannelAvatarImg {
-  width: vw(110);
-  height: vw(110);
-  border-radius: vw(47);
+  width: rfs(110);
+  height: rfs(110);
+  border-radius: rfs(47);
 }
 
 .cardHeaderChannelText {
   align-self: center;
-  width: vw(694);
-  height: vw(110);
-  margin-left: vw(32);
+  width: rfs(694);
+  height: rfs(110);
+  margin-left: rfs(32);
   display: flex;
   flex-direction: column;
 }
 
 .cardHeaderChannelTextName {
-  margin-bottom: vw(10);
-  font-size: vw(47);
+  margin-bottom: rfs(10);
+  font-size: rfs(47);
   font-weight: 600;
-  line-height: vw(52);
+  line-height: rfs(52);
   color: #000;
 }
 
 .cardHeaderChannelTextDesc {
-  font-size: vw(38);
-  line-height: vw(42);
+  font-size: rfs(38);
+  line-height: rfs(42);
   color: #a4a4a7;
 }
 
 // 关注按钮
 .cardHeaderButton {
   align-self: flex-end;
-  width: vw(205);
-  height: vw(91);
+  width: rfs(205);
+  height: rfs(91);
   background-color: #eff5fe;
+  font-size: rfs(38);
   color: #3f71fd;
-  border-radius: vw(45.5);
+  border-radius: rfs(45.5);
   text-align: center;
-  line-height: vw(91);
+  line-height: rfs(91);
 }
 
 // 卡片主体
 .cardBodyTitle {
-  font-size: vw(56);
+  font-size: rfs(56);
   font-weight: 600;
-  line-height: vw(72);
+  line-height: rfs(72);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -85,8 +95,8 @@
 }
 
 .cardBodyContent {
-  font-size: vw(56);
-  line-height: vw(72);
+  font-size: rfs(56);
+  line-height: rfs(72);
   // border: 1px solid #000;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -99,13 +109,18 @@
 .cardBodyImg {
 
   // 图片容器样式
+  img {
+    object-fit: cover;
+  }
 
   // 渲染的图片数量为1时
   &.cardBodyImgOne {
     img {
-      max-width: vw(756);
-      max-height: vw(1008);
-      border-radius: vw(24);
+      min-width: rfs(372);
+      min-height: rfs(372);
+      max-width: rfs(756);
+      max-height: rfs(1008);
+      border-radius: rfs(24);
     }
   }
 
@@ -113,24 +128,22 @@
   // 渲染的图片数量为2或3时
   &.cardBodyImgTwoOrThree {
     display: flex;
-    flex-wrap: wrap;
-    gap: vw(12);
+    gap: rfs(12);
 
     img {
-      width: vw(372);
-      height: vw(372);
-      object-fit: cover;
+      width: rfs(372);
+      height: rfs(372);
     }
 
     // 第一个图片为左边圆角，最后一个图片为右边圆角
     img:first-child {
-      border-top-left-radius: vw(24);
-      border-bottom-left-radius: vw(24);
+      border-top-left-radius: rfs(24);
+      border-bottom-left-radius: rfs(24);
     }
 
     img:last-child {
-      border-top-right-radius: vw(24);
-      border-bottom-right-radius: vw(24);
+      border-top-right-radius: rfs(24);
+      border-bottom-right-radius: rfs(24);
     }
   }
 
@@ -140,20 +153,20 @@
 .cardFooter {
   display: flex;
   justify-content: space-around;
-  height: vw(140);
-  padding: vw(45);
+  height: rfs(140);
+  padding: rfs(45);
   color: #515152;
 
   .cardFooterItem {
     display: flex;
     align-items: center;
-    gap: vw(21);
+    gap: rfs(21);
   }
 
   // 图标基础样式
   .icon {
-    width: vw(48);
-    height: vw(48);
+    width: rfs(48);
+    height: rfs(48);
     cursor: pointer;
     fill: #515152;
   }

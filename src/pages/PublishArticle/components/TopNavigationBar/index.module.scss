@@ -4,23 +4,32 @@
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
 .topBarContainer {
-  height: vw(154);
-  // padding: 0 vw(40);
+  height: rfs(154);
+  // padding: 0 rfs(40);
   background-color: #fff;
   position: relative;
 
   .topBarLeft {
     position: absolute;
-    // left: vw(40);
+    // left: rfs(40);
     left: 0;
     height: 100%;
     display: flex;
     align-items: center;
 
     .closeIcon .icon {
-      width: vw(49);
-      height: vw(49);
+      width: rfs(49);
+      height: rfs(49);
       cursor: pointer;
     }
   }
@@ -31,7 +40,7 @@
     transform: translateX(-50%);
     height: 100%;
     $side: 49*2 + 40*2;
-    max-width: calc(100vw - #{vw($side)});
+    max-width: calc(100vw - #{rfs($side)});
 
     >div {
       display: flex;
@@ -59,9 +68,9 @@
     }
 
     .tabItem {
-      font-size: vw(57);
+      font-size: rfs(57);
       color: #515152;
-      padding: vw(12) vw(28);
+      padding: rfs(12) rfs(28);
       cursor: pointer;
       position: relative;
       transition: color 0.2s;
@@ -74,13 +83,13 @@
         &::after {
           content: "";
           position: absolute;
-          bottom: vw(0);
+          bottom: rfs(0);
           left: 50%;
           transform: translateX(-50%);
-          width: vw(49);
-          height: vw(12);
+          width: rfs(49);
+          height: rfs(12);
           background-color: #8b44fe;
-          border-radius: vw(6);
+          border-radius: rfs(6);
         }
       }
 
@@ -94,7 +103,7 @@
 
   .topBarRight {
     position: absolute;
-    // right: vw(40);
+    // right: rfs(40);
     right: 0;
     height: 100%;
     display: flex;
@@ -105,11 +114,11 @@
       background-image: linear-gradient(to right, #3f71ff 0%, #00f2fe);
       color: #fff;
       font-weight: bold;
-      padding: vw(15) vw(30);
+      padding: rfs(15) rfs(30);
       /* 调整内边距 */
-      border-radius: vw(50);
+      border-radius: rfs(50);
       /* 大圆角 */
-      font-size: vw(40);
+      font-size: rfs(40);
       /* 调整字体大小 */
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
       /* 添加文字发光效果 */

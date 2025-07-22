@@ -20,7 +20,7 @@ export type ImageDTO = {
  * @param coverImageUrl 封面图片
  * @param createTime 创建时间
  */
-export type Article = {
+export type ArticleItem = {
   id: number;
   userId: number;
   channelId: number;
@@ -34,7 +34,7 @@ export type Article = {
 /**
  * @description 文章列表
  */
-export type ArticleList = Article[];
+export type ArticleList = ArticleItem[];
 
 /**
  * @description 新增文章数据接口
@@ -48,4 +48,24 @@ export type ArticleAdd = {
   title: string;
   images: File[] | null;
   content: string;
+}
+
+export type ArticleDetail = {
+  id: number;
+  userId: number;
+  channelId: number;
+  title: string;
+  content: string;
+  coverImageUrl: ImageDTO[];
+  createTime: string;
+  updateTime: string;
+  user: {
+    id: number;
+    nickname: string;
+    image: string | null;
+  };
+  channel: {
+    id: number;
+    channelname: string;
+  };
 }

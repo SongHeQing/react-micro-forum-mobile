@@ -1,12 +1,16 @@
 import React, { useRef, useState } from 'react';
 import styles from './index.module.scss';
-import { useLocation } from 'react-router';
+import { useNavigate } from 'react-router';
+import { verifyRegisterCode } from '@/apis/userApi';
+import { Toast } from 'antd-mobile';
 
 const CODE_LENGTH = 6;
 
 const VerifyCode: React.FC = () => {
-  const location = useLocation();
-  const { value, password, type, typeName, verifyType, verifyTypeName } = location.state || {};
+  // const location = useLocation();
+  // const { value, password, type, typeName, verifyType, verifyTypeName } = location.state || {};
+  const verifyCode = JSON.parse(sessionStorage.getItem('verifyCode') || '{}');
+  const { value, password, type, typeName, verifyType, verifyTypeName } = verifyCode;
 
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
   const [timer, setTimer] = useState(50);
@@ -37,7 +41,9 @@ const VerifyCode: React.FC = () => {
     return () => clearTimeout(t);
   }, [timer]);
 
+  // 是否正在提交
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   // 输入满自动提交
   React.useEffect(() => {
@@ -52,15 +58,20 @@ const VerifyCode: React.FC = () => {
   const handleSubmit = () => {
     const verifyCode = code.join('');
     // 这里写你的请求逻辑，比如：verifyCodeApi({ code: verifyCode, value, ... })
-    console.log('自动提交验证码:', verifyCode, value, password, type, typeName, verifyType, verifyTypeName);
-    // 模拟请求完成后重置 isSubmitting
-    setTimeout(() => setIsSubmitting(false), 1500);
+    // console.log('自动提交验证码:', verifyCode, value, password, type, typeName, verifyType, verifyTypeName);
+    if (type === 'register' && verifyType === 'email') {
+      verifyRegisterCode({ email: value, password }, verifyCode).then(() => {
+        // 模拟请求完成后重置 isSubmitting 并跳转到登录页
+        Toast.show({ icon: 'success', content: '验证码验证成功', });
+        navigate('/login');
+      });
+    }
   };
 
   return (
     <div className={styles.VerifyCodePage}>
       <div className={styles.Header}>
-        <span className={styles.Back}>&lt;</span>
+        <span className={styles.Back} onClick={() => navigate(-1)}>&lt;</span>
         <span className={styles.Title}>输入{verifyTypeName}验证码</span>
       </div>
       <div className={styles.Content}>
@@ -83,7 +94,7 @@ const VerifyCode: React.FC = () => {
             />
           ))}
         </div>
-        <div className={styles.Timer}>{timer}秒后重新发送</div>
+        {/* <div className={styles.Timer}>{timer}秒后重新发送</div> */}
       </div>
     </div>
   );

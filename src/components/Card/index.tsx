@@ -1,38 +1,23 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
-import type { Article } from "@/types";
+import type { ArticleItem } from "@/types";
 import { getLineCount } from "@/utils/lineCount";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import styles from './index.module.scss';
 import avatar from '@/assets/默认频道图片.jpg';
 import { ImageViewer } from "antd-mobile";
+import clsx from "clsx";
+import { useNavigate } from "react-router";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface CardProps {
-  article: Article;
+  article: ArticleItem;
 }
 
 const Card: React.FC<CardProps> = ({ article }) => {
   const titleRef = useRef<HTMLDivElement>(null);
   const [contentLineCount, setContentLineCount] = useState<number>(0);
 
-  // 使用自定义Hook管理分享图标点击动画
-  const { getModuleAnimationClassName: getModuleAnimationClassNameShareIcon, triggerAnimation: triggerAnimationShareIcon } = useClickAnimation({
-    duration: 300
-  });
-
-  // 使用自定义Hook管理评论图标点击动画
-  const { getModuleAnimationClassName: getModuleAnimationClassNameCommentIcon, triggerAnimation: triggerAnimationCommentIcon } = useClickAnimation({
-    duration: 300
-  });
-
-  // 使用自定义Hook管理点赞图标点击动画
-  const { getModuleAnimationClassName: getModuleAnimationClassNameLikeIcon, triggerAnimation: triggerAnimationLikeIcon } = useClickAnimation({
-    duration: 300
-  });
-
-  // 使用自定义Hook管理关注图标点击动画
-  const { getModuleAnimationClassName: getModuleAnimationClassNameFollow, triggerAnimation: triggerAnimationFollow } = useClickAnimation({
-    duration: 300
-  });
 
   // 图片预览数量
   const [previewImagesCount, setPreviewImagesCount] = useState<number>(0);
@@ -64,6 +49,26 @@ const Card: React.FC<CardProps> = ({ article }) => {
     }
   }, [article.coverImageUrl]);
 
+
+  // 使用自定义Hook管理分享图标点击动画
+  const { getModuleAnimationClassName: getModuleAnimationClassNameShareIcon, triggerAnimation: triggerAnimationShareIcon } = useClickAnimation({
+    duration: 300
+  });
+
+  // 使用自定义Hook管理评论图标点击动画
+  const { getModuleAnimationClassName: getModuleAnimationClassNameCommentIcon, triggerAnimation: triggerAnimationCommentIcon } = useClickAnimation({
+    duration: 300
+  });
+
+  // 使用自定义Hook管理点赞图标点击动画
+  const { getModuleAnimationClassName: getModuleAnimationClassNameLikeIcon, triggerAnimation: triggerAnimationLikeIcon } = useClickAnimation({
+    duration: 300
+  });
+
+  // 使用自定义Hook管理关注图标点击动画
+  const { getModuleAnimationClassName: getModuleAnimationClassNameFollow, triggerAnimation: triggerAnimationFollow } = useClickAnimation({
+    duration: 300
+  });
   // 处理分享图标点击
   const handleClickShare = () => {
     triggerAnimationShareIcon();
@@ -83,6 +88,8 @@ const Card: React.FC<CardProps> = ({ article }) => {
   const handleFollowClick = () => {
     triggerAnimationFollow();
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.cardContainer}>
@@ -109,7 +116,11 @@ const Card: React.FC<CardProps> = ({ article }) => {
         </div>
       </div>
       {/* 内容 */}
-      <div className={styles.cardBody}>
+      <div className={styles.cardBody}
+        onClick={() => {
+          navigate(`/article/${article.id}`);
+        }}
+      >
         {/* 限制标题为最大两行，超出显示省略号 */}
         <div className={styles.cardBodyTitle} ref={titleRef}>{article.title}</div>
         <div className={styles.cardBodyContent}
@@ -120,7 +131,13 @@ const Card: React.FC<CardProps> = ({ article }) => {
         >
           {article.contentPreview}
         </div>
-        <div className={`${styles.cardBodyImg} ${previewImagesCount >= 2 ? styles.cardBodyImgTwoOrThree : ''} ${previewImagesCount === 1 ? styles.cardBodyImgOne : ''}`}>
+        <div className={clsx(
+          styles.cardBodyImg,
+          {
+            [styles.cardBodyImgTwoOrThree]: previewImagesCount >= 2,
+            [styles.cardBodyImgOne]: previewImagesCount === 1,
+          }
+        )}>
           {/* 封面图片 */}
           {/* 
           * 复制再排序是为了保证原始数据不被意外修改，避免副作用，符合 React 推荐的“不可变数据”理念。
@@ -130,10 +147,13 @@ const Card: React.FC<CardProps> = ({ article }) => {
             <img key={imgUrl}
               src={imgUrl}
               // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
-              onClick={() => ImageViewer.Multi.show({
-                images: sortedImagesUrl,
-                defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
-              })}
+              onClick={(e) => {
+                e.stopPropagation();
+                ImageViewer.Multi.show({
+                  images: sortedImagesUrl,
+                  defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
+                })
+              }}
               alt="cover" />
           ))}
         </div>

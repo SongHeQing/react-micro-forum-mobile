@@ -5,6 +5,7 @@ import PublishArticle from '@/pages/PublishArticle';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import VerifyCode from '@/pages/VerifyCode';
+import ArticleDetail from '@/pages/ArticleDetail';
 
 const Router = () => (
   <BrowserRouter>
@@ -15,6 +16,7 @@ const Router = () => (
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/verify-code" element={<VerifyCode />} />
+      <Route path="/article/:id" element={<ArticleDetail />} />
     </Routes>
   </BrowserRouter>
 );

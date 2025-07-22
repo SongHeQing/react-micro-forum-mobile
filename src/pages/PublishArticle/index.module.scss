@@ -4,26 +4,32 @@
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
 .publishArticle {
   min-height: 100vh;
   background-color: #fff;
   //设置左右边距
-  padding: 0 vw(40);
-
-
+  padding: 0 rfs(40);
 
   // 输入框容器
   .titleInputContainer {
     align-items: center;
-    border-bottom: vw(2) solid #ededee;
-    padding-top: vw(20);
-    padding-bottom: vw(20);
+    border-bottom: rfs(2) solid #ededee;
+    padding-top: rfs(20);
+    padding-bottom: rfs(20);
 
     // 输入框
     .titleInput {
       // 输入字体样式
-      font-size: vw(53);
-      line-height: vw(73);
+      font-size: rfs(53);
+      line-height: rfs(73);
       font-weight: 700;
       color: #141414;
       width: 100%;
@@ -41,8 +47,8 @@
       &::placeholder {
         color: #b9b8be;
         font-weight: 700;
-        font-size: vw(53);
-        line-height: vw(73);
+        font-size: rfs(53);
+        line-height: rfs(73);
       }
     }
 
@@ -51,8 +57,8 @@
       display: flex;
       justify-content: end;
       align-items: center;
-      font-size: vw(53);
-      line-height: vw(73);
+      font-size: rfs(53);
+      line-height: rfs(73);
       color: #b9b8be;
 
       span.active {
@@ -63,16 +69,16 @@
 
   // 内容输入框容器
   .contentInputContainer {
-    border-bottom: vw(2) solid #ededee;
-    padding-top: vw(69);
-    padding-bottom: vw(86);
-    margin-bottom: vw(77);
+    border-bottom: rfs(2) solid #ededee;
+    padding-top: rfs(69);
+    padding-bottom: rfs(86);
+    margin-bottom: rfs(77);
 
     // 输入框
     .contentInput {
       // 输入字体样式
-      font-size: vw(53);
-      line-height: vw(73);
+      font-size: rfs(53);
+      line-height: rfs(73);
       color: #141414;
       width: 100%;
       /* 清除默认样式 */
@@ -88,8 +94,8 @@
       //设置输入框占位符样式
       &::placeholder {
         color: #b9b8be;
-        font-size: vw(53);
-        line-height: vw(73);
+        font-size: rfs(53);
+        line-height: rfs(73);
       }
     }
 
@@ -98,8 +104,8 @@
       display: flex;
       justify-content: end;
       align-items: center;
-      font-size: vw(53);
-      line-height: vw(73);
+      font-size: rfs(53);
+      line-height: rfs(73);
       color: #b9b8be;
 
       span.active {
@@ -113,15 +119,15 @@
       display: flex;
       justify-content: start;
       align-items: start;
-      gap: vw(25) vw(24);
+      gap: rfs(25) rfs(24);
       flex-wrap: wrap;
-      margin-top: vw(20);
+      margin-top: rfs(20);
 
       .imageWrapper {
         position: relative;
-        width: vw(374);
-        height: vw(377);
-        border-radius: vw(22);
+        width: rfs(374);
+        height: rfs(377);
+        border-radius: rfs(22);
         overflow: hidden;
         display: flex;
         justify-content: center;
@@ -142,19 +148,19 @@
           color: white;
           border: none;
           border-radius: 50%; // 在 SCSS 中可以直接写数字，默认是 px
-          width: vw(46);
-          height: vw(46);
+          width: rfs(46);
+          height: rfs(46);
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: vw(25);
+          font-size: rfs(25);
           cursor: pointer;
           padding: 0;
           z-index: 1; // 确保按钮在图片上方
 
           .icon {
-            width: vw(20);
-            height: vw(20);
+            width: rfs(20);
+            height: rfs(20);
             fill: #fff;
           }
         }
@@ -162,22 +168,18 @@
 
     }
 
-
-
-
-
     .imageUploadInput {
-      width: vw(370);
-      height: vw(377);
+      width: rfs(370);
+      height: rfs(377);
       background-color: #f7f7f8;
-      border-radius: vw(19);
+      border-radius: rfs(19);
       display: flex;
       justify-content: center;
       align-items: center;
 
       .icon {
-        width: vw(88);
-        height: vw(88);
+        width: rfs(88);
+        height: rfs(88);
         fill: #a3a2a8;
       }
     }

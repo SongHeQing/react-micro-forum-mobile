@@ -36,7 +36,7 @@ const Login = () => {
         <h2 className={styles.Title}>登录账号 体验完整功能</h2>
         <div className={styles.InputGroup}>
           <input className={styles.Input}
-            placeholder="请输入用户名/邮箱"
+            placeholder="请输入邮箱"
             type="text"
             value={username}
             onChange={(e) => {

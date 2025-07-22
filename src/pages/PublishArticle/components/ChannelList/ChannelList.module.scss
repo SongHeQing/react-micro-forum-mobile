@@ -1,14 +1,21 @@
 @use "sass:math";
 
-// 公共的vw计算函数
 @function vw($px) {
   @return math.div($px, 1260) * 100vw;
 }
 
+@function vh($px) {
+  @return math.div($px, 1260) * 100vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
 .channelList {
   display: flex;
-  gap: vw(25);
-  padding: 1.77vw;
+  gap: rfs(25);
+  padding: rfs(22);
   // 溢出滚动
   overflow-x: auto;
   // 隐藏所有浏览器的滚动条。
@@ -29,38 +36,18 @@
 .channelItem {
   display: flex;
   align-items: center;
-  /**
-   * flex: 0 0 auto 让每个
-   * .channelItem 的宽度只由内容决定，不会被父容器拉伸（grow:0），
-   * 也不会被压缩（shrink:0），宽度就是内容的宽度（basis:auto）。
-   * 这样每个频道项不会互相“抢空间”，每个 item 都是“自适应内容宽度”，
-   * 不会因为别的 item 太长而被挤压变窄。
-   */
   flex: 0 0 auto; // 关键：让宽度由内容决定，不被拉伸或压缩
-
-  // max-width: vw(402); 
-  padding: vw(19) vw(37);
-
+  padding: rfs(19) rfs(37);
   color: #141414;
-  font-size: 1.77vw;
-
+  font-size: rfs(22);
   background: #f7f7f8;
-
-  border-radius: vw(math.div(50 + 19 * 2, 2));
-
+  border-radius: rfs(44);
   transition: background 0.2s, color 0.2s;
-  // ... 现有样式 ...
   cursor: pointer;
-  /* 或者 default，取决于你的交互 */
-  // 禁止用户选中内容
   -webkit-user-select: none;
-  /* Safari, Chrome */
   -moz-user-select: none;
-  /* Firefox */
   -ms-user-select: none;
-  /* IE 10+ */
   user-select: none;
-  /* Standard */
 
   &.active {
     background: #eaf1fe;
@@ -69,20 +56,19 @@
 }
 
 .channelImg {
-  width: vw(50);
-  height: vw(50);
-  border-radius: math.div(20vw, 12.6);
-  margin-right: 0.82vw;
+  width: rfs(50);
+  height: rfs(50);
+  border-radius: rfs(32);
+  margin-right: rfs(10);
   object-fit: cover;
 }
 
 .channelName {
   font-weight: 500;
-  font-size: vw(36);
-  line-height: vw(36);
+  font-size: rfs(36);
+  line-height: rfs(36);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 6em; // 改用 em 单位，大约能显示 6 个字符
-  // 移除 flex: 1度由内容决定
+  max-width: 6em;
 }
