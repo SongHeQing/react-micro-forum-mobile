@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosResponse } from 'axios';
-import type { ResType } from '@/types/api';
+import type { ResType } from '@/types/Api';
 import { Toast } from 'antd-mobile';
 import { isErrorMessageResponseType, isfieldErrorsResponseType } from './typeGuards';
 

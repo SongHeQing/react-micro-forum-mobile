@@ -13,7 +13,7 @@ function vw(px: number) {
   return (px / DESIGN_WIDTH) * window.innerWidth;
 }
 function vh(px: number) {
-  return (px / DESIGN_HEIGHT) * window.innerHeight;
+  return (px / DESIGN_HEIGHT) * window.innerHeight * 0.4;
 }
 function rfs(px: number, min = 0) {
   return Math.max(min, Math.min(vw(px), vh(px)));
@@ -62,7 +62,7 @@ const Home = () => {
 
     <div className={styles.home}>
       <PullToRefresh onRefresh={onRefresh}
-        threshold={rfs(321)}
+        threshold={rfs(301)}
       >
         {/* 动态渲染文章卡片 */}
         {articleList.length > 0 ? (

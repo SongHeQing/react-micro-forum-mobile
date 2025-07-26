@@ -5,17 +5,17 @@ import { useNavigate } from 'react-router';
 import { Toast } from 'antd-mobile';
 import { useDispatch } from 'react-redux';
 import { setToken, setUserInfo } from '@/store/modules/user';
-import type { LoginInfo } from '@/types/user';
+import type { LoginInfo } from '@/types/User';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(true);
   const dispatch = useDispatch();
   const handleLogin = () => {
-    login({ username, password }).then((data: LoginInfo) => {
+    login({ email, password }).then((data: LoginInfo) => {
       Toast.show({ icon: 'success', content: '登录成功', });
       dispatch(setToken(data.token));
       dispatch(setUserInfo(data));
@@ -38,9 +38,9 @@ const Login = () => {
           <input className={styles.Input}
             placeholder="请输入邮箱"
             type="text"
-            value={username}
+            value={email}
             onChange={(e) => {
-              setUsername(e.target.value);
+              setEmail(e.target.value);
               if (e.target.value) {
                 setIsLoginButtonDisabled(false);
               } else {

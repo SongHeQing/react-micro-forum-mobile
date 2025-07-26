@@ -5,7 +5,7 @@
 }
 
 @function vh($px) {
-  @return math.div($px, 1260) * 100vh;
+  @return math.div($px, 1260) * 65vh;
 }
 
 

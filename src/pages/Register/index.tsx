@@ -19,7 +19,7 @@ const Register = () => {
     console.log(email, password);
     register({ email, password },).then(() => {
       // navigate('/verify-code', { state: { value: email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' } });
-      sessionStorage.setItem('verifyCode', JSON.stringify({ email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' }));
+      sessionStorage.setItem('verifyCode', JSON.stringify({ value: email, password, type: 'register', typeName: '注册', verifyType: 'email', verifyTypeName: '邮箱' }));
       navigate('/verify-code');
     }).catch(err => {
       if (isfieldErrorsResponseType(err.response.data)) {

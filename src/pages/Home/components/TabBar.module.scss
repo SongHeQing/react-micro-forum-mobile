@@ -6,7 +6,7 @@
 }
 
 @function vh($px) {
-  @return math.div($px, 1260) * 100vh;
+  @return math.div($px, 1260) * 65vh;
 }
 
 @function rfs($px, $min: 0px) {
@@ -22,6 +22,8 @@
   right: 0;
   bottom: 0;
   height: rfs(177);
+  width: clamp(0px, 100vw, 65vh);
+  margin: 0 auto;
   border-top: rfs(4) solid #f7f7f8;
   background: #fff;
   display: flex;

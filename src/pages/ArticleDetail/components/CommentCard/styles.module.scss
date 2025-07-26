@@ -1,0 +1,165 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+@function vh($px) {
+  @return math.div($px, 1260) * 65vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+.commentCard {
+  display: flex;
+  flex-direction: column;
+
+  padding: rfs(52) rfs(40) rfs(39);
+  border-bottom: 1px solid #f2f2f2;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .commentAvatarBox {
+    width: rfs(133);
+    height: 100%;
+
+    .commentAvatar {
+      width: rfs(110);
+      height: rfs(110);
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+
+
+  .commentMeta {
+    display: flex;
+    align-items: center;
+    gap: rfs(12);
+    font-size: 13px;
+    color: #888;
+    margin-bottom: rfs(28);
+
+    .commentNickname {
+      color: #222;
+      font-weight: 500;
+    }
+
+    .commentLevel {
+      background: #eaf1fe;
+      color: #4e70f1;
+      font-size: 11px;
+      border-radius: 8px;
+      padding: 0 4px;
+    }
+
+    .authorTag {
+      background: #eaf1fe;
+      color: #4e70f1;
+      font-size: 12px;
+      border-radius: 8px;
+      padding: 0 6px;
+    }
+
+    .commentLike {
+      color: #888;
+      font-size: 13px;
+      margin-left: 8px;
+
+      &:active {
+        color: #4e70f1;
+        transform: scale(1.2);
+        transition: transform 0.2s;
+      }
+    }
+  }
+
+  .commentContent {
+    font-size: rfs(55);
+    color: #141414;
+    line-height: rfs(88);
+    margin-left: rfs(133);
+    // css进行换行符换行显示
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .commentInfo {
+    margin-left: rfs(133);
+    color: #bdbdbd;
+    font-size: rfs(43);
+    line-height: rfs(73);
+    display: flex;
+    align-items: center;
+    gap: rfs(14);
+  }
+
+  .replyBox {
+    margin-left: rfs(133);
+    margin-top: rfs(20);
+    background: #f7f7f8;
+    border-radius: rfs(12);
+    padding: rfs(16) rfs(20);
+
+    .replyItem {
+      // display: flex;
+      // align-items: flex-start;
+      gap: rfs(8);
+      font-size: rfs(45);
+      line-height: rfs(65);
+      color: #666;
+      margin-bottom: rfs(12);
+      max-height: rfs(260); // 4行的高度
+      word-break: break-all;
+      // display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .replyNickname {
+        color: #8f8e94;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .replyText {
+        color: #333;
+        flex: 1;
+
+        line-height: rfs(65);
+
+      }
+    }
+
+    .viewAllReplies {
+      margin-top: rfs(12);
+      color: #4e70f1;
+      font-size: rfs(45);
+      text-align: center;
+      cursor: pointer;
+      padding: rfs(8) 0;
+      border-top: 1px solid #e1e5e9;
+
+      &:hover {
+        color: #3a5fd9;
+      }
+
+      &:active {
+        color: #2a4fc9;
+      }
+    }
+  }
+
+}

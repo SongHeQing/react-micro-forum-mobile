@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchChannelList } from "@/apis/channelApi";
-import type { Channel } from "@/types/channel";
+import type { Channel } from "@/types/Channel";
 import styles from "./ChannelList.module.scss";
 //导入图片
 import channelImage from "../../../../assets/默认频道图片.jpg";

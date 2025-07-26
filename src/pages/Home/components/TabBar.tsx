@@ -16,7 +16,7 @@ const TabBar = () => {
       </div>
       <div className={styles.TabItem}>
         <span className={styles.Icon}>🧭</span>
-        <span className={styles.Label}>进吧</span>
+        <span className={styles.Label}>频道</span>
       </div>
       <div className={styles.TabItem}
         onClick={() => {

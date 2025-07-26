@@ -1,9 +1,18 @@
-// 文章相关类型定义
 
 /**
- * @description 图片
- * @param imageUrl 图片URL
- * @param orderNum 图片顺序
+ * @description 频道卡片
+ */
+export type ChannelCard = {
+  id: number;
+  channelName: string;
+  userCount: number;
+  articleCount: number;
+  image: string;
+};
+
+
+/**
+ * @description 文章图片
  */
 export type ImageDTO = {
   imageUrl: string;
@@ -11,30 +20,25 @@ export type ImageDTO = {
 };
 
 /**
- * @description 文章
- * @param id 文章ID
- * @param userId 用户ID
- * @param channelId 频道ID
- * @param title 标题
- * @param contentPreview 内容预览
- * @param coverImageUrl 封面图片
- * @param createTime 创建时间
+ * @description 单篇文章卡片
  */
-export type ArticleItem = {
+export type ArticleCard = {
   id: number;
-  userId: number;
-  channelId: number;
+  channelCard: ChannelCard;
   title: string;
   contentPreview: string;
   coverImageUrl: ImageDTO[];
+  likeCount: number;
+  commentCount: number;
   createTime: string;
   updateTime: string;
 };
 
+
 /**
  * @description 文章列表
  */
-export type ArticleList = ArticleItem[];
+export type ArticleList = ArticleCard[];
 
 /**
  * @description 新增文章数据接口

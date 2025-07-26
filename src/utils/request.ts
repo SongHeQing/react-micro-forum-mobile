@@ -5,7 +5,7 @@ import { responseInterceptors } from './response.interceptors';
 
 // 创建axios实例
 const request: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8080', // 基础URL
+  baseURL: import.meta.env.VITE_API_BASE_URL, // 基础URL
   timeout: 10000, // 请求超时时间
 });
 

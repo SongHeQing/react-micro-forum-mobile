@@ -6,7 +6,7 @@
 }
 
 @function vh($px) {
-  @return math.div($px, 1260) * 100vh;
+  @return math.div($px, 1260) * 65vh;
 }
 
 @function rfs($px, $min: 0px) {
@@ -46,25 +46,41 @@
 
 .cardHeaderChannelText {
   align-self: center;
+  display: flex;
+  flex-direction: column;
   width: rfs(694);
   height: rfs(110);
   margin-left: rfs(32);
-  display: flex;
-  flex-direction: column;
 }
 
-.cardHeaderChannelTextName {
-  margin-bottom: rfs(10);
+.cardHeaderChannelTextNameBox {
+  display: inline-flex;
+  margin-bottom: rfs(11);
   font-size: rfs(47);
-  font-weight: 600;
+  font-weight: 500;
   line-height: rfs(52);
   color: #000;
+
+  .cardHeaderChannelTextName {
+    // 字数限制10个字符，超出显示省略号
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 9rem;
+  }
 }
 
+
+
 .cardHeaderChannelTextDesc {
+  display: flex;
+  align-items: center;
+  gap: rfs(10);
+  // margin-top: rfs(5);
   font-size: rfs(38);
   line-height: rfs(42);
   color: #a4a4a7;
+
 }
 
 // 关注按钮
@@ -82,9 +98,11 @@
 
 // 卡片主体
 .cardBodyTitle {
+  margin-bottom: rfs(11);
   font-size: rfs(56);
   font-weight: 600;
   line-height: rfs(72);
+  // 字数限制2行，超出显示省略号
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -97,7 +115,7 @@
 .cardBodyContent {
   font-size: rfs(56);
   line-height: rfs(72);
-  // border: 1px solid #000;
+  // 字数限制2行，超出显示省略号
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;

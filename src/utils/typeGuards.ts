@@ -1,4 +1,4 @@
-import type { ErrorResponseType } from '@/types/api';
+import type { ErrorResponseType } from '@/types/Api';
 
 type ErrorLike = {
   code?: unknown;

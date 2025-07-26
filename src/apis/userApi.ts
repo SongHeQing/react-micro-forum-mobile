@@ -1,5 +1,5 @@
 import type { ResType } from "@/types";
-import type { LoginInfo, LoginParams, RegisterParams } from "@/types/user";
+import type { LoginInfo, LoginParams, RegisterParams } from "@/types/User";
 import request from "@/utils/request";
 
 

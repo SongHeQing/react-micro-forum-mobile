@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { ChannelList } from "@/types/channel";
+import type { ChannelList } from "@/types/Channel";
 
 export function fetchChannelList(): Promise<ChannelList> {
   return request.get("/channels");
