@@ -29,6 +29,7 @@ export type ArticleCard = {
   contentPreview: string;
   coverImageUrl: ImageDTO[];
   likeCount: number;
+  isLiked: boolean;
   commentCount: number;
   createTime: string;
   updateTime: string;

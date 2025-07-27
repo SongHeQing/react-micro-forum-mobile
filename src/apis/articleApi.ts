@@ -25,4 +25,15 @@ export function getArticleDetail(id: number): Promise<ArticleDetail> {
   return request.get(`/articles/${id}`);
 }
 
+// 文章点赞
+export function toggleLike(articleId: number): Promise<void> {
+  return request.post(`/articles/${articleId}/toggleLike`);
+}
+
+// 查询文章点赞状态
+export function isArticleLikedByUser(articleId: number): Promise<boolean> {
+  return request.get(`/articles/${articleId}/likeStatus`);
+}
+
+
 // 你可以在这里继续添加其他文章相关API

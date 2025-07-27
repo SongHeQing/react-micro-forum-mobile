@@ -4,9 +4,10 @@ import { getLineCount } from "@/utils/lineCount";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import styles from './index.module.scss';
 import avatar from '@/assets/默认频道图片.jpg';
-import { ImageViewer } from "antd-mobile";
+import { ImageViewer, Toast } from "antd-mobile";
 import clsx from "clsx";
 import { useNavigate } from "react-router";
+import { toggleLike } from "@/apis/articleApi"; // 只保留 toggleLike，不再需要 isArticleLikedByUser
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -93,11 +94,57 @@ const Card: React.FC<CardProps> = ({ article }) => {
   const handleClickComment = () => {
     triggerAnimationCommentIcon();
   };
+  // 管理点赞状态和数量，直接从 article prop 初始化
+  // 新增状态：当前用户是否点赞
+  const [isLiked, setIsLiked] = useState<boolean>(article.isLiked);
+  // 新增状态：用于显示的点赞数量 (乐观更新)
+  const [displayLikeCount, setDisplayLikeCount] = useState<number>(article.likeCount);
 
   // 处理点赞图标点击
-  const handleClickLike = () => {
-    triggerAnimationLikeIcon();
+  const handleClickLike = async () => {
+    triggerAnimationLikeIcon(); // 触发动画
+
+    const previousIsLiked = isLiked;
+    const previousDisplayLikeCount = displayLikeCount;
+
+    // 乐观更新 UI
+    setIsLiked(!previousIsLiked);
+    setDisplayLikeCount(previousIsLiked ? previousDisplayLikeCount - 1 : previousDisplayLikeCount + 1);
+
+    try {
+      await toggleLike(article.id);
+      // 如果后端返回了新的计数，可以这里更新 displayLikeCount
+      // 例如：const response = await toggleLike(article.id); setDisplayLikeCount(response.newLikeCount);
+      // 但目前API返回void，所以依赖乐观更新
+    } catch (error) {
+      console.error("点赞/取消点赞失败", error);
+      Toast.show({
+        content: previousIsLiked ? '取消点赞失败' : '点赞失败',
+        position: 'bottom',
+      });
+      // API调用失败，回滚 UI 状态
+      setIsLiked(previousIsLiked);
+      setDisplayLikeCount(previousDisplayLikeCount);
+    }
   };
+  // // 仅在 article.id 或 article.isLiked 或 article.likeCount 变化时同步初始状态
+  // // 初始化点赞状态和数量
+  // useEffect(() => {
+  //   // 每次 article.id 变化时，重新获取点赞状态
+  //   const fetchLikeStatus = async () => {
+  //     try {
+  //       const liked = await isArticleLikedByUser(article.id);
+  //       setIsLiked(liked);
+  //     } catch (error) {
+  //       console.error("获取点赞状态失败", error);
+  //       // 可以在这里显示一个错误提示
+  //     }
+  //   };
+
+  //   fetchLikeStatus();
+  //   // setDisplayLikeCount(article.likeCount); // 确保点赞数与传入的prop同步
+  // }, [article.id, article.isLiked, article.likeCount]); // 依赖 article.id 和 article.likeCount
+
 
   // 处理关注按钮点击
   const handleFollowClick = () => {
@@ -221,7 +268,9 @@ const Card: React.FC<CardProps> = ({ article }) => {
           </span>
         </div>
         {/* 点赞 */}
-        <div className={styles.cardFooterItem} onClick={handleClickLike}>
+        <div className={clsx(styles.cardFooterItem, {
+          [styles.cardFooterItemLiked]: isLiked
+        })} onClick={handleClickLike}>
           {/* 填充型SVG - 带点击动画 */}
           <svg
             className={getModuleAnimationClassNameLikeIcon(styles.icon, styles.iconAnimate)}
@@ -232,7 +281,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
             <path d="M795.769 342.896c-0.007 0 0.005 0 0 0H685.4c-0.849 0-1.489-0.69-1.262-1.508 4.144-14.865 21.546-84.656 4.471-153.887C668.02 104.026 601.913 64.003 542.469 64c-32.186-0.002-62.412 11.729-82.415 34.647-56.944 65.247-19.396 88.469-52.796 175.756-28.589 74.718-96.736 94.832-115.814 99.091l-5.188 1.037h-93.46c-70.692 0-128 57.308-128 128V816c0 70.692 57.308 128 128 128h511.09c88.992 0 166.321-61.153 186.831-147.751l60.745-256.479c23.799-100.487-52.431-196.874-155.693-196.874zM144.795 816V502.531c0-26.467 21.532-48 48-48h48V864h-48c-26.468 0-48-21.533-48-48z m728.82-294.667l-60.746 256.479C800.851 828.559 756.034 864 703.885 864h-383.09V448.497c38.811-11.046 123.048-45.847 161.181-145.505 18.542-48.459 20.521-83.044 21.966-108.297 1.396-24.407 1.511-26.401 16.385-43.444 3.904-4.473 12.387-7.252 22.139-7.251 24.457 0.001 57.065 16.412 68.472 62.659 9.14 37.052 3.955 76.38-0.277 97.734-5.33 22.173-17.249 50.663-28.257 74.365-9.891 21.296 5.923 45.558 29.402 45.32l116.708-1.184h67.256c24.607 0 47.478 11.072 62.745 30.379 15.267 19.308 20.771 44.115 15.1 68.06z" ></path>
           </svg>
           <span className={styles.cardFooterItemText}>
-            {article.likeCount}
+            {displayLikeCount}
           </span>
         </div>
       </div>
