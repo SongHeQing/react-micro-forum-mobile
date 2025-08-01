@@ -1,3 +1,4 @@
+// src/pages/ArticleDetail/components/CommentList/index.tsx
 import React from 'react'
 import { DotLoading, InfiniteScroll } from 'antd-mobile'
 import CommentCard from '../CommentCard'

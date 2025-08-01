@@ -1,3 +1,4 @@
+// src/pages/ArticleDetail/index.tsx  
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router";
 import styles from "./index.module.scss";
@@ -14,7 +15,7 @@ import type { CommentVO } from "@/types";
 import { fetchTopLevelComments } from "@/apis/commentApi";
 import { formatRelativeTime } from "@/utils";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const DESIGN_WIDTH = 1260;
 const DESIGN_HEIGHT = 1260;
@@ -47,7 +48,7 @@ const ArticleDetail = () => {
   }, [id]);
   // 文章内容段落分割
   const content = useMemo(() => {
-    if (!article) return '';
+    if (!article || !article.content) return '';
     return article.content.split('\n').map((line, i) => <p key={i}>{line}</p>)
   }, [article]);
 
@@ -175,7 +176,7 @@ const ArticleDetail = () => {
         <div className={styles.channel}>
           {/* src\assets\默认用户头像.jpg */}
           {/* src\pages\ArticleDetail\index.tsx */}
-          <img className={styles.channelImg} src={defaultChannel} alt="channel" />
+          <img className={styles.channelImg} src={defaultChannel} alt="channel" loading="lazy" />
           <span className={styles.channelName}>{article.channel.channelname}</span>
           <svg className={styles.channelIcon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4873" ><path d="M647.765 512L291.383 155.618c-15.621-15.621-15.621-40.948 0-56.568 15.621-15.621 40.947-15.621 56.568 0l384.666 384.666c15.621 15.621 15.621 40.947 0 56.568L347.951 924.95c-15.621 15.621-40.947 15.621-56.568 0s-15.621-40.947 0-56.568L647.765 512z" p-id="4874"></path></svg>
         </div>
@@ -186,7 +187,7 @@ const ArticleDetail = () => {
         {/* 用户信息 */}
         <div className={styles.userInfo}>
           {/* 头像 */}
-          <img className={styles.avatar} src={article.user.image || defaultAvatar} alt="avatar" />
+          <img className={styles.avatar} src={article.user.image || defaultAvatar} alt="avatar" loading="lazy" />
           {/* 用户信息 */}
           <div className={styles.userInfoBox}>
             {/* 用户信息top */}
@@ -218,7 +219,7 @@ const ArticleDetail = () => {
                       images: sortedImagesUrl,
                       defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
                     })}
-                    alt="cover" />
+                    alt="cover" loading="lazy" />
                   <div className={styles.imageMask}></div>
                 </div>
               </div>

@@ -10,7 +10,7 @@ const VerifyCode: React.FC = () => {
   // const location = useLocation();
   // const { value, password, type, typeName, verifyType, verifyTypeName } = location.state || {};
   const verifyCode = JSON.parse(sessionStorage.getItem('verifyCode') || '{}');
-  const { value, password, type, typeName, verifyType, verifyTypeName } = verifyCode;
+  const { value, password, type, verifyType, verifyTypeName } = verifyCode;
 
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
   const [timer, setTimer] = useState(50);

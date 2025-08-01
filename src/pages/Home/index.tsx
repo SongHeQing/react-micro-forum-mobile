@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { getArticleList } from "@/apis/articleApi";
-import type { ArticleItem } from "@/types";
+import type { ArticleCard } from "@/types";
 import Card from "@/components/Card";
 import TabBar from '@/pages/Home/components/TabBar';
 import { InfiniteScroll, PullToRefresh } from "antd-mobile";
@@ -20,7 +20,7 @@ function rfs(px: number, min = 0) {
 }
 
 const Home = () => {
-  const [articleList, setArticleList] = useState<ArticleItem[]>([]);
+  const [articleList, setArticleList] = useState<ArticleCard[]>([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 

@@ -1,4 +1,4 @@
-// BottomBar.tsx
+// src/pages/ArticleDetail/components/BottomBar/index.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './styles.module.scss';
 import { Toast } from 'antd-mobile';
@@ -43,6 +43,7 @@ const BottomBar: React.FC<Props> = ({ articleId, onSendSuccess, replyInfo }) => 
       Toast.show('评论发送成功');
       setValue('');
       setIsInputActive(false);
+      onSendSuccess?.()
     } catch (err) {
       console.log(err);
       Toast.show('发送失败，请稍后重试');

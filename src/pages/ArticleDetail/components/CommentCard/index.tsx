@@ -1,3 +1,4 @@
+// src/pages/ArticleDetail/components/CommentCard/index.tsx
 import type { CommentVO } from '@/types';
 import styles from './styles.module.scss';
 import defaultAvatar from "@/assets/默认用户头像.jpg";

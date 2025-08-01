@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { useNavigate } from "react-router";
 import { toggleLike } from "@/apis/articleApi"; // 只保留 toggleLike，不再需要 isArticleLikedByUser
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface CardProps {
   article: ArticleCard;
@@ -159,7 +159,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderChannel}>
           {/* 频道头像 */}
-          <img className={styles.cardHeaderChannelAvatarImg} src={article.channelCard.image ? (BASE_URL + article.channelCard.image) : avatar} alt="avatar" />
+          <img className={styles.cardHeaderChannelAvatarImg} src={article.channelCard.image ? (BASE_URL + article.channelCard.image) : avatar} alt="avatar" loading="lazy" />
           {/* 频道名称和频道描述 */}
           <div className={styles.cardHeaderChannelText}>
             {/* 频道名称 */}
@@ -227,7 +227,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
                   defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
                 })
               }}
-              alt="cover" />
+              alt="cover" loading="lazy" />
           ))}
         </div>
       </div>
