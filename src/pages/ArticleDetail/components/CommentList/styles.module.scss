@@ -36,3 +36,13 @@
     white-space: nowrap;
   }
 }
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: rfs(80) 0;
+  color: #999;
+  font-size: rfs(44);
+  line-height: rfs(49);
+}

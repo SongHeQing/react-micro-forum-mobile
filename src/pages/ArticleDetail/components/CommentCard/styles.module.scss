@@ -20,9 +20,6 @@
   padding: rfs(52) rfs(40) rfs(39);
   border-bottom: 1px solid #f2f2f2;
 
-  &:last-child {
-    border-bottom: none;
-  }
 
   .commentAvatarBox {
     width: rfs(133);
@@ -162,4 +159,8 @@
     }
   }
 
+}
+
+.lastComment {
+  border-bottom: none;
 }

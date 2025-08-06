@@ -11,13 +11,7 @@ export type ChannelCard = {
 };
 
 
-/**
- * @description 文章图片
- */
-export type ImageDTO = {
-  imageUrl: string;
-  orderNum: number;
-};
+
 
 /**
  * @description 单篇文章卡片
@@ -27,9 +21,10 @@ export type ArticleCard = {
   channelCard: ChannelCard;
   title: string;
   contentPreview: string;
-  coverImageUrl: ImageDTO[];
-  likeCount: number;
+  mediaType: number | null; // 媒体类型：NULL=无；1=图片；2=视频
+  mediaUrls: string[]; // 媒体URLs
   isLiked: boolean;
+  likeCount: number;
   commentCount: number;
   createTime: string;
   updateTime: string;
@@ -57,11 +52,15 @@ export type ArticleAdd = {
 
 export type ArticleDetail = {
   id: number;
-  userId: number;
-  channelId: number;
   title: string;
   content: string;
-  coverImageUrl: ImageDTO[];
+  mediaType: number | null; // 媒体类型：NULL=无；1=图片；2=视频
+  likeCount: number;
+  collectCount: number;
+  commentCount: number;
+  viewCount: number;
+  mediaUrls: string[]; // 媒体URLs
+  isLiked: boolean; // 是否点赞
   createTime: string;
   updateTime: string;
   user: {

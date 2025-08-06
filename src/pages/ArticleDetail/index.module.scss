@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 64px;
+  padding-bottom: rfs(168);
 
   // 吸顶header
   .header {
@@ -265,6 +265,15 @@
             justify-content: center;
           }
         }
+
+        // 点赞状态样式
+        &.cardFooterItemLiked {
+          color: #ff382a;
+
+          .icon {
+            fill: #fe4c63;
+          }
+        }
       }
     }
   }
@@ -298,6 +307,7 @@
     margin: 0 auto;
     background: #fff;
     // padding: 0px rfs(40);
+    flex: 1;
 
     // 评论区标题吸顶
     .commentTitle {
@@ -362,5 +372,15 @@
     }
   }
 
+  .empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: rfs(908);
+    padding: rfs(80) 0;
+    color: #999;
+    font-size: rfs(44);
+    line-height: rfs(49);
+  }
 
 }

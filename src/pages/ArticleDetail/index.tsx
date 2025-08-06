@@ -2,11 +2,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router";
 import styles from "./index.module.scss";
-import { getArticleDetail } from "@/apis/articleApi";
+import { getArticleDetail, toggleLike } from "@/apis/articleApi";
 import type { ArticleDetail } from "@/types/Article";
 import defaultAvatar from "@/assets/默认用户头像.jpg";
 import defaultChannel from "@/assets/默认频道图片.jpg";
-import { ImageViewer } from "antd-mobile";
+import { ImageViewer, Toast } from "antd-mobile";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import clsx from "clsx";
 import CommentList from "./components/CommentList";
@@ -82,13 +82,13 @@ const ArticleDetail = () => {
 
   /**图片排序*/
   const sortedImagesUrl = useMemo(() => {
-    // 判断是否为数组
-    if (!Array.isArray(article?.coverImageUrl)) return [];
-    // 复制一份，避免原数组被排序,为每个image添加BASE_URL
-    const sortedImagesUrl = article?.coverImageUrl.slice().sort((a, b) => a.orderNum - b.orderNum).map(img => BASE_URL + img.imageUrl);
+    // 判断是否为数组且媒体类型为图片
+    if (!Array.isArray(article?.mediaUrls) || article?.mediaType !== 1) return [];
+    // 为每个图片URL添加BASE_URL
+    const sortedImagesUrl = article?.mediaUrls.map(imgUrl => BASE_URL + imgUrl);
     // 返回排序后的图片数组
     return sortedImagesUrl;
-  }, [article?.coverImageUrl]);
+  }, [article?.mediaUrls, article?.mediaType]);
 
   /**使用自定义Hook管理点赞图标点击动画*/
   const { getModuleAnimationClassName: getModuleAnimationClassNameLikeIcon, triggerAnimation: triggerAnimationLikeIcon } = useClickAnimation({
@@ -97,8 +97,33 @@ const ArticleDetail = () => {
 
 
   /**点赞事件*/
-  const handleClickLike = () => {
-    triggerAnimationLikeIcon();
+  const handleClickLike = async () => {
+    if (!article) return;
+
+    triggerAnimationLikeIcon(); // 触发动画
+
+    const previousIsLiked = isLiked;
+    const previousDisplayLikeCount = displayLikeCount;
+
+    // 乐观更新 UI
+    setIsLiked(!previousIsLiked);
+    setDisplayLikeCount(previousIsLiked ? previousDisplayLikeCount - 1 : previousDisplayLikeCount + 1);
+
+    try {
+      await toggleLike(article.id);
+      // 如果后端返回了新的计数，可以这里更新 displayLikeCount
+      // 例如：const response = await toggleLike(article.id); setDisplayLikeCount(response.newLikeCount);
+      // 但目前API返回void，所以依赖乐观更新
+    } catch (error) {
+      console.error("点赞/取消点赞失败", error);
+      Toast.show({
+        content: previousIsLiked ? '取消点赞失败' : '点赞失败',
+        position: 'bottom',
+      });
+      // API调用失败，回滚 UI 状态
+      setIsLiked(previousIsLiked);
+      setDisplayLikeCount(previousDisplayLikeCount);
+    }
   };
 
 
@@ -128,6 +153,26 @@ const ArticleDetail = () => {
     return formatRelativeTime(article?.createTime || '');
   }, [article?.createTime]);
 
+  // 管理点赞状态和数量，直接从 article prop 初始化
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [displayLikeCount, setDisplayLikeCount] = useState<number>(0);
+
+  // 当文章数据加载完成时，初始化点赞状态
+  useEffect(() => {
+    if (article) {
+      setIsLiked(article.isLiked);
+      setDisplayLikeCount(article.likeCount);
+    }
+  }, [article]);
+
+  // 根据文章表的评论数量判断是否存在评论
+  const [hasComments, setHasComments] = useState(false)
+  useEffect(() => {
+    if (article?.commentCount) {
+      setHasComments(article.commentCount > 0)
+    }
+  }, [article?.commentCount])
+
   const [comments, setComments] = useState<CommentVO[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
@@ -147,12 +192,9 @@ const ArticleDetail = () => {
     }
   }
 
-  // 评论发送成功回调：刷新第一页
+  // 评论发送成功回调
   const handleSendSuccess = async () => {
-    const res = await fetchTopLevelComments({ articleId: article!.id, page: 1 })
-    setComments(res)
-    setPage(2)
-    setHasMore(res.length === 15)
+    setHasComments(true)
   }
 
   if (!article) {
@@ -208,7 +250,7 @@ const ArticleDetail = () => {
         {/* 内容 */}
         <div className={styles.content}>{content}</div>
         {/* 图片 */}
-        {Array.isArray(article.coverImageUrl) && article.coverImageUrl.length > 0 && (
+        {Array.isArray(article.mediaUrls) && article.mediaUrls.length > 0 && article.mediaType === 1 && (
           <div className={styles.images}>
             {sortedImagesUrl.map(imgUrl => (
               <div className={styles.imageItem} key={imgUrl}>
@@ -235,7 +277,9 @@ const ArticleDetail = () => {
             <span className={styles.cardFooterItemText}>分享</span>
           </div>
           {/* 点赞 */}
-          <div className={styles.cardFooterItem} onClick={handleClickLike}>
+          <div className={clsx(styles.cardFooterItem, {
+            [styles.cardFooterItemLiked]: isLiked
+          })} onClick={handleClickLike}>
             <svg
               className={getModuleAnimationClassNameLikeIcon(styles.icon, styles.iconAnimate)}
               viewBox="0 0 1024 1024"
@@ -245,7 +289,7 @@ const ArticleDetail = () => {
               <path d="M795.769 342.896c-0.007 0 0.005 0 0 0H685.4c-0.849 0-1.489-0.69-1.262-1.508 4.144-14.865 21.546-84.656 4.471-153.887C668.02 104.026 601.913 64.003 542.469 64c-32.186-0.002-62.412 11.729-82.415 34.647-56.944 65.247-19.396 88.469-52.796 175.756-28.589 74.718-96.736 94.832-115.814 99.091l-5.188 1.037h-93.46c-70.692 0-128 57.308-128 128V816c0 70.692 57.308 128 128 128h511.09c88.992 0 166.321-61.153 186.831-147.751l60.745-256.479c23.799-100.487-52.431-196.874-155.693-196.874zM144.795 816V502.531c0-26.467 21.532-48 48-48h48V864h-48c-26.468 0-48-21.533-48-48z m728.82-294.667l-60.746 256.479C800.851 828.559 756.034 864 703.885 864h-383.09V448.497c38.811-11.046 123.048-45.847 161.181-145.505 18.542-48.459 20.521-83.044 21.966-108.297 1.396-24.407 1.511-26.401 16.385-43.444 3.904-4.473 12.387-7.252 22.139-7.251 24.457 0.001 57.065 16.412 68.472 62.659 9.14 37.052 3.955 76.38-0.277 97.734-5.33 22.173-17.249 50.663-28.257 74.365-9.891 21.296 5.923 45.558 29.402 45.32l116.708-1.184h67.256c24.607 0 47.478 11.072 62.745 30.379 15.267 19.308 20.771 44.115 15.1 68.06z" ></path>
             </svg>
             <span className={styles.cardFooterItemText}>
-              10
+              {displayLikeCount}
             </span>
           </div>
         </div>
@@ -265,17 +309,21 @@ const ArticleDetail = () => {
             <div className={styles.commentModeItem}>倒序</div>
           </div>
         </div>
-
-        <CommentList
-          comments={comments}
-          articleAuthorId={article.user.id}
-          loadMore={loadComments}
-          hasMore={hasMore}
-          onViewAllReplies={(commentId) => {
-            // TODO: 处理查看全部回复的逻辑
-            console.log('查看全部回复:', commentId);
-          }}
-        />
+        {/* 评论列表 */}
+        {hasComments ? (
+          <CommentList
+            comments={comments}
+            articleAuthorId={article.user.id}
+            loadMore={loadComments}
+            hasMore={hasMore}
+            onViewAllReplies={(commentId) => {
+              // TODO: 处理查看全部回复的逻辑
+              console.log('查看全部回复:', commentId);
+            }}
+          />
+        ) : (
+          <div className={styles.empty}>暂无评论，快来发一条吧！</div>
+        )}
       </div>
       {/* 底部输入栏 */} <BottomBar articleId={article.id} onSendSuccess={handleSendSuccess} />
     </div >

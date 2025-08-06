@@ -9,9 +9,10 @@ interface Props {
   comment: CommentVO;
   articleAuthorId: number;
   onViewAllReplies?: (commentId: number) => void;
+  isLast?: boolean;
 }
 
-const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllReplies }) => {
+const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllReplies, isLast = false }) => {
   const isAuthor = comment.user.id === articleAuthorId;
 
   /**时间格式化*/
@@ -20,7 +21,7 @@ const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllRepli
   }, [comment?.createTime]);
 
   return (
-    <div className={styles.commentCard}>
+    <div className={`${styles.commentCard} ${isLast ? styles.lastComment : ''}`}>
       <div className={styles.commentMeta}>
         <div className={styles.commentAvatarBox}>
           <img className={styles.commentAvatar} src={comment.user.image || defaultAvatar} alt="avatar" />

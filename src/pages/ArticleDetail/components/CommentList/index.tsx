@@ -39,12 +39,13 @@ const CommentList: React.FC<Props> = ({ comments, articleAuthorId, loadMore, has
       {comments.length === 0 ? (
         <div className={styles.empty}>暂无评论，快来发一条吧！</div>
       ) : (
-        comments.map(comment => (
+        comments.map((comment, index) => (
           <CommentCard
             key={comment.id}
             comment={comment}
             articleAuthorId={articleAuthorId}
             onViewAllReplies={onViewAllReplies}
+            isLast={index === comments.length - 1}
           />
         ))
       )}

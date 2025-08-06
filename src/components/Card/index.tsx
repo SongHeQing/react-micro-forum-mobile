@@ -31,29 +31,29 @@ const Card: React.FC<CardProps> = ({ article }) => {
     setContentLineCount(remainingLineCount);
   }, [article.title]);
 
-  // 用 useMemo 计算排序后的图片数组
+  // 用 useMemo 处理图片链接
   const sortedImagesUrl = useMemo(() => {
-    // 判断是否为数组
-    if (!Array.isArray(article.coverImageUrl)) return [];
-    // 复制一份，避免原数组被排序,为每个image添加BASE_URL
-    const sortedImagesUrl = article.coverImageUrl.slice().sort((a, b) => a.orderNum - b.orderNum).map(img => BASE_URL + img.imageUrl);
+    // 判断是否为数组且媒体类型为图片
+    if (!Array.isArray(article.mediaUrls) || article.mediaType !== 1) return [];
+    // 为每个图片URL添加BASE_URL
+    const sortedImagesUrl = article.mediaUrls.map(imgUrl => BASE_URL + imgUrl);
     // 返回排序后的图片数组
     return sortedImagesUrl;
-  }, [article.coverImageUrl]);
+  }, [article.mediaUrls, article.mediaType]);
 
   // 图片预览数量
   const [previewImagesCount, setPreviewImagesCount] = useState<number>(0);
 
   // 根据图片url动态设置图片预览数量
   useEffect(() => {
-    const previewImagesCount: number = article.coverImageUrl.length;
+    const previewImagesCount: number = article.mediaUrls.length;
     if (previewImagesCount > 3) {
       // 设置图片预览数量
       setPreviewImagesCount(3);
     } else {
       setPreviewImagesCount(previewImagesCount);
     }
-  }, [article.coverImageUrl]);
+  }, [article.mediaUrls]);
 
   // 根据频道名称是否溢出动态设置频道后缀的距离
   const channelNameRef = useRef<HTMLDivElement>(null);
