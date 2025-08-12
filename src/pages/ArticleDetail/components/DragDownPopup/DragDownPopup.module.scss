@@ -1,0 +1,103 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+@function vh($px) {
+  @return math.div($px, 1260) * 65vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 21;
+}
+
+
+.dragDownPanel {
+  z-index: 22;
+  background-color: white;
+  width: 100%;
+  height: 90vh;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-out;
+  transform: translateY(0);
+
+  &.closed {
+    transform: translateY(100vh);
+  }
+}
+
+.dragHandle {
+  width: 30px;
+  height: 4px;
+  background-color: #ccc;
+  border-radius: 2px;
+  margin: 8px auto;
+}
+
+.header {
+  position: relative;
+  height: rfs(153);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 rfs(40);
+  border-bottom: rfs(3) solid #f7f7f7;
+  flex-shrink: 0;
+
+  /* 防止 header 挤压 */
+  h3 {
+    margin: 0;
+    font-size: rfs(53);
+    font-weight: 500;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  left: rfs(40+17);
+
+  .icon {
+    width: rfs(47);
+    height: rfs(47);
+    fill: #141414
+  }
+}
+
+.content {
+  flex: 1;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  /* 增强 iOS 上的滚动体验 */
+
+  // 核心修改: 使用 overscroll-behavior 解决滚动穿透
+  overscroll-behavior: contain;
+
+  // 确保内容区域在拖拽时不会被意外移动
+  position: relative;
+
+  // 防止在拖拽过程中出现选择文本的情况
+  user-select: none;
+  -webkit-user-select: none;
+
+  padding: 16px;
+}

@@ -1,5 +1,5 @@
 // src/pages/ArticleDetail/index.tsx  
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router";
 import styles from "./index.module.scss";
 import { getArticleDetail, toggleLike } from "@/apis/articleApi";
@@ -14,6 +14,7 @@ import BottomBar from "./components/BottomBar";
 import type { CommentVO } from "@/types";
 import { fetchTopLevelComments } from "@/apis/commentApi";
 import { formatRelativeTime } from "@/utils";
+import useScrollToHash from "@/hooks/useScrollToHash";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -179,7 +180,7 @@ const ArticleDetail = () => {
   const [loading, setLoading] = useState(false)
 
   // 获取一级评论列表
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     if (!article || loading || !hasMore) return
     setLoading(true)
     try {
@@ -190,16 +191,105 @@ const ArticleDetail = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [article, loading, hasMore, page])
+
+  // 锚点跳转钩子
+  const { scrollToElement } = useScrollToHash();
+  // 是否滚动过
+  const scrolledRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    // 检查是否需要锚点跳转，以及是否已对当前文章滚动过
+    if (location.hash !== '#comment-section' || !article || scrolledRef.current) {
+      return;
+    }
+
+    // 如果评论区没有评论，或者评论已经加载过，则直接锚点跳转
+    if (article && article.commentCount === 0) {
+      console.log('没有评论，直接锚点跳转');
+      scrolledRef.current = true;
+      scrollToElement();
+    }
+
+    // 如果文章有评论但还没加载，则手动触发 InfiniteScroll 加载
+    if (article.commentCount > 0) {
+      console.log('文章有评论但尚未加载，手动触发 InfiniteScroll');
+      scrolledRef.current = true;
+      // 异步加载评论
+      loadComments().then(() => {
+        // 滚动到评论区域
+        scrollToElement();
+      });
+    }
+  }, [article, scrollToElement, loadComments]);
+
+  // 添加BottomBar输入状态控制
+  const [isBottomBarActive, setIsBottomBarActive] = useState(false);
+  const [replyInfo, setReplyInfo] = useState<CommentVO | null>(null);
+
 
   // 评论发送成功回调
-  const handleSendSuccess = async () => {
-    setHasComments(true)
-  }
+  const handleSendSuccess = async (comment: CommentVO) => {
+    // 重新加载评论列表
+    // await loadComments();
 
-  if (!article) {
-    return <div>加载中...</div>;
-  }
+    // 如果hasComments为false，则不进行乐观更新评论UI，直接改变hasComments状态
+    if (!hasComments) {
+      setHasComments(true);
+    } else {
+      // 乐观更新评论UI
+      // 判断是发送一级评论还是回复一级评论
+      if (replyInfo) {
+        // 如果是回复一级评论，乐观更新评论UI，将评论回复数+1
+        setComments(prev => prev.map(comment => comment.id === replyInfo.id ? { ...comment, replyCount: comment.replyCount + 1 } : comment));
+      } else {
+        // 如果是发送一级评论，乐观更新评论UI，将评论添加到评论列表最后
+        setComments(prev => [...prev, comment]);
+      }
+    }
+
+    // 清除回复信息并关闭BottomBar
+    setReplyInfo(null);
+    setIsBottomBarActive(false);
+  };
+  // 使用骨架屏加载
+  // if (!article) {
+  //   return (
+  //     // 
+  //     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  //       <DotLoading />
+  //     </div>
+
+  // <div className={styles.articleDetailPage}>
+  //   {/* 头部骨架 */}
+  //   <div style={{ height: rfs(155) }}></div>
+  //   <div className={styles.header}>
+  //     <div className={styles.back}>
+  //       <Skeleton.Title animated className={styles.skeletonBack} />
+  //     </div>
+  //     <div className={styles.channel}>
+  //       <Skeleton animated className={styles.avatar} style={{ borderRadius: rfs(26) }} />
+  //       <Skeleton.Title animated className={styles.skeletonChannel} style={{ height: rfs(63) }} />
+  //     </div>
+  //   </div>
+  //   {/* 文章卡片骨架 */}
+  //   <div className={styles.articleCard}>
+  //     <div className={styles.userInfo}>
+  //       <Skeleton animated className={styles.avatar} />
+  //       <div className={styles.userInfoBox}>
+  //         <div className={styles.userMeta}>
+  //           <Skeleton.Title animated className={styles.nickname} />
+  //         </div>
+  //         <Skeleton.Title animated className={styles.time} />
+  //       </div>
+  //       <Skeleton animated className={styles.followBtn} />
+  //     </div>
+  //     {/* 标题骨架 */}
+  //     <Skeleton.Title animated className={styles.title} />
+  //   </div>
+  // </div>
+  //   );
+  // }
 
   return (
     <div className={styles.articleDetailPage}>
@@ -219,7 +309,7 @@ const ArticleDetail = () => {
           {/* src\assets\默认用户头像.jpg */}
           {/* src\pages\ArticleDetail\index.tsx */}
           <img className={styles.channelImg} src={defaultChannel} alt="channel" loading="lazy" />
-          <span className={styles.channelName}>{article.channel.channelname}</span>
+          <span className={styles.channelName}>{article?.channel.channelname}</span>
           <svg className={styles.channelIcon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4873" ><path d="M647.765 512L291.383 155.618c-15.621-15.621-15.621-40.948 0-56.568 15.621-15.621 40.947-15.621 56.568 0l384.666 384.666c15.621 15.621 15.621 40.947 0 56.568L347.951 924.95c-15.621 15.621-40.947 15.621-56.568 0s-15.621-40.947 0-56.568L647.765 512z" p-id="4874"></path></svg>
         </div>
       </div>
@@ -229,13 +319,13 @@ const ArticleDetail = () => {
         {/* 用户信息 */}
         <div className={styles.userInfo}>
           {/* 头像 */}
-          <img className={styles.avatar} src={article.user.image || defaultAvatar} alt="avatar" loading="lazy" />
+          <img className={styles.avatar} src={article?.user.image || defaultAvatar} alt="avatar" loading="lazy" />
           {/* 用户信息 */}
           <div className={styles.userInfoBox}>
             {/* 用户信息top */}
             {/* 昵称、等级、楼主标签 */}
             <div className={styles.userMeta}>
-              <span className={styles.nickname}>{article.user.nickname}</span>
+              <span className={styles.nickname}>{article?.user.nickname}</span>
               {/* <span className={styles.level}>Lv.{article.user.level}</span> */}
               {/* <span className={styles.authorTag}>楼主</span> */}
             </div>
@@ -246,11 +336,11 @@ const ArticleDetail = () => {
           <div className={getModuleAnimationClassNameFollowBtn(styles.followBtn, styles.iconAnimate)} onClick={handleClickFollow}>关注</div>
         </div>
         {/* 标题 */}
-        <div className={styles.title}>{article.title}</div>
+        <div className={styles.title}>{article?.title}</div>
         {/* 内容 */}
         <div className={styles.content}>{content}</div>
         {/* 图片 */}
-        {Array.isArray(article.mediaUrls) && article.mediaUrls.length > 0 && article.mediaType === 1 && (
+        {Array.isArray(article?.mediaUrls) && article?.mediaUrls.length > 0 && article?.mediaType === 1 && (
           <div className={styles.images}>
             {sortedImagesUrl.map(imgUrl => (
               <div className={styles.imageItem} key={imgUrl}>
@@ -273,7 +363,7 @@ const ArticleDetail = () => {
           {/* 分享 */}
           <div className={styles.cardFooterItem} onClick={handleClickShare}>
             <svg className={getModuleAnimationClassNameShareBtn(styles.icon, styles.iconAnimate)}
-              viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="22241" ><path d="M791.188 623.375c-55.099 0-103.843 26.675-134.439 67.684L436.89 574.158c6.804-19.66 10.681-40.683 10.681-62.658 0-25.166-4.98-49.136-13.791-71.155l220.151-112.173c30.365 43.17 80.468 71.452 137.256 71.452 92.681 0 167.813-75.133 167.813-167.813C959 139.132 883.868 64 791.188 64s-167.813 75.132-167.813 167.813c0 7.291 0.622 14.421 1.524 21.467L388.838 373.56c-34.494-33.278-81.336-53.845-133.052-53.845C149.866 319.714 64 405.579 64 511.5c0 105.92 85.866 191.786 191.786 191.786 55.136 0 104.696-23.399 139.681-60.649l230.151 122.374c-1.343 8.551-2.243 17.249-2.243 26.177 0 92.68 75.133 167.813 167.813 167.813C883.868 959 959 883.867 959 791.188c0-92.681-75.132-167.813-167.812-167.813z m0-479.464c48.469 0 87.902 39.432 87.902 87.902s-39.432 87.902-87.902 87.902-87.902-39.433-87.902-87.902 39.432-87.902 87.902-87.902zM255.786 623.375c-61.688 0-111.875-50.187-111.875-111.875s50.187-111.875 111.875-111.875S367.661 449.812 367.661 511.5s-50.187 111.875-111.875 111.875z m535.402 255.714c-48.469 0-87.902-39.432-87.902-87.902s39.432-87.902 87.902-87.902 87.902 39.432 87.902 87.902-39.433 87.902-87.902 87.902z" fill="#333333" p-id="22242"></path></svg>
+              viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="22241" ><path d="M791.188 623.375c-55.099 0-103.843 26.675-134.439 67.684L436.89 574.158c6.804-19.66 10.681-40.683 10.681-62.658 0-25.166-4.98-49.136-13.791-71.155l220.151-112.173c30.365 43.17 80.468 71.452 137.256 71.452 92.681 0 167.813-75.133 167.813-167.813C959 139.132 883.868 64 791.188 64s-167.813 75.132-167.813 167.813c0 7.291 0.622 14.421 1.524 21.467L388.838 373.56c-34.494-33.278-81.336-53.845-133.052-53.845C149.866 319.714 64 405.579 64 511.5c0 105.92 85.866 191.786 191.786 191.786 55.136 0 104.696-23.399 139.681-60.649l230.151 122.374c-1.343 8.551-2.243 17.249-2.243 26.177 0 92.68 75.133 167.813 167.813 167.813C883.868 959 959 883.867 959 791.188c0-92.681-75.132-167.813-167.812-167.813z m0-479.464c48.469 0 87.902 39.432 87.902 87.902s-39.432 87.902-87.902 87.902-87.902-39.433-87.902-87.902 39.432-87.902 87.902-87.902zM255.786 623.375c-61.688 0-111.875-50.187-111.875-111.875s50.187-111.875 111.875-111.875S367.661 449.812 367.661 511.5s-50.187 111.875-111.875 111.875z m535.402 255.714c-48.469 0-87.902-39.432-87.902-87.902s39.432-87.902 87.902-87.902 87.902 39.432 87.902 87.902-39.433 87.902-87.902 87.902z" p-id="22242"></path></svg>
             <span className={styles.cardFooterItemText}>分享</span>
           </div>
           {/* 点赞 */}
@@ -289,13 +379,13 @@ const ArticleDetail = () => {
               <path d="M795.769 342.896c-0.007 0 0.005 0 0 0H685.4c-0.849 0-1.489-0.69-1.262-1.508 4.144-14.865 21.546-84.656 4.471-153.887C668.02 104.026 601.913 64.003 542.469 64c-32.186-0.002-62.412 11.729-82.415 34.647-56.944 65.247-19.396 88.469-52.796 175.756-28.589 74.718-96.736 94.832-115.814 99.091l-5.188 1.037h-93.46c-70.692 0-128 57.308-128 128V816c0 70.692 57.308 128 128 128h511.09c88.992 0 166.321-61.153 186.831-147.751l60.745-256.479c23.799-100.487-52.431-196.874-155.693-196.874zM144.795 816V502.531c0-26.467 21.532-48 48-48h48V864h-48c-26.468 0-48-21.533-48-48z m728.82-294.667l-60.746 256.479C800.851 828.559 756.034 864 703.885 864h-383.09V448.497c38.811-11.046 123.048-45.847 161.181-145.505 18.542-48.459 20.521-83.044 21.966-108.297 1.396-24.407 1.511-26.401 16.385-43.444 3.904-4.473 12.387-7.252 22.139-7.251 24.457 0.001 57.065 16.412 68.472 62.659 9.14 37.052 3.955 76.38-0.277 97.734-5.33 22.173-17.249 50.663-28.257 74.365-9.891 21.296 5.923 45.558 29.402 45.32l116.708-1.184h67.256c24.607 0 47.478 11.072 62.745 30.379 15.267 19.308 20.771 44.115 15.1 68.06z" ></path>
             </svg>
             <span className={styles.cardFooterItemText}>
-              {displayLikeCount}
+              {displayLikeCount > 0 ? displayLikeCount : '赞'}
             </span>
           </div>
         </div>
       </div>
       {/* 评论区 */}
-      <div className={styles.commentSection}>
+      <div id="comment-section" className={styles.commentSection}>
         {/* 评论区标题吸顶（用距离检测切换类名） */}
         <div ref={commentTitleRef} className={clsx(styles.commentTitle, isCommentTitleSticky && styles.StickyActive)}>
           <div className={styles.commentViewFilter}>
@@ -313,19 +403,38 @@ const ArticleDetail = () => {
         {hasComments ? (
           <CommentList
             comments={comments}
-            articleAuthorId={article.user.id}
+            articleAuthorId={article?.user.id}
             loadMore={loadComments}
             hasMore={hasMore}
             onViewAllReplies={(commentId) => {
               // TODO: 处理查看全部回复的逻辑
               console.log('查看全部回复:', commentId);
             }}
+            // 回复当前评论
+            onReplyComment={(comment) => {
+              // 弹出BottomBar，并传入评论信息
+              setReplyInfo(comment);
+              // 激活BottomBar输入框
+              setIsBottomBarActive(true);
+            }}
+
           />
         ) : (
           <div className={styles.empty}>暂无评论，快来发一条吧！</div>
         )}
       </div>
-      {/* 底部输入栏 */} <BottomBar articleId={article.id} onSendSuccess={handleSendSuccess} />
+      {/* 底部输入栏 */}
+      <BottomBar
+        isInputActive={isBottomBarActive}
+        articleId={article?.id}
+        replyInfo={replyInfo}
+        onSendSuccess={handleSendSuccess}
+        onInputActiveChange={setIsBottomBarActive}
+        onClose={() => {
+          setReplyInfo(null);
+          setIsBottomBarActive(false);
+        }}
+      />
     </div >
   );
 };

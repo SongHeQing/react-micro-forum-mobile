@@ -4,46 +4,88 @@ import styles from './styles.module.scss';
 import { Toast } from 'antd-mobile';
 import { postComment, postReply } from '@/apis/commentApi';
 import clsx from 'clsx';
+import { CommentVO } from '@/types';
+import { useSelector } from 'react-redux';
+import store from '@/store';
 
-// 新增 ReplyInfo 类型，用于存储被回复评论的信息
-interface ReplyInfo {
-  parentId: number; // 被回复评论的 ID
-  replyToUsername: string; // 被回复用户的昵称
-  replyToContent: string; // 被回复评论的内容（用于预览）
-}
 
 interface Props {
-  articleId: number;
-  onSendSuccess?: () => void;
-  replyInfo?: ReplyInfo;
+  articleId?: number;
+  onSendSuccess?: (comment: CommentVO) => void;
+  replyInfo: CommentVO | null;
+  // 新增：让父组件控制输入框状态
+  isInputActive?: boolean;
+  // 设置输入框状态
+  onInputActiveChange?: (active: boolean) => void;
+  // 关闭回调
+  onClose?: () => void;
 }
 
-const BottomBar: React.FC<Props> = ({ articleId, onSendSuccess, replyInfo }) => {
+const BottomBar: React.FC<Props> = ({
+  articleId,
+  onSendSuccess,
+  replyInfo,
+  // isInputActive: externalIsInputActive,
+  isInputActive,
+  onInputActiveChange,
+  onClose
+}) => {
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // // 使用外部状态或内部状态
+  // const [internalIsInputActive, setInternalIsInputActive] = useState(false);
+
+  // // 如果父组件提供了外部状态，使用外部状态；否则使用内部状态
+  // const isInputActive = externalIsInputActive !== undefined ? externalIsInputActive : internalIsInputActive;
+  // 设置输入框状态
+  const setIsInputActive = (active: boolean) => {
+    // 如果父组件提供了设置输入框状态的回调，则调用父组件的回调
+    // if (onInputActiveChange) {
+    onInputActiveChange?.(active);
+    // } else {
+    // setInternalIsInputActive(active);
+    // }
+  };
+
+  // 从Redux获取用户信息
+  const userInfo = useSelector((state: ReturnType<typeof store.getState>) => state.user.userInfo);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = async () => {
     const content = value.trim();
     if (!content) return Toast.show('评论内容不能为空');
 
     setLoading(true);
+    // 回复一级评论或回复二级评论
     try {
-      if (replyInfo) { // 如果存在 replyInfo，则调用回复评论 API
+      if (replyInfo && articleId) {
         await postReply({
           articleId,
-          parentId: replyInfo.parentId,
+          parentId: replyInfo.id,
           content: content,
         });
         Toast.show('回复发送成功');
-      } else { // 否则，调用发表新评论 API
+        // 如果发送成功，乐观更新UI
+      }
+
+      // 发布一级评论
+      if (!replyInfo && articleId) {
         await postComment({ articleId, content });
         Toast.show('评论发送成功');
       }
-      Toast.show('评论发送成功');
       setValue('');
       setIsInputActive(false);
-      onSendSuccess?.()
+      // 发送成功回调
+      onSendSuccess?.({
+        id: 0,
+        user: userInfo,
+        content: value,
+        createTime: new Date().toISOString(),
+        replyCount: 0,
+        previewReplies: []
+      });
     } catch (err) {
       console.log(err);
       Toast.show('发送失败，请稍后重试');
@@ -52,131 +94,111 @@ const BottomBar: React.FC<Props> = ({ articleId, onSendSuccess, replyInfo }) => 
     }
   };
 
-  /**
-   * false：显示一个只读的“占位符”区域，作为用户评论的入口。
-   * true：显示一个覆盖全屏的半透明遮罩，并在底部弹出真正的 textarbottomBarRefea 输入框和发送按钮。
-   */
-  const [isInputActive, setIsInputActive] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const inputPanelRef = useRef<HTMLDivElement>(null); // 新增：用于包裹激活状态下评论输入面板的Ref
-
   const activateInput = () => {
     setIsInputActive(true);
   };
 
-  // ******** 合并后的 useEffect ********
   useEffect(() => {
-    // 只有当输入框处于激活状态时才执行以下逻辑
-    if (replyInfo && !isInputActive) {
-      // 在非激活状态下，确保清除之前的任何监听器
-      return;
+    // 当输入框激活时，自动获取焦点
+    if (isInputActive) {
+      textareaRef.current?.focus();
     }
+  }, [isInputActive]);
 
-    textareaRef.current?.focus();
+  const overlayRef = useRef<HTMLDivElement>(null);
 
-    // 处理点击/触摸外部关闭浮层的逻辑
-    const handleInteractionOutside = (event: MouseEvent | TouchEvent) => {
-      // 1. 如果点击的是底部的 bottomBar 容器本身（即背景遮罩），就关闭
-      //    这个逻辑主要由 JSX 里的 onClick={...} 处理，但这里也可以作为备用或额外判断
-      //    如果你在 JSX 的 bottomBar 上已经加了 `onClick={...}`，这里的 `event.target === event.currentTarget` 可以在某些情况下去掉
-      //    但为了通用性，保留它通常更安全，因为它捕获的是文档层面的事件
-      const isClickedOnSelfOrOutsidePanel =
-        (event.target === event.currentTarget && (event instanceof MouseEvent || (event instanceof TouchEvent && event.type === 'touchstart'))) ||
-        // 2. 如果点击/触摸发生在 inputPanelRef 外部
-        (inputPanelRef.current &&
-          !inputPanelRef.current.contains(event.target as Node) &&
-          // 3. 并且点击的不是发送按钮（防止点击发送后立即关闭）
-          !(event.target instanceof HTMLButtonElement && event.target.className.includes(styles.sendBtn)));
+  // 在组件状态激活时
+  useEffect(() => {
 
-      if (isClickedOnSelfOrOutsidePanel) {
-        // 4. 排除滑动事件，只在点击或首次触摸时关闭
-        if (event instanceof TouchEvent && event.type === 'touchmove') return;
-
-        console.log('点击了外部或背景遮罩，关闭浮层'); // 调试用
-        setIsInputActive(false);
-        // setValue('');
-      }
-    };
-
-    // 延迟添加事件监听器，避免激活点击事件冒泡导致立即关闭
-    // 0ms 延迟通常足够，它会将任务放入微任务队列的末尾，确保当前渲染周期和事件处理完成后再执行
-    const timer = setTimeout(() => {
-      document.addEventListener('mousedown', handleInteractionOutside, true); // 监听鼠标点击
-      document.addEventListener('touchstart', handleInteractionOutside, true); // 监听手指触摸开始
-      // 如果你真的需要处理滑动（不推荐），可以取消下面行的注释，但需要更复杂的逻辑来判断滑动意图
-      // document.addEventListener('touchmove', handleInteractionOutside, true);
-    }, 0);
-
-    // 清理函数：在组件卸载或 isInputActive 变为 false 时执行
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener('mousedown', handleInteractionOutside, true);
-      document.removeEventListener('touchstart', handleInteractionOutside, true);
-      // document.removeEventListener('touchmove', handleInteractionOutside, true);
-    };
-  }, [isInputActive, replyInfo]); // 依赖 isInputActive 状态，只有它变化时才重新运行这个 Effect
-
-  // ******** 合并后的 useEffect 结束 ********
-
-  return (<>
-    {isInputActive && (
-      // ******** 新增的独立遮罩层 ********
+    if (isInputActive) {
+      // document.body.style.overflow = 'hidden';
+      // 捕获 touchmove 事件并阻止其默认行为，防止 iOS 上的穿透
+      const handleTouchMove = (e: TouchEvent) => {
+        console.log('touchmove 事件触发');
+        // 关闭拖动事件的默认行为
+        e.preventDefault();
+      };
+      // const overlayElement = overlayRef.current;
+      // overlayElement?.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.body.addEventListener('touchmove', handleTouchMove, { passive: false });
+      return () => {
+        // document.body.style.overflow = '';
+        // overlayElement?.removeEventListener('touchmove', handleTouchMove);
+        document.body.removeEventListener('touchmove', handleTouchMove);
+      };
+    }
+    // else {
+    //   document.body.style.overflow = '';
+    // }
+  }, [isInputActive]);
+  return (
+    <>
+      {/* 移除条件渲染，转为控制显隐 */}
+      {/* 问题的核心：事件的“时间差”
+          遇到的问题，无论你把它称作“点击穿透”还是“触摸穿透”，其根源都是一个时间差：
+          当你触摸屏幕时，浏览器会依次触发一系列事件：touchstart -> touchmove -> touchend -> click。
+          click 事件有一个约 300 毫秒的延迟。
+          如果你的蒙层在 touchend 事件发生后立即移除，那么当 click 事件到达时，蒙层已经不在了。
+          于是，这个 click 事件就会穿透到蒙层原来所在的位置，触发下面的元素。 
+      */}
+      {/* {isInputActive && ( */}
+      {/* 独立的遮罩层，点击它本身即可关闭 */}
+      {/* 阻止冒泡，防止点击输入框时事件冒泡到此并关闭 */}
       <div
-        className={clsx(styles.overlay, { [styles.active]: isInputActive })} // 定义新的样式
-        onClick={() => { // 点击遮罩就关闭
+        className={clsx(styles.overlay, { [styles.active]: isInputActive })}
+        ref={overlayRef}
+
+        // onTouchStart={(e) => e.stopPropagation()} //React的事件机制对touch stopPropagation无效
+        onTouchEnd={() => {
+          // e.stopPropagation() //React的事件机制对touch stopPropagation无效
           setIsInputActive(false);
-          setValue('');
+          // setValue('');
+          onClose?.();
+        }}
+        onClick={() => {
+          console.log('点击了遮罩层');
+          // e.preventDefault() //处于 body #root .comment-section 下面，事件传播路径没有其他监听机制，不会对页面造成影响
         }}
       ></div>
-    )}
-    {/* 注意：这里的 bottomBar 仍然是固定在底部的那个div，当 active 时它会覆盖全屏 */}
-    <div className={clsx(styles.bottomBar, { [styles.active]: isInputActive })}
-      // 在 active 状态的 div 上直接监听点击，如果点击它（也就是点击背景遮罩），就关闭
-      // 这样比 document.addEventListener 更精确，且可以利用冒泡
-      onClick={isInputActive || replyInfo ? (e) => {
-        // 如果点击的是 bottomBar 本身（即背景遮罩），而不是里面的内容
-        if (e.target === e.currentTarget) {
-          console.log('点击了背景遮罩', e.target, e.currentTarget);
-          setIsInputActive(false);
-          setValue('');
-        }
-      } : undefined} // 只有在激活状态时才添加这个点击处理
-    >
-      {/* 条件渲染： 根据 isInputActive 的值，在 JSX 中渲染不同形态的 UI 结构：
-       1. 当 isInputActive 为 false 时，显示一个只读的“占位符”区域，作为用户评论的入口。
-       2. 当 isInputActive 为 true 时，显示一个覆盖全屏的半透明遮罩，并在底部弹出真正的 textarea 输入框和发送按钮。
-      */}
-      {!isInputActive && !replyInfo ? (
-        <div className={styles.inputPlaceholder} onClick={activateInput}>
-          <span className={styles.placeholderText}>发一条友善的评论</span>
-        </div>
-      ) : (
-        // 在这里将 inputPanelRef 绑定到实际的评论输入面板容器上
-        <div className={styles.activeInputContainer} ref={inputPanelRef}>
-          {/* ******** 新增的回复预览区域 ******** */}
-          {replyInfo && (
-            <div className={styles.replyPreview}>
-              <span className={styles.replyPreviewText}>
-                {`回复 ${replyInfo.replyToUsername}: ${replyInfo.replyToContent}`}
-              </span>
-            </div>
-          )}
-          <textarea
-            ref={textareaRef}
-            className={styles.textarea}
-            placeholder="发一条友善的评论"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            disabled={loading}
-            rows={3}
-          />
-          <button className={styles.sendBtn} onClick={handleSend} disabled={loading}>
-            {loading ? '发送中...' : '发送'}
-          </button>
-        </div>
-      )}
-    </div>
-  </>
+      {/* )} */}
+
+      {/* 底部评论栏容器 */}
+      <div className={clsx(styles.bottomBar, { [styles.active]: isInputActive })}>
+        {/*
+          根据 isInputActive 状态，渲染不同形态的UI：
+          - false: 显示一个只读的“占位符”，作为评论入口
+          - true: 显示真正的 textarea 输入框和发送按钮
+        */}
+        {!isInputActive && !replyInfo ? (
+          <div className={styles.inputPlaceholder} onClick={activateInput}>
+            <span className={styles.placeholderText}>发一条友善的评论</span>
+          </div>
+        ) : (
+          <div className={styles.activeInputContainer}>
+            {/* 回复对象 */}
+            {replyInfo && (
+              <div className={styles.replyPreview}>
+                <span className={styles.replyPreviewText}>
+                  {`回复 ${replyInfo.user.nickname}: ${replyInfo.content}`}
+                </span>
+              </div>
+            )}
+            <textarea
+              ref={textareaRef}
+              className={styles.textarea}
+              placeholder="发一条友善的评论"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              disabled={loading}
+              rows={3}
+            />
+            <button className={styles.sendBtn} onClick={handleSend} disabled={loading}>
+              {loading ? '发送中...' : '发送'}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

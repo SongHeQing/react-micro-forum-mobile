@@ -18,7 +18,13 @@ const Login = () => {
     login({ email, password }).then((data: LoginInfo) => {
       Toast.show({ icon: 'success', content: '登录成功', });
       dispatch(setToken(data.token));
-      dispatch(setUserInfo(data));
+      // 去除UserInfo中的email和token 
+      const userInfo = {
+        ...data,
+        email: '',
+        token: ''
+      }
+      dispatch(setUserInfo(userInfo));
       navigate('/');
     }).catch(err => {
       Toast.show({ icon: 'fail', content: err.message, });

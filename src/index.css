@@ -102,3 +102,9 @@ h5,
 h6 {
   font-weight: 400;
 }
+
+/* 在您的 CSS/SCSS 文件中 */
+.adm-pull-to-refresh {
+  /* touch-action: none; */
+  /* 'none' 确保拖动手势可以被库完全接管 */
+}

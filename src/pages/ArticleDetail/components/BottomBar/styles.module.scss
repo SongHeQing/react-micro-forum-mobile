@@ -13,26 +13,27 @@
   @return clamp($min, vw($px), vh($px));
 }
 
-// .overlay {
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   background: rgba(0, 0, 0, 0.5); // 半透明背景
-//   z-index: 19; // 确保在 bottomBar 下方
-//   // 可以添加过渡效果
-//   opacity: 0;
-//   visibility: hidden;
-//   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); // 半透明背景
+  z-index: 19; // 确保在 bottomBar 下方
+  // 可以添加过渡效果
+  overscroll-behavior: contain;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 
-//   // 激活状态由 JS 控制渲染，或者可以这样写
-//   &.active {
-//     // 如果你想通过 CSS 来控制显示/隐藏
-//     opacity: 1;
-//     visibility: visible;
-//   }
-// }
+  // 激活状态由 JS 控制渲染，或者可以这样写
+  &.active {
+    // 如果你想通过 CSS 来控制显示/隐藏
+    opacity: 1;
+    visibility: visible;
+  }
+}
 
 
 .bottomBar {
@@ -117,8 +118,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: rfs(28); // 字体大小
-    color: #606266; // 字体颜色
+    font-size: rfs(42); // 字体大小
+    color: #a3a3a6; // 字体颜色
   }
 
   .replyPreviewText {

@@ -5,7 +5,7 @@ export type LoginParams = {
 
 export type LoginInfo = {
   id: number;
-  username: string;
+  nickname: string;
   email: string;
   token: string;
 }

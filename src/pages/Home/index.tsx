@@ -70,7 +70,7 @@ const Home = () => {
             <Card key={article.id || index} article={article} />
           ))
         ) : (
-          <div>暂无文章</div>
+          <div></div>
         )}
       </PullToRefresh>
       <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />

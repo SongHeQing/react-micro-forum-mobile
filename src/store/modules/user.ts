@@ -5,7 +5,7 @@ const userStore = createSlice({
   name: 'user',
   initialState: {
     token: getToken() || '',
-    userInfo: {},
+    userInfo: JSON.parse(localStorage.getItem('userInfo') || '{}'),
   },
   reducers: {
     setToken: (state, action) => {
@@ -14,6 +14,7 @@ const userStore = createSlice({
     },
     setUserInfo: (state, action) => {
       state.userInfo = action.payload;
+      localStorage.setItem('userInfo', JSON.stringify(action.payload));
     },
     clearUserInfo: (state) => {
       state.token = ''

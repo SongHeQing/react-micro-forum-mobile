@@ -22,6 +22,13 @@
   margin-bottom: rfs(24);
   padding: rfs(49) rfs(34) rfs(0);
   border-radius: 10px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+
+  // 点击变色效果
+  &.active {
+    background-color: #f5f5f5;
+  }
 }
 
 // 卡片头部

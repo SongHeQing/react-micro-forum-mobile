@@ -8,10 +8,11 @@ import type { CommentVO } from '@/types'
 
 interface Props {
   comments: CommentVO[]
-  articleAuthorId: number
+  articleAuthorId?: number
   loadMore: () => Promise<void>
   hasMore: boolean
   onViewAllReplies?: (commentId: number) => void
+  onReplyComment?: (comment: CommentVO) => void
 }
 
 const InfiniteScrollContent = ({ hasMore }: { hasMore?: boolean }) => {
@@ -33,12 +34,10 @@ const InfiniteScrollContent = ({ hasMore }: { hasMore?: boolean }) => {
   )
 }
 
-const CommentList: React.FC<Props> = ({ comments, articleAuthorId, loadMore, hasMore, onViewAllReplies }) => {
+const CommentList: React.FC<Props> = ({ comments, articleAuthorId, loadMore, hasMore, onViewAllReplies, onReplyComment }) => {
   return (
     <div className={styles.commentList}>
-      {comments.length === 0 ? (
-        <div className={styles.empty}>暂无评论，快来发一条吧！</div>
-      ) : (
+      {
         comments.map((comment, index) => (
           <CommentCard
             key={comment.id}
@@ -46,10 +45,11 @@ const CommentList: React.FC<Props> = ({ comments, articleAuthorId, loadMore, has
             articleAuthorId={articleAuthorId}
             onViewAllReplies={onViewAllReplies}
             isLast={index === comments.length - 1}
+            onReplyComment={onReplyComment}
           />
         ))
-      )}
-      <InfiniteScroll loadMore={loadMore} hasMore={hasMore} >
+      }
+      <InfiniteScroll loadMore={loadMore} hasMore={hasMore}>
         <InfiniteScrollContent hasMore={hasMore} />
       </InfiniteScroll>
     </div>
