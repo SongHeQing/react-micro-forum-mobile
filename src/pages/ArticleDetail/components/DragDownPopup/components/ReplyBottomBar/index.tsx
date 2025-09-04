@@ -1,27 +1,26 @@
-// src/pages/ArticleDetail/components/BottomBar/index.tsx
+// src/pages/ArticleDetail/components/DragDownPopup/components/ReplyBottomBar/index.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './styles.module.scss';
 import { Toast } from 'antd-mobile';
-import { postComment, postReply } from '@/apis/commentApi';
+import { postReply } from '@/apis/commentApi';
 import clsx from 'clsx';
 import { CommentVO } from '@/types';
 import { useSelector } from 'react-redux';
 import store from '@/store';
 
-
 interface Props {
   articleId?: number;
+  parentId?: number;
   onSendSuccess?: (comment: CommentVO) => void;
-  replyInfo: CommentVO | null;
   isInputActive?: boolean;
   onInputActiveChange: (active: boolean) => void;
   onClose?: () => void;
 }
 
-const BottomBar: React.FC<Props> = ({
+const ReplyBottomBar: React.FC<Props> = ({
   articleId,
+  parentId,
   onSendSuccess,
-  replyInfo,
   isInputActive,
   onInputActiveChange,
   onClose
@@ -44,29 +43,26 @@ const BottomBar: React.FC<Props> = ({
   const handleSend = async () => {
     const content = value.trim();
     if (!content) return Toast.show('评论内容不能为空');
-    setLoading(true);
-    // 回复一级评论
-    try {
-      if (replyInfo && articleId) {
-        await postReply({
-          articleId,
-          parentId: replyInfo.id,
-          content: content,
-        });
-        Toast.show('回复发送成功');
-        // 如果发送成功，乐观更新UI
-      }
+    if (!parentId || !articleId) return Toast.show('缺少必要参数');
 
-      // 发布一级评论
-      let commentId = 0; // 声明变量以便在作用域外使用
-      if (!replyInfo && articleId) {
-        commentId = await postComment({ articleId, content });
-        Toast.show('评论发送成功');
-      }
+    setLoading(true);
+
+    try {
+      // 回复某条评论（二级评论）
+      await postReply({
+        articleId,
+        parentId,
+        content: content,
+      });
+
+      Toast.show('回复发送成功');
+
+      // 清空输入框
       setValue('');
-      Toast.show(`异步代码成功，获取到的commentId为：${commentId}`);
+
+      // 调用成功回调
       onSendSuccess?.({
-        id: commentId,
+        id: Date.now(), // 临时ID，实际ID应该由后端返回
         user: userInfo,
         content: value,
         createTime: new Date().toISOString(),
@@ -83,6 +79,7 @@ const BottomBar: React.FC<Props> = ({
   };
 
   const overlayRef = useRef<HTMLDivElement>(null);
+
   // 阻止默认行为
   useEffect(() => {
     if (isInputActive) {
@@ -95,53 +92,32 @@ const BottomBar: React.FC<Props> = ({
       };
     }
   }, [isInputActive]);
+
   return (
     <>
-      {/* 移除条件渲染，转为控制显隐 */}
-      {/* 问题的核心：事件的“时间差”
-          遇到的问题，无论你把它称作“点击穿透”还是“触摸穿透”，其根源都是一个时间差：
-          当你触摸屏幕时，浏览器会依次触发一系列事件：touchstart -> touchmove -> touchend -> click。
-          click 事件有一个约 300 毫秒的延迟。
-          如果你的蒙层在 touchend 事件发生后立即移除，那么当 click 事件到达时，蒙层已经不在了。
-          于是，这个 click 事件就会穿透到蒙层原来所在的位置，触发下面的元素。 
-      */}
-      {/* {isInputActive && ( */}
       {/* 独立的遮罩层，点击它本身即可关闭 */}
-      {/* 阻止冒泡，防止点击输入框时事件冒泡到此并关闭 */}
       <div
         className={clsx(styles.overlay, { [styles.active]: isInputActive })}
         ref={overlayRef}
         onTouchEnd={() => {
-          // e.stopPropagation() //React的事件机制对touch stopPropagation无效
-          // setValue('');
           onClose?.();
         }}
         onMouseUp={() => {
-          // e.stopPropagation() //React的事件机制对touch stopPropagation无效
-          // setValue('');
           onClose?.();
         }}
       ></div>
 
-      <div className={clsx(styles.bottomBar, { [styles.active]: isInputActive })}>
-        {!isInputActive && !replyInfo ? (
+      <div className={styles.bottomBar}>
+        {!isInputActive ? (
           <div className={styles.inputPlaceholder} onClick={() => { onInputActiveChange(true); }}>
-            <span className={styles.placeholderText}>发一条友善的评论</span>
+            <span className={styles.placeholderText}>发一条友善的回复</span>
           </div>
         ) : (
           <div className={styles.activeInputContainer}>
-            {/* 回复对象 */}
-            {replyInfo && (
-              <div className={styles.replyPreview}>
-                <span className={styles.replyPreviewText}>
-                  {`回复 ${replyInfo.user.nickname}: ${replyInfo.content}`}
-                </span>
-              </div>
-            )}
             <textarea
               ref={textareaRef}
               className={styles.textarea}
-              placeholder="发一条友善的评论"
+              placeholder="发一条友善的回复"
               value={value}
               onChange={(e) => setValue(e.target.value)}
               disabled={loading}
@@ -157,4 +133,4 @@ const BottomBar: React.FC<Props> = ({
   );
 };
 
-export default BottomBar;
+export default ReplyBottomBar;

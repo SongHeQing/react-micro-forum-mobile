@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      host: '192.168.101.35',
+      host: true,
     },
     esbuild: {
       // 根据环境决定是否删除 console 和 debugger

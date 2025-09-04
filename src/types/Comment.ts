@@ -6,7 +6,6 @@ export interface UserSimpleVO {
   isAuthor?: boolean // 前端 UI 展示所需，可选字段
 }
 
-
 // 一级评论展示结构（对应 CommentVO）
 export interface CommentVO {
   id: number
@@ -14,6 +13,8 @@ export interface CommentVO {
   content: string
   createTime: string // ISO 日期字符串
   replyCount: number
+  likeCount: number
+  isLiked: boolean
   previewReplies?: CommentReplyVO[]
   floor?: number
 }
@@ -24,6 +25,8 @@ export interface CommentReplyVO {
   user: UserSimpleVO
   replyToUser?: UserSimpleVO
   content: string
+  likeCount: number
+  isLiked: boolean
   createTime: string
 }
 

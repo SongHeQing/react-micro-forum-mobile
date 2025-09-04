@@ -110,10 +110,10 @@
   // 新增回复预览区域样式
   .replyPreview {
     width: 100%;
-    margin-bottom: rfs(10); // 与 textarea 之间的间距
-    padding: rfs(12) rfs(15); // 预览区域的内边距
-    background-color: #f0f2f5; // 预览区域背景色
-    border-radius: rfs(8);
+
+    margin-bottom: rfs(51); // 与 textarea 之间的间距
+    // background-color: #f0f2f5; // 预览区域背景色
+    // border-radius: rfs(8);
     // 单行显示，多余内容省略
     white-space: nowrap;
     overflow: hidden;
@@ -123,6 +123,8 @@
   }
 
   .replyPreviewText {
+    font-weight: 400;
+    line-height: rfs(60);
     // 文本样式，确保没有额外的换行或间距
     display: inline;
   }

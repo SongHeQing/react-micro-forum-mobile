@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import styles from './DragDownPopup.module.scss';
 import ReactDOM from 'react-dom';
+import ReplyBottomBar from './components/ReplyBottomBar';
 
 interface DragDownPopupProps {
   visible: boolean;
@@ -9,6 +10,9 @@ interface DragDownPopupProps {
   children: React.ReactNode;
   closeThreshold?: number;
   maxDragDistance?: number;
+  articleId?: number;
+  parentId?: number;
+  onReplySendSuccess?: (comment) => void;
 }
 
 const DragDownPopup: React.FC<DragDownPopupProps> = ({
@@ -17,6 +21,9 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
   title,
   children,
   closeThreshold = 100,
+  articleId,
+  parentId,
+  onReplySendSuccess,
   // maxDragDistance = 200
 }) => {
 
@@ -30,11 +37,8 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
   const scrollableContentRef = useRef<HTMLDivElement>(null);
   const [portalNode, setPortalNode] = useState<HTMLDivElement | null>(null);
   const startY = useRef(0); //记录初始触摸位置
-  const onCloseRef = useRef(onClose); // 关闭回调函数
   const isDraggingPanel = useRef(false);
-  useEffect(() => {
-    onCloseRef.current = onClose;
-  }, [onClose]);
+  const [isInputActive, setIsInputActive] = useState(false);
 
   useEffect(() => {
     // 判断是否允许拖动，并记录初始触摸位置
@@ -109,7 +113,7 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
       if (translateY > closeThreshold) {
         dragDownPanelElement.style.transform = `translateY(100vh)`;
         setTimeout(() => {
-          onCloseRef.current();
+          onClose();
         }, 300);
       } else {
         dragDownPanelElement.style.transform = `translateY(0)`;
@@ -129,7 +133,7 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
         dragDownPanelElement.removeEventListener('touchend', handleTouchEnd);
       }
     };
-  }, [visible, closeThreshold, dragDownPanelElement])
+  }, [visible, closeThreshold, dragDownPanelElement, onClose])
 
   useEffect(() => {
     if (visible && !portalNode) {
@@ -194,14 +198,31 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
         <div className={styles.dragHandle} />
         <div className={styles.header}>
           <h3>{title}</h3>
-          <div onClick={onClose} className={styles.closeButton}>
+          <div onClick={() => {
+            if (!dragDownPanelElement) {
+              return;
+            }
+            dragDownPanelElement.style.transition = 'transform 0.3s ease-out';
+            dragDownPanelElement.style.transform = `translateY(100vh)`;
+            setTimeout(() => {
+              onClose();
+            }, 300);
+          }
+          } className={styles.closeButton}>
             <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7158" ><path d="M560.568 512l316.784-316.784c15.621-15.621 15.621-40.947 0-56.568s-40.947-15.621-56.568 0L504 455.432 187.216 138.647c-15.621-15.621-40.947-15.621-56.568 0s-15.621 40.947 0 56.568L447.432 512 130.647 828.783c-15.621 15.621-15.621 40.948 0 56.569 15.621 15.62 40.947 15.62 56.568 0L504 568.568l316.784 316.784c15.621 15.62 40.947 15.62 56.568 0 15.621-15.621 15.621-40.948 0-56.569L560.568 512z" p-id="7159"></path></svg>
           </div>
         </div>
-        <div className={styles.content} ref={scrollableContentRef}
-        >
+        <div className={styles.content} ref={scrollableContentRef}>
           {children}
         </div>
+        <ReplyBottomBar
+          articleId={articleId}
+          parentId={parentId}
+          onSendSuccess={onReplySendSuccess}
+          isInputActive={isInputActive}
+          onInputActiveChange={setIsInputActive}
+          onClose={() => setIsInputActive(false)}
+        />
       </div>
     </div>,
     portalNode

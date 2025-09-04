@@ -28,12 +28,13 @@
 
 
 .dragDownPanel {
+  position: relative;
   z-index: 22;
   background-color: white;
-  width: 100%;
+  width: clamp(0px, 100vw, 65vh);
   height: 90vh;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  border-top-left-radius: rfs(34);
+  border-top-right-radius: rfs(34);
   display: flex;
   flex-direction: column;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
@@ -45,13 +46,13 @@
   }
 }
 
-.dragHandle {
-  width: 30px;
-  height: 4px;
-  background-color: #ccc;
-  border-radius: 2px;
-  margin: 8px auto;
-}
+// .dragHandle {
+//   width: rfs(150);
+//   height: rfs(20);
+//   background-color: #f0f0f0;
+//   border-radius: rfs(7);
+//   margin: rfs(28) auto;
+// }
 
 .header {
   position: relative;
@@ -73,10 +74,14 @@
 
 .closeButton {
   position: absolute;
-  top: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   left: rfs(40+17);
 
   .icon {
+    display: flex;
+    text-align: center;
+    align-items: center;
     width: rfs(47);
     height: rfs(47);
     fill: #141414
@@ -98,6 +103,4 @@
   // 防止在拖拽过程中出现选择文本的情况
   user-select: none;
   -webkit-user-select: none;
-
-  padding: 16px;
 }

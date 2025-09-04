@@ -25,7 +25,7 @@ export async function fetchCommentReplies(params: ReplyQueryParams): Promise<Com
 /**
  * 发布一级评论
  */
-export async function postComment(data: CommentPostDTO): Promise<void> {
+export async function postComment(data: CommentPostDTO): Promise<number> {
   return request.post('/comment/add', data)
 }
 
@@ -36,10 +36,20 @@ export async function postReply(data: ReplyPostDTO): Promise<void> {
   return request.post('/comment/reply', data)
 }
 
+/**
+ * 切换评论点赞状态
+ */
+export async function toggleCommentLike(commentId: number, articleId: number): Promise<boolean> {
+  return request.post(`/comment/${commentId}/like`, null, {
+    params: { articleId }
+  })
+}
+
 // 可选：统一导出
 export const commentApi = {
   fetchTopLevelComments,
   fetchCommentReplies,
   postComment,
-  postReply
+  postReply,
+  toggleCommentLike
 }

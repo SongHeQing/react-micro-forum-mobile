@@ -384,4 +384,54 @@
     line-height: rfs(49);
   }
 
+  // 评论列表样式
+  .commentList {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .noMore {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: rfs(24);
+    color: #999;
+    padding: rfs(40) 0;
+
+    div {
+      width: rfs(97);
+      height: rfs(1);
+      background-color: #f2f2f2;
+    }
+
+    span {
+      font-size: rfs(44);
+      line-height: rfs(49);
+      color: #888;
+      white-space: nowrap;
+    }
+  }
+
+  // 回复列表弹窗样式
+  .repliesList {
+    display: flex;
+    flex-direction: column;
+    gap: rfs(20);
+  }
+
+  .originalCommentWrapper {
+    padding-bottom: rfs(20);
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: rfs(20);
+  }
+
+  .repliesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: rfs(16);
+  }
+}
+
+.originalCommentWrapper {
+  border-bottom: rfs(21) solid #f7f7f8;
 }

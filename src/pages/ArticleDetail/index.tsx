@@ -9,10 +9,12 @@ import defaultChannel from "@/assets/默认频道图片.jpg";
 import { ImageViewer, Toast } from "antd-mobile";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import clsx from "clsx";
-import CommentList from "./components/CommentList";
 import BottomBar from "./components/BottomBar";
-import type { CommentVO } from "@/types";
-import { fetchTopLevelComments } from "@/apis/commentApi";
+import DragDownPopup from "./components/DragDownPopup";
+import CommentCard from "./components/CommentCard";
+import { DotLoading, InfiniteScroll } from 'antd-mobile';
+import type { CommentReplyVO, CommentVO } from "@/types";
+import { fetchCommentReplies, fetchTopLevelComments } from "@/apis/commentApi";
 import { formatRelativeTime } from "@/utils";
 import useScrollToHash from "@/hooks/useScrollToHash";
 
@@ -185,7 +187,16 @@ const ArticleDetail = () => {
     setLoading(true)
     try {
       const res = await fetchTopLevelComments({ articleId: article.id, page })
-      setComments(prev => [...prev, ...res])
+      // setComments(prev => [...prev, ...res])
+      // 如果返回的评论id虚拟回显已经在replies回显了，就不添加
+      setComments(prev => {
+        // 创建一个现有回复ID的集合，用于快速查找
+        const existingIds = new Set(prev.map(reply => reply.id));
+        // 过滤出新的回复（不在现有回复列表中的）
+        const newRes = res.filter(reply => !existingIds.has(reply.id));
+        // 只添加新的回复
+        return [...prev, ...newRes];
+      })
       setHasMore(res.length === 15)
       setPage(prev => prev + 1)
     } finally {
@@ -197,6 +208,30 @@ const ArticleDetail = () => {
   const { scrollToElement } = useScrollToHash();
   // 是否滚动过
   const scrolledRef = useRef<boolean>(false);
+
+  // 创建一个可以直接滚动到指定元素ID的函数
+  const scrollToElementById = useCallback((elementId: string) => {
+    const tryScroll = (retries = 10) => {
+      const targetElement = document.getElementById(elementId);
+      if (targetElement) {
+        console.log(`找到ID为 ${elementId} 的元素:`, targetElement);
+        requestAnimationFrame(() => {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        });
+      } else if (retries > 0) {
+        // 如果没找到元素，延迟后重试
+        console.log(`未找到ID为 ${elementId} 的元素，${retries} 次重试机会`);
+        setTimeout(() => tryScroll(retries - 1), 50);
+      } else {
+        console.log(`无法找到ID为 ${elementId} 的元素，即使经过多次重试`);
+      }
+    };
+
+    tryScroll();
+  }, []);
 
   useEffect(() => {
     // 检查是否需要锚点跳转，以及是否已对当前文章滚动过
@@ -227,6 +262,69 @@ const ArticleDetail = () => {
   const [isBottomBarActive, setIsBottomBarActive] = useState(false);
   const [replyInfo, setReplyInfo] = useState<CommentVO | null>(null);
 
+  // 添加回复列表弹窗状态管理
+  const [showRepliesPopup, setShowRepliesPopup] = useState(false);
+  const [pepliesPopupComment, setRepliesPopupComment] = useState<CommentVO | null>
+    (null);
+  const [hasRepliesMore, setHasRepliesMore] = useState(true)
+  const [replies, setReplies] = useState<CommentReplyVO[]>([])
+  // 添加回复列表的分页状态
+  const [repliesPage, setRepliesPage] = useState(1)
+
+  // 处理查看回复列表
+  const handleViewReplies = useCallback((comment: CommentVO) => {
+    setRepliesPopupComment(comment);
+    setShowRepliesPopup(true);
+    // 重置回复列表和分页状态
+    setReplies([]);
+    setRepliesPage(1);
+    setHasRepliesMore(true);
+  }, []);
+
+  // 关闭回复列表弹窗
+  const handleCloseRepliesPopup = useCallback(() => {
+    setShowRepliesPopup(false);
+    setRepliesPopupComment(null);
+  }, []);
+
+  // 发起查看所有回复的请求
+  const loadReplies = async () => {
+    if (!pepliesPopupComment) return
+    fetchCommentReplies({ parentId: pepliesPopupComment.id, page: repliesPage }).then((res) => {
+      // 如果返回的评论id虚拟回显已经在replies回显了，就不添加
+      setReplies(prev => {
+        // 创建一个现有回复ID的集合，用于快速查找
+        const existingIds = new Set(prev.map(reply => reply.id));
+        // 过滤出新的回复（不在现有回复列表中的）
+        const newReplies = res.filter(reply => !existingIds.has(reply.id));
+        // 只添加新的回复
+        return [...prev, ...newReplies];
+      })
+      setHasRepliesMore(res.length === 15)
+      setRepliesPage(prev => prev + 1)
+    });
+  }
+
+  // 处理回复发送成功
+  const handleReplySendSuccess = useCallback((newReply: CommentReplyVO) => {
+    // 将新回复添加到回复列表中
+    setReplies(prev => [...prev, newReply]);
+    
+    // 更新原评论的回复数
+    if (pepliesPopupComment) {
+      setRepliesPopupComment(prev => prev ? {
+        ...prev,
+        replyCount: prev.replyCount + 1
+      } : null);
+    }
+    
+    // 同时更新主评论列表中的回复数
+    setComments(prev => prev.map(comment => 
+      comment.id === pepliesPopupComment?.id 
+        ? { ...comment, replyCount: comment.replyCount + 1 } 
+        : comment
+    ));
+  }, [pepliesPopupComment]);
 
   // 评论发送成功回调
   const handleSendSuccess = async (comment: CommentVO) => {
@@ -243,8 +341,10 @@ const ArticleDetail = () => {
         // 如果是回复一级评论，乐观更新评论UI，将评论回复数+1
         setComments(prev => prev.map(comment => comment.id === replyInfo.id ? { ...comment, replyCount: comment.replyCount + 1 } : comment));
       } else {
-        // 如果是发送一级评论，乐观更新评论UI，将评论添加到评论列表最后
-        setComments(prev => [...prev, comment]);
+        // 如果是发送一级评论，乐观更新评论UI，将评论添加到评论列表最前
+        setComments(prev => [comment, ...prev]);
+        // 使用js锚点滚动到新发送的评论
+        scrollToElementById(`${comment.id}`);
       }
     }
 
@@ -252,45 +352,6 @@ const ArticleDetail = () => {
     setReplyInfo(null);
     setIsBottomBarActive(false);
   };
-  // 使用骨架屏加载
-  // if (!article) {
-  //   return (
-  //     // 
-  //     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-  //       <DotLoading />
-  //     </div>
-
-  // <div className={styles.articleDetailPage}>
-  //   {/* 头部骨架 */}
-  //   <div style={{ height: rfs(155) }}></div>
-  //   <div className={styles.header}>
-  //     <div className={styles.back}>
-  //       <Skeleton.Title animated className={styles.skeletonBack} />
-  //     </div>
-  //     <div className={styles.channel}>
-  //       <Skeleton animated className={styles.avatar} style={{ borderRadius: rfs(26) }} />
-  //       <Skeleton.Title animated className={styles.skeletonChannel} style={{ height: rfs(63) }} />
-  //     </div>
-  //   </div>
-  //   {/* 文章卡片骨架 */}
-  //   <div className={styles.articleCard}>
-  //     <div className={styles.userInfo}>
-  //       <Skeleton animated className={styles.avatar} />
-  //       <div className={styles.userInfoBox}>
-  //         <div className={styles.userMeta}>
-  //           <Skeleton.Title animated className={styles.nickname} />
-  //         </div>
-  //         <Skeleton.Title animated className={styles.time} />
-  //       </div>
-  //       <Skeleton animated className={styles.followBtn} />
-  //     </div>
-  //     {/* 标题骨架 */}
-  //     <Skeleton.Title animated className={styles.title} />
-  //   </div>
-  // </div>
-  //   );
-  // }
-
   return (
     <div className={styles.articleDetailPage}>
       {/* 站位 position: fixed; */}
@@ -401,24 +462,37 @@ const ArticleDetail = () => {
         </div>
         {/* 评论列表 */}
         {hasComments ? (
-          <CommentList
-            comments={comments}
-            articleAuthorId={article?.user.id}
-            loadMore={loadComments}
-            hasMore={hasMore}
-            onViewAllReplies={(commentId) => {
-              // TODO: 处理查看全部回复的逻辑
-              console.log('查看全部回复:', commentId);
-            }}
-            // 回复当前评论
-            onReplyComment={(comment) => {
-              // 弹出BottomBar，并传入评论信息
-              setReplyInfo(comment);
-              // 激活BottomBar输入框
-              setIsBottomBarActive(true);
-            }}
-
-          />
+          <div className={styles.commentList}>
+            {comments.map((comment) => (
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                articleAuthorId={article?.user.id}
+                onViewAllReplies={handleViewReplies}
+                articleId={article!.id}
+                onReplyComment={(comment: CommentVO) => {
+                  // 弹出BottomBar，并传入评论信息
+                  setReplyInfo(comment);
+                  // 激活BottomBar输入框
+                  setIsBottomBarActive(true);
+                }}
+              />
+            ))}
+            <InfiniteScroll loadMore={loadComments} hasMore={hasMore}>
+              {hasMore ? (
+                <>
+                  <span>Loading</span>
+                  <DotLoading />
+                </>
+              ) : (
+                <div className={styles.noMore}>
+                  <div></div>
+                  <span> 已加载全部回复 </span>
+                  <div></div>
+                </div>
+              )}
+            </InfiniteScroll>
+          </div>
         ) : (
           <div className={styles.empty}>暂无评论，快来发一条吧！</div>
         )}
@@ -435,6 +509,56 @@ const ArticleDetail = () => {
           setIsBottomBarActive(false);
         }}
       />
+
+      {/* 回复列表弹窗 */}
+      {pepliesPopupComment && (
+        <DragDownPopup
+          visible={showRepliesPopup}
+          onClose={handleCloseRepliesPopup}
+          title={`回复列表 (${pepliesPopupComment.replyCount}条)`}
+          articleId={article?.id}
+          parentId={pepliesPopupComment.id}
+          onReplySendSuccess={handleReplySendSuccess}
+        >
+          <div className={styles.repliesList}>
+            {/* 原评论 */}
+            <div className={styles.originalCommentWrapper}>
+              <CommentCard
+                comment={pepliesPopupComment!}
+                articleAuthorId={article?.user.id}
+                preview={false}
+                articleId={article!.id}
+              />
+            </div>
+
+            {/* 回复列表 */}
+            <div className={styles.repliesContainer}>
+              {replies.map((reply) => (
+                <CommentCard
+                  key={reply.id}
+                  comment={reply}
+                  articleAuthorId={article?.user.id}
+                  articleId={article!.id}
+                />
+              ))}
+              <InfiniteScroll loadMore={loadReplies} hasMore={hasRepliesMore}>
+                {hasMore ? (
+                  <>
+                    <span>Loading</span>
+                    <DotLoading />
+                  </>
+                ) : (
+                  <div className={styles.noMore}>
+                    <div></div>
+                    <span> 已加载全部回复 </span>
+                    <div></div>
+                  </div>
+                )}
+              </InfiniteScroll>
+            </div>
+          </div>
+        </DragDownPopup>
+      )}
     </div >
   );
 };
