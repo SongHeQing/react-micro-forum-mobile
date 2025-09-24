@@ -129,11 +129,10 @@
   }
 
   .BottomLinks {
-    // position: fixed;
-    // bottom: rfs(82);
-    // left: 0;
-    // right: 0;
-    margin-top: rfs(396);
+    position: fixed;
+    bottom: rfs(82);
+    left: 0;
+    right: 0;
     margin-bottom: rfs(82);
     display: flex;
     justify-content: center;

@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
-import type { ArticleCard } from "@/types";
+import type { ArticleCard, ArticleUserCard } from "@/types";
 import { getLineCount } from "@/utils/lineCount";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import styles from './index.module.scss';
-import avatar from '@/assets/默认频道图片.jpg';
+import defaultChannelAvatar from '@/assets/默认频道图片.jpg';
+import defaultUserAvatar from '@/assets/默认用户头像.jpg';
 import { ImageViewer, Toast } from "antd-mobile";
 import clsx from "clsx";
 import { useNavigate } from "react-router";
@@ -12,10 +13,15 @@ import { toggleLike } from "@/apis/articleApi"; // 只保留 toggleLike，不再
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface CardProps {
-  article: ArticleCard;
+  article: ArticleCard | ArticleUserCard;
 }
 
-const Card: React.FC<CardProps> = ({ article }) => {
+const ArticleCard: React.FC<CardProps> = ({ article }) => {
+
+  // 类型守卫函数
+  const isArticleUserCard = (article: ArticleCard | ArticleUserCard): article is ArticleUserCard => {
+    return (article as ArticleUserCard).channel !== undefined;
+  };
 
   // 根据标题行数动态设置内容行数
   const titleRef = useRef<HTMLDivElement>(null);
@@ -64,7 +70,7 @@ const Card: React.FC<CardProps> = ({ article }) => {
     if (nameEl && suffixEl && nameEl.scrollWidth > nameEl.offsetWidth) {
       suffixEl.style.marginLeft = '-0.825rem'; // 吸附过去
     }
-  }, [article.channelCard.channelName]);
+  }, [article]);
 
   // 使用自定义Hook管理分享图标点击动画
   const { getModuleAnimationClassName: getModuleAnimationClassNameShareIcon, triggerAnimation: triggerAnimationShareIcon } = useClickAnimation({
@@ -259,46 +265,72 @@ const Card: React.FC<CardProps> = ({ article }) => {
     >
       {/* 头部 */}
       <div className={styles.cardHeader}>
-        <div className={styles.cardHeaderChannel}>
-          {/* 频道头像 */}
-          <img className={styles.cardHeaderChannelAvatarImg} src={article.channelCard.image ? (BASE_URL + article.channelCard.image) : avatar} alt="avatar" loading="lazy" />
-          {/* 频道名称和频道描述 */}
-          <div className={styles.cardHeaderChannelText}>
-            {/* 频道名称 */}
-            <div className={styles.cardHeaderChannelTextNameBox}>
-              <div className={styles.cardHeaderChannelTextName}
-                ref={channelNameRef}
-              >
-                {article.channelCard.channelName}
+        {!isArticleUserCard(article) &&
+          <>
+            <div className={styles.cardHeaderChannel}>
+              {/* 频道头像 */}
+              <img className={styles.cardHeaderChannelAvatarImg} src={article.channelCard.image ? (BASE_URL + article.channelCard.image) : defaultChannelAvatar} alt="avatar" loading="lazy" />
+              {/* 频道名称和频道描述 */}
+              <div className={styles.cardHeaderChannelText}>
+                {/* 频道名称 */}
+                <div className={styles.cardHeaderChannelTextNameBox}>
+                  <div className={styles.cardHeaderChannelTextName}
+                    ref={channelNameRef}
+                  >
+                    {article.channelCard.channelName}
+                  </div>
+                  <span ref={channelNameSuffixRef}>频道</span>
+                </div>
+                <div className={styles.cardHeaderChannelTextDesc}>
+                  {/* 关注量 */}
+                  <span className={styles.cardHeaderChannelTextDesc}>
+                    关注 {article.channelCard.userCount}
+                  </span>
+                  {/* 文章量 */}
+                  <span className={styles.cardHeaderChannelTextDesc}>
+                    文章 {article.channelCard.articleCount}
+                  </span>
+                </div>
               </div>
-              <span ref={channelNameSuffixRef}>频道</span>
             </div>
-            <div className={styles.cardHeaderChannelTextDesc}>
-              {/* 关注量 */}
-              <span className={styles.cardHeaderChannelTextDesc}>
-                关注 {article.channelCard.userCount}
-              </span>
-              {/* 文章量 */}
-              <span className={styles.cardHeaderChannelTextDesc}>
-                文章 {article.channelCard.articleCount}
-              </span>
+            {/* 按钮 */}
+            <div className={getModuleAnimationClassNameFollow(styles.cardHeaderButton, styles.iconAnimate)} onClick={(e) => {
+              e.stopPropagation();
+              handleFollowClick();
+            }}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
+              onTouchStart={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              关注
             </div>
-          </div>
-        </div>
-        {/* 按钮 */}
-        <div className={getModuleAnimationClassNameFollow(styles.cardHeaderButton, styles.iconAnimate)} onClick={(e) => {
-          e.stopPropagation();
-          handleFollowClick();
-        }}
-          onMouseDown={(e) => {
-            e.stopPropagation();
-          }}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          关注
-        </div>
+          </>
+        }
+
+        {isArticleUserCard(article) &&
+          <>
+            <div className={styles.cardHeaderChannel}>
+              {/* 用户头像 */}
+              <img className={styles.cardHeaderUserAvatarImg} src={article.user.image ? (BASE_URL + article.user.image) : defaultUserAvatar} alt="avatar" loading="lazy" />
+              <div className={styles.cardHeaderChannelText}>
+                {/* 用户昵称 */}
+                <div className={styles.cardHeaderChannelTextNameBox}>
+                  <div className={styles.cardHeaderChannelTextName}
+                  >
+                    {article.user.nickname}
+                  </div>
+                </div>
+                <div className={styles.cardHeaderUserTextDesc}>
+                  <span className={styles.channelName}>{article.channel.channelname}</span>
+                  {"频道"}
+                </div>
+              </div>
+            </div>
+          </>
+        }
       </div>
       {/* 内容 */}
       <div className={styles.cardBody}>
@@ -325,23 +357,26 @@ const Card: React.FC<CardProps> = ({ article }) => {
           * 这样代码更安全、可维护，尤其是在组件复用、状态管理等场景下。
           */}
           {sortedImagesUrl.slice(0, previewImagesCount).map(imgUrl => (
-            <img key={imgUrl}
-              src={imgUrl}
-              // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
-              onClick={(e) => {
-                e.stopPropagation();
-                ImageViewer.Multi.show({
-                  images: sortedImagesUrl,
-                  defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
-                })
-              }}
-              onMouseDown={(e) => {
-                e.stopPropagation();
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation();
-              }}
-              alt="cover" loading="lazy" />
+            <div className={styles.imageBox}>
+              <img key={imgUrl}
+                src={imgUrl}
+                // 点击图片预览大图，使用 ImageViewer.Multi.show() 指令式
+                onClick={(e) => {
+                  e.stopPropagation();
+                  ImageViewer.Multi.show({
+                    images: sortedImagesUrl,
+                    defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
+                  })
+                }}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
+                alt="cover" loading="lazy" />
+              <div className={styles.imageMask}></div>
+            </div>
           ))}
         </div>
       </div>
@@ -419,4 +454,4 @@ const Card: React.FC<CardProps> = ({ article }) => {
   );
 };
 
-export default Card; 
+export default ArticleCard; 

@@ -119,6 +119,12 @@
     // css进行换行符换行显示
     white-space: pre-wrap;
     word-break: break-all;
+    
+    .replyToUser {
+      color: #8f8e94;
+      font-weight: 500;
+      margin-right: rfs(30);
+    }
   }
 
   .commentInfo {

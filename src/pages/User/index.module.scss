@@ -1,0 +1,227 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+@function vh($px) {
+  @return math.div($px, 1260) * 65vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: rfs(152);
+  width: rfs(1260);
+  margin: 0 auto;
+  padding-top: rfs(60);
+  background-color: transparent; // 默认背景色透明
+  transition: background-color 0.3s ease; // 添加过渡效果
+
+  &.scrolled {
+    background-color: #fff; // 滚动后的背景色
+  }
+
+  .back {
+    height: rfs(62);
+    margin-left: rfs(64);
+  }
+}
+
+.background {
+  height: rfs(566);
+  width: rfs(1260);
+  margin: 0 auto;
+}
+
+.userInfo {
+  width: rfs(1260);
+  margin: 0 auto;
+  position: relative;
+  background-color: #fff;
+  padding-left: rfs(52);
+  padding-right: rfs(52);
+
+  .avatar {
+    position: absolute;
+    // 向上偏移头像的50%
+    transform: translateY(-50%);
+    left: rfs(52);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: rfs(315);
+    height: rfs(315);
+    background-color: #fff;
+    border-radius: 50%;
+
+    img {
+      width: rfs(298);
+      height: rfs(298);
+      border-radius: 50%;
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    height: rfs(157);
+
+    .editProfile {
+      height: rfs(100);
+      width: rfs(365);
+      border: rfs(2) solid #415b9e;
+      margin-top: rfs(49);
+      margin-right: rfs(55);
+      border-radius: rfs(50);
+      font-size: rfs(47);
+      color: #285aea;
+      line-height: rfs(100);
+      text-align: center;
+    }
+
+    .userActions {
+      display: flex;
+      gap: rfs(36);
+      margin-top: rfs(36);
+      margin-right: rfs(49);
+      font-size: rfs(44);
+
+      .follow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: rfs(15);
+        width: rfs(283);
+        color: #fff;
+        background-color: #3d71fe;
+        border-radius: rfs(math.div(283, 2));
+
+        .icon {
+          stroke: #fff;
+        }
+      }
+
+      .message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: rfs(15);
+        width: rfs(243);
+        color: #325acc;
+        background-color: #f4f2fe;
+        border-radius: rfs(math.div(243, 2));
+
+        .icon {
+          fill: #325acc;
+          width: rfs(50);
+          height: rfs(50);
+        }
+      }
+
+      .icon {
+        width: rfs(44);
+        height: rfs(44);
+      }
+    }
+  }
+
+  .nickname {
+    margin-top: rfs(48);
+    color: #141414;
+    font-size: rfs(63);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .userIdAndCreateTime {
+    display: flex;
+    align-items: center;
+    gap: rfs(20);
+    margin-top: rfs(65);
+    color: #8f8e94;
+    font-size: rfs(40);
+    line-height: 1;
+
+    .icon {
+      height: rfs(30);
+      stroke: #e3e2e8;
+    }
+  }
+
+  .introduction {
+    margin-top: rfs(56);
+    font-size: rfs(46);
+    color: #8f8e96;
+    line-height: 1;
+  }
+
+  .userStats {
+    display: flex;
+    gap: rfs(102);
+    padding-top: rfs(69);
+    padding-bottom: rfs(62);
+    border-bottom: #ededed rfs(1) solid;
+    color: #8f8e96;
+    font-size: rfs(44);
+    line-height: 1;
+
+
+    span {
+      margin-right: rfs(25);
+      color: #141414;
+      font-size: rfs(60);
+      font-weight: 600;
+    }
+  }
+}
+
+.tabs {
+  position: sticky;
+  z-index: 1;
+  top: rfs(152);
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: rfs(66);
+  width: rfs(1260);
+  height: rfs(138);
+  margin: 0 auto;
+  padding-left: rfs(52);
+  padding-right: rfs(52);
+  background-color: #fff;
+  color: #8f8e94;
+  font-size: rfs(46);
+  line-height: 1;
+
+  .active {
+    position: relative;
+    color: #141414;
+    font-weight: 600;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: calc(#{rfs(26)} * -1);
+      left: 50%;
+      transform: translateX(-50%);
+      width: rfs(54);
+      height: rfs(15);
+      background-color: #1677ff;
+      border-radius: rfs(7);
+    }
+  }
+}
+
+.content {
+  padding-top: rfs(24);
+}

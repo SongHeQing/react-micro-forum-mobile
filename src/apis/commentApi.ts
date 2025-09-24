@@ -32,7 +32,7 @@ export async function postComment(data: CommentPostDTO): Promise<number> {
 /**
  * 回复某条评论（二级评论）
  */
-export async function postReply(data: ReplyPostDTO): Promise<void> {
+export async function postReply(data: ReplyPostDTO): Promise<number> {
   return request.post('/comment/reply', data)
 }
 

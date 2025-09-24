@@ -10,9 +10,6 @@ export type ChannelCard = {
   image: string;
 };
 
-
-
-
 /**
  * @description 单篇文章卡片
  */
@@ -34,7 +31,7 @@ export type ArticleCard = {
 /**
  * @description 文章列表
  */
-export type ArticleList = ArticleCard[];
+export type ArticleCardList = ArticleCard[];
 
 /**
  * @description 新增文章数据接口
@@ -71,5 +68,32 @@ export type ArticleDetail = {
   channel: {
     id: number;
     channelname: string;
+    image: string | null;
   };
+}
+
+// 用户文章列表类型定义
+export type ArticleUserCardList = ArticleUserCard[];
+
+// 用户文章卡片类型定义
+export type ArticleUserCard = {
+  id: number;
+  channel: {
+    id: number;
+    channelname: string;
+  };
+  user: {
+    id: number;
+    nickname: string;
+    image: string;
+  };
+  title: string;
+  contentPreview: string;
+  mediaType: number;
+  mediaUrls: string[];
+  likeCount: number;
+  commentCount: number;
+  isLiked: boolean;
+  createTime: string;
+  updateTime: string;
 }

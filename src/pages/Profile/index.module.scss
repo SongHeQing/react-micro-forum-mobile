@@ -1,0 +1,184 @@
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+@function vh($px) {
+  @return math.div($px, 1260) * 65vh;
+}
+
+@function rfs($px, $min: 0px) {
+  @return clamp($min, vw($px), vh($px));
+}
+
+
+.profile {
+  width: 100%;
+  height: 100%;
+  padding-top: rfs(154);
+}
+
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  width: rfs(1260);
+  height: rfs(154);
+  padding-right: rfs(55);
+  margin: 0 auto;
+
+  .icon {
+    margin-top: rfs(38);
+    height: rfs(65);
+    width: rfs(72);
+  }
+}
+
+.userInfo {
+  width: rfs(1260);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 rfs(48);
+  margin-top: rfs(37);
+  margin-bottom: rfs(45);
+
+  .avatar {
+    width: rfs(169);
+    margin-right: rfs(41);
+
+    img {
+      border-radius: 50%;
+    }
+  }
+
+  .userInfotext {
+    display: flex;
+    flex-direction: column;
+    gap: rfs(27);
+    color: #141414;
+
+    .nickname {
+      font-size: rfs(58);
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .followAndFans {
+      display: flex;
+      gap: rfs(34);
+      color: #8f8e94;
+      font-size: rfs(37);
+      line-height: 1;
+    }
+  }
+}
+
+.userStats {
+  display: flex;
+  justify-content: space-around;
+  width: rfs(1260);
+  height: rfs(248);
+  margin: 0 auto;
+  background-color: #fbfbfb;
+  border-radius: rfs(20) rfs(20) 0 0;
+
+  .userStatsItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: rfs(26);
+    line-height: 1;
+
+    .Count {
+      font-size: rfs(58);
+      font-weight: 500;
+      color: #141414;
+    }
+
+    .Name {
+      font-size: rfs(36);
+      color: #515152;
+    }
+  }
+}
+
+.functionArea {
+  width: rfs(1260);
+  padding: 0 rfs(25);
+  margin: 0 auto;
+  background-color: #f7f7f8;
+
+  .commonFunction {
+    background-color: #fff;
+    border-radius: rfs(31);
+    padding-top: rfs(59);
+    padding-bottom: rfs(59);
+
+    // 选中第一个div
+    .Name {
+      padding-left: rfs(38);
+      margin-bottom: rfs(63);
+      font-size: rfs(50);
+      font-weight: 500;
+      color: #141414;
+      line-height: 1;
+    }
+
+    // 修改.functionArea的直接子标签的样式
+    .functionList {
+      display: flex;
+      gap: rfs(80);
+      padding: 0 rfs(43);
+
+      .functionItem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: rfs(28);
+
+        .Icon {
+          width: rfs(80);
+          height: rfs(80);
+        }
+
+        // 单独设置第一个.Icon的颜色
+        &:first-child .Icon {
+          fill: #ff953c;
+        }
+
+        // 单独设置第二个.Icon的颜色
+        &:nth-child(2) .Icon {
+          fill: #fd617f;
+        }
+
+        // 单独设置第三个.Icon的颜色
+        &:nth-child(3) .Icon {
+          fill: #57acff;
+        }
+
+        // 单独设置第四个.Icon的颜色
+        &:nth-child(4) .Icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(to top right, #30cc6f, #81e679);
+          border-radius: rfs(30);
+
+          svg {
+            width: rfs(35);
+            height: rfs(35);
+          }
+        }
+      }
+    }
+  }
+}

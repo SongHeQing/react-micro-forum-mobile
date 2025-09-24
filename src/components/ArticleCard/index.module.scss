@@ -29,78 +29,93 @@
   &.active {
     background-color: #f5f5f5;
   }
-}
 
-// 卡片头部
-.cardHeader {
-  display: flex;
-  height: rfs(115);
-  // border: 1px solid #000;
-  margin-bottom: rfs(12);
-}
+  // 卡片头部
+  .cardHeader {
+    display: flex;
+    height: rfs(115);
+    // border: 1px solid #000;
+    margin-bottom: rfs(12);
 
-.cardHeaderChannel {
-  display: flex;
-  align-items: start;
-  height: rfs(115);
-}
+    .cardHeaderChannel {
+      display: flex;
+      align-items: start;
+      height: rfs(115);
 
-.cardHeaderChannelAvatarImg {
-  width: rfs(110);
-  height: rfs(110);
-  border-radius: rfs(47);
-}
+      .cardHeaderChannelAvatarImg {
+        width: rfs(110);
+        height: rfs(110);
+        border-radius: rfs(47);
+      }
 
-.cardHeaderChannelText {
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  width: rfs(694);
-  height: rfs(110);
-  margin-left: rfs(32);
-}
+      .cardHeaderChannelText {
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        width: rfs(694);
+        height: rfs(110);
+        margin-left: rfs(32);
 
-.cardHeaderChannelTextNameBox {
-  display: inline-flex;
-  margin-bottom: rfs(11);
-  font-size: rfs(47);
-  font-weight: 500;
-  line-height: rfs(52);
-  color: #000;
+        .cardHeaderChannelTextNameBox {
+          display: inline-flex;
+          margin-bottom: rfs(11);
+          font-size: rfs(47);
+          font-weight: 500;
+          line-height: rfs(52);
+          color: #000;
 
-  .cardHeaderChannelTextName {
-    // 字数限制10个字符，超出显示省略号
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 9rem;
+          .cardHeaderChannelTextName {
+            // 字数限制10个字符，超出显示省略号
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 9em;
+          }
+        }
+
+        .cardHeaderChannelTextDesc {
+          display: flex;
+          align-items: center;
+          gap: rfs(10);
+          // margin-top: rfs(5);
+          font-size: rfs(38);
+          line-height: rfs(42);
+          color: #a4a4a7;
+        }
+      }
+
+      .cardHeaderUserAvatarImg {
+        border-radius: 50%;
+      }
+
+      .cardHeaderUserTextDesc {
+        display: flex;
+        font-size: rfs(38);
+        line-height: rfs(42);
+        color: #a4a4a7;
+
+        .channelName {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 9em;
+        }
+      }
+    }
   }
-}
 
-
-
-.cardHeaderChannelTextDesc {
-  display: flex;
-  align-items: center;
-  gap: rfs(10);
-  // margin-top: rfs(5);
-  font-size: rfs(38);
-  line-height: rfs(42);
-  color: #a4a4a7;
-
-}
-
-// 关注按钮
-.cardHeaderButton {
-  align-self: flex-end;
-  width: rfs(205);
-  height: rfs(91);
-  background-color: #eff5fe;
-  font-size: rfs(38);
-  color: #3f71fd;
-  border-radius: rfs(45.5);
-  text-align: center;
-  line-height: rfs(91);
+  // 关注按钮
+  .cardHeaderButton {
+    align-self: flex-end;
+    width: rfs(205);
+    height: rfs(91);
+    background-color: #eff5fe;
+    font-size: rfs(38);
+    color: #3f71fd;
+    border-radius: rfs(45.5);
+    text-align: center;
+    line-height: rfs(91);
+  }
 }
 
 // 卡片主体
@@ -133,19 +148,43 @@
 
 .cardBodyImg {
 
-  // 图片容器样式
-  img {
-    object-fit: cover;
+  .imageBox {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+
+    // 图片容器样式
+    img {
+      object-fit: cover;
+    }
+
+    .imageMask {
+      pointer-events: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border: rfs(1) solid rgba(0, 0, 0, 0.07);
+    }
   }
 
   // 渲染的图片数量为1时
   &.cardBodyImgOne {
-    img {
-      min-width: rfs(372);
-      min-height: rfs(372);
-      max-width: rfs(756);
+    .imageBox {
       max-height: rfs(1008);
       border-radius: rfs(24);
+
+      img {
+        min-width: rfs(372);
+        min-height: rfs(372);
+        max-width: rfs(756);
+        border-radius: rfs(24);
+      }
+
+      .imageMask {
+        border-radius: rfs(24);
+      }
     }
   }
 
@@ -161,14 +200,24 @@
     }
 
     // 第一个图片为左边圆角，最后一个图片为右边圆角
-    img:first-child {
+    .imageBox:first-child {
       border-top-left-radius: rfs(24);
       border-bottom-left-radius: rfs(24);
+
+      .imageMask {
+        border-top-left-radius: rfs(24);
+        border-bottom-left-radius: rfs(24);
+      }
     }
 
-    img:last-child {
+    .imageBox:last-child {
       border-top-right-radius: rfs(24);
       border-bottom-right-radius: rfs(24);
+
+      .imageMask {
+        border-top-right-radius: rfs(24);
+        border-bottom-right-radius: rfs(24);
+      }
     }
   }
 

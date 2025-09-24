@@ -12,7 +12,8 @@ interface Props {
   comment: CommentVO | CommentReplyVO;
   articleAuthorId?: number;
   onViewAllReplies?: (comment: CommentVO) => void;
-  onReplyComment?: (comment: CommentVO) => void;
+  onClickCommentCard?: (comment: CommentVO) => void;
+  onClickReplyCard?: (comment: CommentReplyVO) => void;
   // 不渲染回复预览
   preview?: boolean;
   articleId: number; // 添加文章ID属性用于点赞API调用
@@ -23,7 +24,7 @@ function isCommentVO(comment: CommentVO | CommentReplyVO): comment is CommentVO 
   return (comment as CommentVO).floor !== undefined;
 }
 
-const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllReplies, onReplyComment, preview = true, articleId }) => {
+const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllReplies, onClickCommentCard, onClickReplyCard, preview = true, articleId }) => {
 
   const isAuthor = comment.user.id === articleAuthorId;
 
@@ -41,12 +42,6 @@ const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllRepli
     return formatRelativeTime(comment?.createTime || '');
   }, [comment?.createTime]);
 
-  // 处理查看全部回复
-  const handleViewAllReplies = () => {
-    if (isCommentVO(comment)) {
-      onViewAllReplies?.(comment);
-    }
-  };
 
   /**评论点赞事件 */
   const handleLikeComment = async (e: React.MouseEvent) => {
@@ -90,7 +85,9 @@ const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllRepli
           console.log('点击了评论卡片');
           e.stopPropagation(); // 阻止事件冒泡
           if (isCommentVO(comment)) {
-            onReplyComment?.(comment);
+            onClickCommentCard?.(comment);
+          } else {
+            onClickReplyCard?.(comment);
           }
         }}
       >
@@ -122,6 +119,12 @@ const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllRepli
           </div>
         </div>
         <div className={styles.commentContent}>
+          {/* 如果有 CommentReplyVO.replyToUser 就显示回复信息 */}
+          {!isCommentVO(comment) && comment.replyToUser && (
+            <span>
+              回复 <span className={styles.replyToUser}>{comment.replyToUser.nickname}</span>:
+            </span>
+          )}
           {comment.content}
         </div>
         <div className={styles.commentInfo}>
@@ -144,7 +147,9 @@ const CommentCard: React.FC<Props> = ({ comment, articleAuthorId, onViewAllRepli
                 className={styles.viewAllReplies}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleViewAllReplies();
+                  if (isCommentVO(comment)) {
+                    onViewAllReplies?.(comment);
+                  }
                 }}
               >
                 查看全部{comment.replyCount}条回复

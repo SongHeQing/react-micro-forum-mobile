@@ -215,11 +215,11 @@
         .imageBox {
           position: relative;
           display: inline-block;
+          max-height: rfs(4096);
           border-radius: rfs(23);
           overflow: hidden;
 
           img {
-            max-height: rfs(4096);
             border-radius: rfs(23);
             object-fit: cover;
           }
@@ -312,7 +312,7 @@
 
     // 评论区标题吸顶
     .commentTitle {
-      // position: sticky;
+      position: sticky;
       top: rfs(155);
 
       display: flex;

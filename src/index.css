@@ -34,6 +34,10 @@ body {
   /* IE/Edge */
 }
 
+#root {
+  min-height: 100vh;
+}
+
 /* 设置网页统一的字体大小、行高、字体系列相关属性 */
 body {
   font: 16px/1.5 "Microsoft Yahei",

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import styles from './index.module.scss';
 import { useNavigate } from 'react-router';
 import { verifyRegisterCode } from '@/apis/userApi';
@@ -35,7 +35,7 @@ const VerifyCode: React.FC = () => {
   };
 
   // 倒计时效果
-  React.useEffect(() => {
+  useEffect(() => {
     if (timer === 0) return;
     const t = setTimeout(() => setTimer(timer - 1), 1000);
     return () => clearTimeout(t);
@@ -44,18 +44,8 @@ const VerifyCode: React.FC = () => {
   // 是否正在提交
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-
-  // 输入满自动提交
-  React.useEffect(() => {
-    if (isSubmitting) return;
-    if (code.every(char => char !== '')) {
-      setIsSubmitting(true);
-      handleSubmit();
-    }
-  }, [code]);
-
   // 模拟请求
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const verifyCode = code.join('');
     // 这里写你的请求逻辑，比如：verifyCodeApi({ code: verifyCode, value, ... })
     // console.log('自动提交验证码:', verifyCode, value, password, type, typeName, verifyType, verifyTypeName);
@@ -64,9 +54,21 @@ const VerifyCode: React.FC = () => {
         // 模拟请求完成后重置 isSubmitting 并跳转到登录页
         Toast.show({ icon: 'success', content: '验证码验证成功', });
         navigate('/login');
+      }).catch(() => {
+        // 清空验证码
+        setCode(Array(CODE_LENGTH).fill(''));
+        setIsSubmitting(false);
       });
     }
-  };
+  }, [code, navigate, password, type, value, verifyType]);
+  // 输入满自动提交
+  useEffect(() => {
+    if (isSubmitting) return;
+    if (code.every(char => char !== '')) {
+      setIsSubmitting(true);
+      handleSubmit();
+    }
+  }, [code, handleSubmit, isSubmitting]);
 
   return (
     <div className={styles.VerifyCodePage}>

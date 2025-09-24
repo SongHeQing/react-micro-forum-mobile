@@ -136,11 +136,16 @@
     border-radius: rfs(20);
     padding: rfs(20) rfs(30);
     font-size: rfs(41);
-    background: #f7f7f7;
+    background: #f3f3f4;
     outline: none;
-    border: rfs(1) solid #e0e0e0;
+    border: none;
     resize: vertical;
     margin-bottom: rfs(20);
+
+    // 设置占位符的样式
+    &::placeholder {
+      color: #a3a2a8;
+    }
   }
 
   .sendBtn {

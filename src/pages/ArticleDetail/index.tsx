@@ -17,6 +17,7 @@ import type { CommentReplyVO, CommentVO } from "@/types";
 import { fetchCommentReplies, fetchTopLevelComments } from "@/apis/commentApi";
 import { formatRelativeTime } from "@/utils";
 import useScrollToHash from "@/hooks/useScrollToHash";
+import { throttle } from "@/utils"; // 添加节流函数导入
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -39,7 +40,7 @@ const ArticleDetail = () => {
   const [article, setArticle] = useState<ArticleDetail>();
 
   // 吸顶检测相关ref和state
-  // const headerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const commentTitleRef = useRef<HTMLDivElement>(null);
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
   const [isCommentTitleSticky, setIsCommentTitleSticky] = useState(false);
@@ -57,30 +58,25 @@ const ArticleDetail = () => {
 
   /**距离检测吸顶*/
   useEffect(() => {
-    // 初次渲染后的评论标题距离视口x轴的距离
-    let commentTitleTopInitial;
-    // 检查默认的Effect能不能检测到初次渲染后的评论标题距离视口x轴的距离
-    // console.log(commentTitleRef.current?.getBoundingClientRect().top);
-    const handleScroll = () => {
-      // if (headerRef.current) {
-      //   setIsHeaderSticky(headerRef.current.getBoundingClientRect().top <= 0);
-      // }
-      // 评论标题元素距离视口x轴的距离小于初次渲染后的评论标题距离视口x轴的距离时吸顶
-      if (!commentTitleTopInitial) {
-        commentTitleTopInitial = commentTitleRef.current?.getBoundingClientRect().top;
-      }
-      if (commentTitleRef.current && commentTitleTopInitial) {
-        setIsHeaderSticky(commentTitleRef.current.getBoundingClientRect().top < commentTitleTopInitial);
-      }
+    // 使用节流优化滚动事件处理
+    const handleScroll = throttle(() => {
+      // 使用window.scrollY检测页面滚动位置，性能更好
+      setIsHeaderSticky(window.scrollY > 0);
+
       // 评论标题元素距离视口x轴的距离小于或等于155px(第一个吸顶元素的高度)时吸顶
       if (commentTitleRef.current) {
-        setIsCommentTitleSticky(commentTitleRef.current.getBoundingClientRect().top <= rfs(155));
+        setIsCommentTitleSticky(commentTitleRef.current.getBoundingClientRect().top <= rfs(156));
       }
-    };
+    }, 16); // 约60fps
+
     window.addEventListener("scroll", handleScroll);
     // 初始检测一次
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      // 清除节流函数的定时器
+      handleScroll.cancel();
+    };
   }, []);
 
   /**图片排序*/
@@ -260,71 +256,7 @@ const ArticleDetail = () => {
 
   // 添加BottomBar输入状态控制
   const [isBottomBarActive, setIsBottomBarActive] = useState(false);
-  const [replyInfo, setReplyInfo] = useState<CommentVO | null>(null);
-
-  // 添加回复列表弹窗状态管理
-  const [showRepliesPopup, setShowRepliesPopup] = useState(false);
-  const [pepliesPopupComment, setRepliesPopupComment] = useState<CommentVO | null>
-    (null);
-  const [hasRepliesMore, setHasRepliesMore] = useState(true)
-  const [replies, setReplies] = useState<CommentReplyVO[]>([])
-  // 添加回复列表的分页状态
-  const [repliesPage, setRepliesPage] = useState(1)
-
-  // 处理查看回复列表
-  const handleViewReplies = useCallback((comment: CommentVO) => {
-    setRepliesPopupComment(comment);
-    setShowRepliesPopup(true);
-    // 重置回复列表和分页状态
-    setReplies([]);
-    setRepliesPage(1);
-    setHasRepliesMore(true);
-  }, []);
-
-  // 关闭回复列表弹窗
-  const handleCloseRepliesPopup = useCallback(() => {
-    setShowRepliesPopup(false);
-    setRepliesPopupComment(null);
-  }, []);
-
-  // 发起查看所有回复的请求
-  const loadReplies = async () => {
-    if (!pepliesPopupComment) return
-    fetchCommentReplies({ parentId: pepliesPopupComment.id, page: repliesPage }).then((res) => {
-      // 如果返回的评论id虚拟回显已经在replies回显了，就不添加
-      setReplies(prev => {
-        // 创建一个现有回复ID的集合，用于快速查找
-        const existingIds = new Set(prev.map(reply => reply.id));
-        // 过滤出新的回复（不在现有回复列表中的）
-        const newReplies = res.filter(reply => !existingIds.has(reply.id));
-        // 只添加新的回复
-        return [...prev, ...newReplies];
-      })
-      setHasRepliesMore(res.length === 15)
-      setRepliesPage(prev => prev + 1)
-    });
-  }
-
-  // 处理回复发送成功
-  const handleReplySendSuccess = useCallback((newReply: CommentReplyVO) => {
-    // 将新回复添加到回复列表中
-    setReplies(prev => [...prev, newReply]);
-    
-    // 更新原评论的回复数
-    if (pepliesPopupComment) {
-      setRepliesPopupComment(prev => prev ? {
-        ...prev,
-        replyCount: prev.replyCount + 1
-      } : null);
-    }
-    
-    // 同时更新主评论列表中的回复数
-    setComments(prev => prev.map(comment => 
-      comment.id === pepliesPopupComment?.id 
-        ? { ...comment, replyCount: comment.replyCount + 1 } 
-        : comment
-    ));
-  }, [pepliesPopupComment]);
+  const [CommentTarget, setCommentTarget] = useState<CommentVO | null>(null);
 
   // 评论发送成功回调
   const handleSendSuccess = async (comment: CommentVO) => {
@@ -337,9 +269,9 @@ const ArticleDetail = () => {
     } else {
       // 乐观更新评论UI
       // 判断是发送一级评论还是回复一级评论
-      if (replyInfo) {
+      if (CommentTarget) {
         // 如果是回复一级评论，乐观更新评论UI，将评论回复数+1
-        setComments(prev => prev.map(comment => comment.id === replyInfo.id ? { ...comment, replyCount: comment.replyCount + 1 } : comment));
+        setComments(prev => prev.map(comment => comment.id === CommentTarget.id ? { ...comment, replyCount: comment.replyCount + 1 } : comment));
       } else {
         // 如果是发送一级评论，乐观更新评论UI，将评论添加到评论列表最前
         setComments(prev => [comment, ...prev]);
@@ -349,16 +281,92 @@ const ArticleDetail = () => {
     }
 
     // 清除回复信息并关闭BottomBar
-    setReplyInfo(null);
+    setCommentTarget(null);
     setIsBottomBarActive(false);
   };
+
+  // 添加回复列表弹窗状态管理
+  const [showRepliesPopup, setShowRepliesPopup] = useState(false);
+  const [pepliesPopupComment, setRepliesPopupComment] = useState<CommentVO | null>
+    (null);
+  const [repliesHasMore, setRepliesHasMore] = useState(true)
+  const [replies, setReplies] = useState<CommentReplyVO[]>([])
+  // 添加回复列表的分页状态
+  const [repliesPage, setRepliesPage] = useState(1)
+  const [replyTarget, setReplyTarget] = useState<CommentReplyVO | null>(null)
+
+  // 处理查看所有回复
+  const loadReplies = useCallback(async () => {
+    // 简化条件检查，只保留必要的检查
+    if (!pepliesPopupComment || !repliesHasMore) return;
+
+    try {
+      const res = await fetchCommentReplies({ parentId: pepliesPopupComment.id, page: repliesPage });
+      // 如果返回的评论id虚拟回显已经在replies回显了，就不添加
+      setReplies(prev => {
+        // 创建一个现有回复ID的集合，用于快速查找
+        const existingIds = new Set(prev.map(reply => reply.id));
+        // 过滤出新的回复（不在现有回复列表中的）
+        const newReplies = res.filter(reply => !existingIds.has(reply.id));
+        // 只添加新的回复
+        return [...prev, ...newReplies];
+      })
+      setRepliesHasMore(res.length === 15)
+      setRepliesPage(prev => prev + 1)
+    } catch (error) {
+      // 添加错误处理
+      console.error('获取回复列表失败:', error);
+    }
+  }, [pepliesPopupComment, repliesHasMore, repliesPage]);
+
+  // 处理查看回复列表
+  const handleViewReplies = useCallback((comment: CommentVO) => {
+    setRepliesPopupComment(comment);
+    setShowRepliesPopup(true);
+    // 重置回复列表和分页状态
+    setReplies([]);
+    setRepliesPage(1);
+    setRepliesHasMore(true);
+  }, []);
+
+  // 关闭回复列表弹窗
+  const handleCloseRepliesPopup = useCallback(() => {
+    setShowRepliesPopup(false);
+    setRepliesPopupComment(null);
+  }, []);
+
+  // 处理回复发送成功
+  const handleReplySendSuccess = useCallback((newReply: CommentReplyVO) => {
+    // 将新回复添加到回复列表中
+    setReplies(prev => [...prev, newReply]);
+
+    // 打印发送成功添加评论
+    console.log('发送成功添加评论：', newReply);
+
+    // 更新原评论的回复数
+    if (pepliesPopupComment) {
+      setRepliesPopupComment(prev => prev ? {
+        ...prev,
+        replyCount: prev.replyCount + 1
+      } : null);
+    }
+
+    // 同时更新主评论列表中的回复数
+    setComments(prev => prev.map(comment =>
+      comment.id === pepliesPopupComment?.id
+        ? { ...comment, replyCount: comment.replyCount + 1 }
+        : comment
+    ));
+  }, [pepliesPopupComment]);
+
   return (
     <div className={styles.articleDetailPage}>
       {/* 站位 position: fixed; */}
-      <div style={{ height: rfs(155) }}></div>
+      <div
+        ref={headerRef}
+        style={{ height: rfs(155) }}></div>
       {/* 头部吸顶（用距离检测切换类名） */}
       <div
-        // ref={headerRef} 
         className={clsx(styles.header
           , isHeaderSticky && !isCommentTitleSticky && styles.StickyActive
         )}>
@@ -369,7 +377,7 @@ const ArticleDetail = () => {
         <div className={styles.channel}>
           {/* src\assets\默认用户头像.jpg */}
           {/* src\pages\ArticleDetail\index.tsx */}
-          <img className={styles.channelImg} src={defaultChannel} alt="channel" loading="lazy" />
+          <img className={styles.channelImg} src={article?.channel.image || defaultChannel} alt="channel" loading="lazy" />
           <span className={styles.channelName}>{article?.channel.channelname}</span>
           <svg className={styles.channelIcon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4873" ><path d="M647.765 512L291.383 155.618c-15.621-15.621-15.621-40.948 0-56.568 15.621-15.621 40.947-15.621 56.568 0l384.666 384.666c15.621 15.621 15.621 40.947 0 56.568L347.951 924.95c-15.621 15.621-40.947 15.621-56.568 0s-15.621-40.947 0-56.568L647.765 512z" p-id="4874"></path></svg>
         </div>
@@ -470,9 +478,9 @@ const ArticleDetail = () => {
                 articleAuthorId={article?.user.id}
                 onViewAllReplies={handleViewReplies}
                 articleId={article!.id}
-                onReplyComment={(comment: CommentVO) => {
+                onClickCommentCard={(comment: CommentVO) => {
                   // 弹出BottomBar，并传入评论信息
-                  setReplyInfo(comment);
+                  setCommentTarget(comment);
                   // 激活BottomBar输入框
                   setIsBottomBarActive(true);
                 }}
@@ -498,17 +506,20 @@ const ArticleDetail = () => {
         )}
       </div>
       {/* 底部输入栏 */}
+      {/* 移动到底部的DragDownPopup组件中，当不在弹窗中时显示主评论输入栏 */}
+      {/* {!showRepliesPopup && ( */}
       <BottomBar
         isInputActive={isBottomBarActive}
         articleId={article?.id}
-        replyInfo={replyInfo}
+        CommentTarget={CommentTarget}
         onSendSuccess={handleSendSuccess}
         onInputActiveChange={setIsBottomBarActive}
         onClose={() => {
-          setReplyInfo(null);
+          setCommentTarget(null);
           setIsBottomBarActive(false);
         }}
       />
+      {/* )} */}
 
       {/* 回复列表弹窗 */}
       {pepliesPopupComment && (
@@ -516,15 +527,18 @@ const ArticleDetail = () => {
           visible={showRepliesPopup}
           onClose={handleCloseRepliesPopup}
           title={`回复列表 (${pepliesPopupComment.replyCount}条)`}
-          articleId={article?.id}
-          parentId={pepliesPopupComment.id}
-          onReplySendSuccess={handleReplySendSuccess}
         >
           <div className={styles.repliesList}>
             {/* 原评论 */}
             <div className={styles.originalCommentWrapper}>
               <CommentCard
                 comment={pepliesPopupComment!}
+                onClickCommentCard={(comment: CommentVO) => {
+                  // 弹出BottomBar，并传入评论信息
+                  setCommentTarget(comment);
+                  // 激活BottomBar输入框
+                  setIsBottomBarActive(true);
+                }}
                 articleAuthorId={article?.user.id}
                 preview={false}
                 articleId={article!.id}
@@ -538,11 +552,17 @@ const ArticleDetail = () => {
                   key={reply.id}
                   comment={reply}
                   articleAuthorId={article?.user.id}
+                  onClickReplyCard={(comment: CommentReplyVO) => {
+                    // 弹出BottomBar，并传入评论信息
+                    setReplyTarget(comment);
+                    // 激活BottomBar输入框
+                    setIsBottomBarActive(true);
+                  }}
                   articleId={article!.id}
                 />
               ))}
-              <InfiniteScroll loadMore={loadReplies} hasMore={hasRepliesMore}>
-                {hasMore ? (
+              <InfiniteScroll loadMore={loadReplies} hasMore={repliesHasMore}>
+                {repliesHasMore ? (
                   <>
                     <span>Loading</span>
                     <DotLoading />
@@ -557,6 +577,20 @@ const ArticleDetail = () => {
               </InfiniteScroll>
             </div>
           </div>
+
+          <BottomBar
+            CommentTarget={pepliesPopupComment}
+            replyTarget={replyTarget}
+            articleId={article?.id}
+            onReplySendSuccess={handleReplySendSuccess}
+            isInputActive={isBottomBarActive}
+            onInputActiveChange={setIsBottomBarActive}
+            onClose={() => {
+              setCommentTarget(null);
+              setReplyTarget(null);
+              setIsBottomBarActive(false);
+            }}
+          />
         </DragDownPopup>
       )}
     </div >

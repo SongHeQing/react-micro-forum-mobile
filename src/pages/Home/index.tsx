@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { getArticleList } from "@/apis/articleApi";
-import type { ArticleCard } from "@/types";
-import Card from "@/components/Card";
+import type { ArticleCardList } from "@/types";
+import ArticleCard from "@/components/ArticleCard";
 import TabBar from '@/pages/Home/components/TabBar';
 import { InfiniteScroll, PullToRefresh } from "antd-mobile";
 
@@ -20,7 +20,7 @@ function rfs(px: number, min = 0) {
 }
 
 const Home = () => {
-  const [articleList, setArticleList] = useState<ArticleCard[]>([]);
+  const [articleList, setArticleList] = useState<ArticleCardList>([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -67,7 +67,7 @@ const Home = () => {
         {/* 动态渲染文章卡片 */}
         {articleList.length > 0 ? (
           articleList.map((article, index) => (
-            <Card key={article.id || index} article={article} />
+            <ArticleCard key={article.id || index} article={article} />
           ))
         ) : (
           <div></div>

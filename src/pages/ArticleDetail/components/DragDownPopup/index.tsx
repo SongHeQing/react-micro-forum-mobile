@@ -1,7 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import styles from './DragDownPopup.module.scss';
 import ReactDOM from 'react-dom';
-import ReplyBottomBar from './components/ReplyBottomBar';
 
 interface DragDownPopupProps {
   visible: boolean;
@@ -9,10 +8,6 @@ interface DragDownPopupProps {
   title: string;
   children: React.ReactNode;
   closeThreshold?: number;
-  maxDragDistance?: number;
-  articleId?: number;
-  parentId?: number;
-  onReplySendSuccess?: (comment) => void;
 }
 
 const DragDownPopup: React.FC<DragDownPopupProps> = ({
@@ -21,10 +16,6 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
   title,
   children,
   closeThreshold = 100,
-  articleId,
-  parentId,
-  onReplySendSuccess,
-  // maxDragDistance = 200
 }) => {
 
   // 获取.dragDownPanel的dom
@@ -38,12 +29,35 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
   const [portalNode, setPortalNode] = useState<HTMLDivElement | null>(null);
   const startY = useRef(0); //记录初始触摸位置
   const isDraggingPanel = useRef(false);
-  const [isInputActive, setIsInputActive] = useState(false);
+
+  // 提前声明handleVirtualClose以解决依赖问题
+  const handleVirtualClose = useCallback(() => {
+    if (!dragDownPanelElement) {
+      return;
+    }
+    dragDownPanelElement.style.transition = 'transform 0.3s ease-out';
+    dragDownPanelElement.style.transform = `translateY(100vh)`;
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  }, [dragDownPanelElement, onClose]);
+
+  // 实现进入时的动画效果
+  useEffect(() => {
+    if (visible && dragDownPanelElement) {
+      // 添加过渡效果
+      dragDownPanelElement.style.transition = 'transform 0.3s ease-out';
+      // 动画到正常位置
+      dragDownPanelElement.style.transform = `translateY(0)`;
+    }
+  }, [visible, dragDownPanelElement]);
 
   useEffect(() => {
     // 判断是否允许拖动，并记录初始触摸位置
     const handleTouchStart = (e: TouchEvent) => {
       const isTouchedContent = (e.target as Element).closest(`.${styles.content}`);// 判断触摸的是.content区域还是其他区域
+      // 如果是.bottomBar区域则静止虚拟滚动
+      const isBottomBar = (e.target as Element).closest('[data-drag-exclude="true"]');
       startY.current = e.touches[0].clientY; // 设置TouchStart触点位置
 
       // 修复拖拽逻辑：更精确地判断何时允许拖拽面板
@@ -51,7 +65,10 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
         // 在内容区域：只有当内容滚动到顶部时才可能拖拽面板（但还需要判断拖拽方向）
         const isContentAtTop = scrollableContentRef.current && scrollableContentRef.current.scrollTop === 0;
         isDraggingPanel.current = !!isContentAtTop;
-      } else {
+      } else if (isBottomBar) {
+        return;
+      }
+      else {
         // 在非内容区域（如header、dragHandle等）：总是可以拖拽面板
         isDraggingPanel.current = true;
       }
@@ -135,6 +152,7 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
     };
   }, [visible, closeThreshold, dragDownPanelElement, onClose])
 
+  // 创建 portal
   useEffect(() => {
     if (visible && !portalNode) {
       const element = document.createElement('div');
@@ -147,12 +165,6 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
     }
   }, [visible, portalNode]);
 
-  const handleMaskClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    console.log('点击了蒙层');
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  }, [onClose]);
 
   // 记录状态，是否是.content的子元素
   const isContentTouchedForBodyListener = useRef<HTMLElement | null>(null); // 记录是否是.content的子元素
@@ -187,9 +199,31 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
     return null;
   }
 
+  // 分离内容和底部栏
+  let content: React.ReactNode = null;
+  let bottomBar: React.ReactNode = null;
+
+  // 检查 children 是否包含 BottomBar 组件
+  if (Array.isArray(children)) {
+    content = children.filter(child => {
+      // 简单判断是否为 BottomBar 组件
+      return !child || !child.type || child.type.name !== 'BottomBar';
+    });
+    bottomBar = children.find(child => {
+      return child && child.type && child.type.name === 'BottomBar';
+    });
+  } else {
+    // 如果只有一个子元素，假设它是内容
+    content = children;
+  }
+
   return ReactDOM.createPortal(
     <div className={styles.mask}
-      onClick={handleMaskClick}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleVirtualClose()
+        }
+      }}
     >
       <div
         className={styles.dragDownPanel}
@@ -198,31 +232,16 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
         <div className={styles.dragHandle} />
         <div className={styles.header}>
           <h3>{title}</h3>
-          <div onClick={() => {
-            if (!dragDownPanelElement) {
-              return;
-            }
-            dragDownPanelElement.style.transition = 'transform 0.3s ease-out';
-            dragDownPanelElement.style.transform = `translateY(100vh)`;
-            setTimeout(() => {
-              onClose();
-            }, 300);
-          }
-          } className={styles.closeButton}>
+          <div className={styles.closeButton}
+            onClick={handleVirtualClose}
+          >
             <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7158" ><path d="M560.568 512l316.784-316.784c15.621-15.621 15.621-40.947 0-56.568s-40.947-15.621-56.568 0L504 455.432 187.216 138.647c-15.621-15.621-40.947-15.621-56.568 0s-15.621 40.947 0 56.568L447.432 512 130.647 828.783c-15.621 15.621-15.621 40.948 0 56.569 15.621 15.62 40.947 15.62 56.568 0L504 568.568l316.784 316.784c15.621 15.62 40.947 15.62 56.568 0 15.621-15.621 15.621-40.948 0-56.569L560.568 512z" p-id="7159"></path></svg>
           </div>
         </div>
         <div className={styles.content} ref={scrollableContentRef}>
-          {children}
+          {content}
         </div>
-        <ReplyBottomBar
-          articleId={articleId}
-          parentId={parentId}
-          onSendSuccess={onReplySendSuccess}
-          isInputActive={isInputActive}
-          onInputActiveChange={setIsInputActive}
-          onClose={() => setIsInputActive(false)}
-        />
+        {bottomBar}
       </div>
     </div>,
     portalNode

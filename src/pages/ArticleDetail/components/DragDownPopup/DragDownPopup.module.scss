@@ -39,7 +39,7 @@
   flex-direction: column;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-out;
-  transform: translateY(0);
+  transform: translateY(100vh);
 
   &.closed {
     transform: translateY(100vh);
@@ -91,6 +91,7 @@
 .content {
   flex: 1;
   overflow-y: scroll;
+  padding-bottom: rfs(168);
   -webkit-overflow-scrolling: touch;
   /* 增强 iOS 上的滚动体验 */
 

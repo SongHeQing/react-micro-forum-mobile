@@ -20,6 +20,7 @@ const userStore = createSlice({
       state.token = ''
       state.userInfo = {}
       removeToken()
+      localStorage.removeItem('userInfo')
     },
   },
 });

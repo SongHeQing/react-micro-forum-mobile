@@ -26,9 +26,7 @@ const Login = () => {
       }
       dispatch(setUserInfo(userInfo));
       navigate('/');
-    }).catch(err => {
-      Toast.show({ icon: 'fail', content: err.message, });
-    });
+    })
   }
 
 
