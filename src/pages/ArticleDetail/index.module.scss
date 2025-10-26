@@ -278,6 +278,25 @@
     }
   }
 
+  // 允许双击放大和选择文本
+  .title {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  content {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
   .StickyActive {
     border-bottom: rfs(1) solid #ededed;
   }

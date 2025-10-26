@@ -15,7 +15,7 @@
 
 
 .LoginPage {
-  min-height: 100vh;
+  min-height: 100dvh;
   // background: linear-gradient(180deg, #4e70f1 0%, #4e70f1 math.div(378, 2800 - 104) * 100%, #f5f5f5 math.div(623, 2800 - 104) * 100%, #f5f5f5 100%);
   background: linear-gradient(180deg,
       #4e70f1 0%,
@@ -27,15 +27,24 @@
       /* 从蓝灰过渡到灰色中间色 */
       #f5f5f5 35%,
       #f5f5f5 100%);
-  padding-top: rfs(349);
+
+
+  &>div {
+    min-height: 100dvh;
+    padding-top: rfs(349);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
 
   .Card {
-    margin-left: auto;
-    margin-right: auto;
     background: #fff;
-    height: rfs(1820);
+    // height: rfs(1820);
+    flex: 1;
     width: rfs(1200);
-    padding: rfs(125) rfs(70) rfs(512);
+    padding: rfs(125) rfs(70);
+    /* rfs(512)*/
     border-radius: rfs(67);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
     display: flex;
@@ -74,17 +83,14 @@
         }
       }
 
-      .EyeIcon {
+      .icon {
         position: absolute;
         left: rfs(66);
         top: 50%;
         transform: translateY(-50%);
-
-        .icon {
-          width: rfs(52);
-          height: rfs(52);
-          fill: #b9b8be;
-        }
+        width: rfs(52);
+        height: rfs(52);
+        fill: #b9b8be;
       }
     }
 
@@ -129,11 +135,11 @@
   }
 
   .BottomLinks {
-    position: fixed;
-    bottom: rfs(82);
     left: 0;
     right: 0;
-    margin-bottom: rfs(82);
+    margin-top: auto;
+    padding-top: rfs(122);
+    padding-bottom: rfs(82);
     display: flex;
     justify-content: center;
     gap: rfs(50);

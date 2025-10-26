@@ -18,7 +18,8 @@
   padding: rfs(22);
   // 溢出滚动
   overflow-x: auto;
-  // 隐藏所有浏览器的滚动条。
+
+  // 默认隐藏所有浏览器的滚动条
   // 作用：隐藏Firefox 浏览器的滚动条。
   // 只对 Firefox 有效。
   scrollbar-width: none;
@@ -30,6 +31,33 @@
   // 只对 Webkit/Blink 浏览器有效。
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  // 为精确点击设备显示滚动条
+  @media (hover: hover) and (pointer: fine) {
+    // Firefox
+    scrollbar-width: auto;
+
+    // Webkit/Blink browsers (Chrome, Safari, etc.)
+    // 在精确点击设备上显示滚动条
+    &::-webkit-scrollbar {
+      display: block;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    // IE/Edge - 包装在 & {} 中以避免混合声明警告
+    & {
+      -ms-overflow-style: auto;
+    }
   }
 }
 

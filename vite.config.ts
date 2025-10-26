@@ -1,10 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import compression from 'vite-plugin-compression'
 import path from 'path'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      compression({
+        algorithm: 'gzip',
+        ext: '.gz',
+      })
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -15,7 +22,7 @@ export default defineConfig(({ mode }) => {
     },
     esbuild: {
       // 根据环境决定是否删除 console 和 debugger
-      drop: mode === 'production' || mode === 'docker-production' || mode === 'linux-production'
+      drop: mode === 'production' || mode === 'docker-production' || mode === 'linux-production' || mode === 'docker-test-local'
         ? ['console', 'debugger']
         : [],
     },

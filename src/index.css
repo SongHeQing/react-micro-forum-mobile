@@ -15,23 +15,44 @@
 /* 隐藏浏览器默认滚动条 */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  display: none;
 }
 
-html {
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE/Edge */
-}
-
+html,
 body {
-  scrollbar-width: none;
   /* Firefox */
-  -ms-overflow-style: none;
+  scrollbar-width: none;
   /* IE/Edge */
+  -ms-overflow-style: none;
+}
+
+/* 为精确点击设备显示滚动条 */
+@media (hover: hover) and (pointer: fine) {
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: block;
+    width: 8px;
+  }
+
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  html::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+  }
+
+  html,
+  body {
+    /* Firefox */
+    scrollbar-width: auto;
+    /* IE/Edge */
+    -ms-overflow-style: auto;
+  }
 }
 
 #root {
@@ -40,7 +61,8 @@ body {
 
 /* 设置网页统一的字体大小、行高、字体系列相关属性 */
 body {
-  font: 16px/1.5 "Microsoft Yahei",
+  font: 16px/1.5 "PingFang SC",
+    "Microsoft Yahei",
     "Hiragino Sans GB", "Heiti SC", "WenQuanYi Micro Hei", sans-serif;
   color: #333;
   min-height: 100vh;
@@ -93,7 +115,6 @@ button {
 }
 
 html {
-  box-sizing: border-box;
   min-height: 100vh;
 }
 
@@ -105,10 +126,4 @@ h4,
 h5,
 h6 {
   font-weight: 400;
-}
-
-/* 在您的 CSS/SCSS 文件中 */
-.adm-pull-to-refresh {
-  /* touch-action: none; */
-  /* 'none' 确保拖动手势可以被库完全接管 */
 }
