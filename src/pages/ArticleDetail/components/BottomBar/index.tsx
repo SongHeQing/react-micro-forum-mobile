@@ -8,7 +8,6 @@ import { CommentReplyVO, CommentVO } from '@/types';
 import { useSelector } from 'react-redux';
 import store from '@/store';
 
-
 interface Props {
   articleId?: number;
   onSendSuccess?: (comment: CommentVO) => void;
@@ -137,6 +136,8 @@ const BottomBar: React.FC<Props> = ({
 
   return (
     <>
+      {/* 占位 */}
+      <div className={styles.placeholder}></div>
       {/* 移除条件渲染，转为控制显隐 */}
       {/* 问题的核心：事件的“时间差”
           遇到的问题，无论你把它称作“点击穿透”还是“触摸穿透”，其根源都是一个时间差：

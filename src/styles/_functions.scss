@@ -1,0 +1,15 @@
+// src/styles/_functions.scss
+@use "sass:math";
+
+// 公共的vw计算函数
+@function vw($px) {
+  @return math.div($px, 1260) * 100vw;
+}
+
+@function vh($px) {
+  @return math.div($px, 1260) * 60vh;
+}
+
+@function rfs($px, $min: 0px, $max: $px) {
+  @return clamp($min, vw($px), vh($max));
+}

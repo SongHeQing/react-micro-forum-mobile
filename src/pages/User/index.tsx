@@ -11,19 +11,8 @@ import { UserHome } from "@/types/User";
 import { ArticleUserCardList } from "@/types";
 import ArticleCard from "@/components/ArticleCard";
 import { InfiniteScroll } from "antd-mobile";
+import { rfs } from '@/utils/rfs';
 
-const DESIGN_WIDTH = 1260;
-const DESIGN_HEIGHT = 1260;
-
-function vw(px: number) {
-  return (px / DESIGN_WIDTH) * window.innerWidth;
-}
-function vh(px: number) {
-  return (px / DESIGN_HEIGHT) * window.innerHeight * 0.65;
-}
-function rfs(px: number, min = 0) {
-  return Math.max(min, Math.min(vw(px), vh(px)));
-}
 const User = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'articles' | 'channels'>('articles');
@@ -83,7 +72,7 @@ const User = () => {
   /**
    * @description 获取文章列表
    */
-  const getArticleUserListFn = async (pageNumber: number) => {
+  const getArticleUserListFn = async () => {
     const res = await getUserArticles(Number(id), pageNumber)
     if (res.length > 0) {
       setArticleList([...articleList, ...res]);
@@ -97,7 +86,7 @@ const User = () => {
  * @description 上拉加载
  */
   const loadMore = async () => {
-    await getArticleUserListFn(pageNumber);
+    await getArticleUserListFn();
   };
 
   return (
@@ -109,50 +98,52 @@ const User = () => {
       {/* 背景 */}
       <div className={styles.background}></div>
       {/* 用户信息 */}
-      <div className={styles.userInfo}>
-        <div className={styles.avatar}>
-          <img src={defaultAvatar} alt="" />
-        </div>
-        {/* 交互、如果是自己的账户则显示编辑资料、如果是别人的账户则显示关注和私信 */}
-        <div className={styles.actions}>
-          {isCurrentUser ? (
-            <div className={styles.editProfile}>编辑资料</div>
-          ) : (
-            <div className={styles.userActions}>
-              <div className={styles.follow}>
-                <svg className={styles.icon} viewBox="0 0 28 28" fill="none" >
-                  <path d="M14 5V23" strokeWidth="4" strokeLinecap="round" />
-                  <path d="M5 14H23" strokeWidth="4" strokeLinecap="round" />
-                </svg>
-                <span>关注</span>
+      <div>
+        <div className={styles.userInfo}>
+          <div className={styles.avatar}>
+            <img src={defaultAvatar} alt="" />
+          </div>
+          {/* 交互、如果是自己的账户则显示编辑资料、如果是别人的账户则显示关注和私信 */}
+          <div className={styles.actions}>
+            {isCurrentUser ? (
+              <div className={styles.editProfile}>编辑资料</div>
+            ) : (
+              <div className={styles.userActions}>
+                <div className={styles.follow}>
+                  <svg className={styles.icon} viewBox="0 0 28 28" fill="none" >
+                    <path d="M14 5V23" strokeWidth="4" strokeLinecap="round" />
+                    <path d="M5 14H23" strokeWidth="4" strokeLinecap="round" />
+                  </svg>
+                  <span>关注</span>
+                </div>
+                <div className={styles.message}>
+                  <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1413" width="200" height="200">
+                    <path d="M778.0352 888.6272h-507.904c-94.6176 0-171.6224-75.9808-171.6224-169.5744V371.712c0-46.8992 17.6128-90.9312 49.7664-123.904 32.3584-33.1776 75.5712-51.6096 121.856-51.6096h507.904c46.08 0 89.4976 18.2272 121.856 51.6096 32.1536 32.9728 49.7664 77.0048 49.7664 123.904v347.3408c0 93.3888-77.0048 169.5744-171.6224 169.5744z m-507.904-635.0848c-62.8736 0-114.2784 53.0432-114.2784 118.1696v347.3408c0 61.8496 51.2 112.2304 114.2784 112.2304h507.904c62.8736 0 114.2784-50.3808 114.2784-112.2304V371.712c0-65.1264-51.2-118.1696-114.2784-118.1696h-507.904z" p-id="1414"></path>
+                    <path d="M754.2784 409.3952c-5.9392-11.8784-14.336-10.6496-26.2144-10.6496-5.9392 0-16.1792 5.3248-22.1184 7.168l-188.416 115.0976-170.5984-115.0976c-5.9392-3.8912-17.408-8.3968-23.3472-8.3968-13.9264 0-23.552-0.2048-29.4912 11.8784-11.8784 15.9744-3.8912 37.6832 13.9264 47.7184l186.5728 121.0368c5.9392 3.8912 11.8784 3.8912 17.8176 3.8912h11.8784c5.9392 0 11.8784-2.048 17.8176-3.8912l198.4512-121.0368c17.6128-10.0352 23.552-29.9008 13.7216-47.7184" p-id="1415"></path>
+                  </svg>
+                  <span>私信</span>
+                </div>
               </div>
-              <div className={styles.message}>
-                <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1413" width="200" height="200">
-                  <path d="M778.0352 888.6272h-507.904c-94.6176 0-171.6224-75.9808-171.6224-169.5744V371.712c0-46.8992 17.6128-90.9312 49.7664-123.904 32.3584-33.1776 75.5712-51.6096 121.856-51.6096h507.904c46.08 0 89.4976 18.2272 121.856 51.6096 32.1536 32.9728 49.7664 77.0048 49.7664 123.904v347.3408c0 93.3888-77.0048 169.5744-171.6224 169.5744z m-507.904-635.0848c-62.8736 0-114.2784 53.0432-114.2784 118.1696v347.3408c0 61.8496 51.2 112.2304 114.2784 112.2304h507.904c62.8736 0 114.2784-50.3808 114.2784-112.2304V371.712c0-65.1264-51.2-118.1696-114.2784-118.1696h-507.904z" p-id="1414"></path>
-                  <path d="M754.2784 409.3952c-5.9392-11.8784-14.336-10.6496-26.2144-10.6496-5.9392 0-16.1792 5.3248-22.1184 7.168l-188.416 115.0976-170.5984-115.0976c-5.9392-3.8912-17.408-8.3968-23.3472-8.3968-13.9264 0-23.552-0.2048-29.4912 11.8784-11.8784 15.9744-3.8912 37.6832 13.9264 47.7184l186.5728 121.0368c5.9392 3.8912 11.8784 3.8912 17.8176 3.8912h11.8784c5.9392 0 11.8784-2.048 17.8176-3.8912l198.4512-121.0368c17.6128-10.0352 23.552-29.9008 13.7216-47.7184" p-id="1415"></path>
-                </svg>
-                <span>私信</span>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className={styles.nickname}>{userHome?.nickname}</div>
-        {/* 用户id和创建时间 */}
-        <div className={styles.userIdAndCreateTime}>
-          <div className={styles.userId}>ID {id}</div>
-          <svg className={styles.icon} viewBox="0 0 28 28" fill="none">
-            <path d="M14 4V24" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          {/* 账号创建的时长 */}
-          <div className={styles.createTime}>{"区龄 "}{userHome && calculateAccountAge(userHome.createTime)}</div>
-        </div>
-        {/* 个人简介 */}
-        <div className={styles.introduction}>个人简介</div>
-        {/* 获赞、关注量、粉丝 */}
-        <div className={styles.userStats}>
-          <div><span>{userHome?.likeCount}</span>获赞</div>
-          <div><span>{userHome?.followCount}</span>关注</div>
-          <div><span>{userHome?.fansCount}</span>粉丝</div>
+            )}
+          </div>
+          <div className={styles.nickname}>{userHome?.nickname}</div>
+          {/* 用户id和创建时间 */}
+          <div className={styles.userIdAndCreateTime}>
+            <div className={styles.userId}>ID {id}</div>
+            <svg className={styles.icon} viewBox="0 0 28 28" fill="none">
+              <path d="M14 4V24" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            {/* 账号创建的时长 */}
+            <div className={styles.createTime}>{"区龄 "}{userHome && calculateAccountAge(userHome.createTime)}</div>
+          </div>
+          {/* 个人简介 */}
+          <div className={styles.introduction}>个人简介</div>
+          {/* 获赞、关注量、粉丝 */}
+          <div className={styles.userStats}>
+            <div><span>{userHome?.likeCount}</span>获赞</div>
+            <div><span>{userHome?.followCount}</span>关注</div>
+            <div><span>{userHome?.fansCount}</span>粉丝</div>
+          </div>
         </div>
       </div>
       {/* tabs 文章、关注的频道 */}

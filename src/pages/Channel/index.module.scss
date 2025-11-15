@@ -1,0 +1,61 @@
+.channel {
+  height: 100vh;
+  background-color: #3d5366;
+}
+
+.channelTop {
+  position: fixed;
+  top: 0;
+  height: func.rfs(154);
+  width: 100vw;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 func.rfs(46) 0 func.rfs(64);
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: func.rfs(46);
+
+    .icon {
+      height: func.rfs(63);
+      width: func.rfs(63);
+      fill: #ffffff; // 将SVG图标改为白色
+    }
+
+    .channelSimpleInfo {
+      display: flex;
+      align-items: center;
+      gap: func.rfs(13);
+
+      .channelImage {
+        width: func.rfs(63);
+        height: func.rfs(63);
+        aspect-ratio: 1/1;
+        border-radius: func.rfs(22);
+        background: #D9D9D9;
+        object-fit: cover;
+      }
+
+      .channelName {
+        color: #FFF;
+        font-size: func.rfs(44);
+        font-weight: 400;
+        line-height: func.rfs(44);
+        letter-spacing: func.rfs(0.25);
+      }
+    }
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: func.rfs(60);
+  }
+}
+
+.channelInfo {
+  height: func.rfs(707);
+}

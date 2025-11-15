@@ -1,0 +1,130 @@
+@use "sass:math";
+
+.dragDownPanel {
+
+  position: fixed;
+  top: func.rfs(156);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  width: func.rfs(1260, 0px, 1260*1.68);
+  height: calc(100vh - func.rfs(156));
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: func.rfs(53) func.rfs(53) 0 0;
+  background: #F2F2F3;
+
+  .header {
+    display: flex;
+    height: func.rfs(71);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: func.rfs(43) func.rfs(43) 0 0;
+
+    .bar {
+      width: func.rfs(133);
+      height: func.rfs(13);
+      flex-shrink: 0;
+      border-radius: func.rfs(10);
+      background: #D9D9DA;
+    }
+  }
+
+  .tabs {
+    display: flex;
+    height: func.rfs(118);
+    padding: func.rfs(39);
+    align-items: center;
+    gap: func.rfs(118);
+    flex-shrink: 0;
+    align-self: stretch;
+
+    .tab {
+      color: #000;
+      font-family: "PingFang SC";
+      font-size: func.rfs(46);
+      font-style: normal;
+      font-weight: 400;
+      line-height: 100%;
+      letter-spacing: func.rfs(0.25);
+
+      &.active {
+        color: #000;
+        font-family: "PingFang SC";
+        font-size: func.rfs(46);
+        font-style: normal;
+        font-weight: 600;
+        line-height: 100%;
+        letter-spacing: func.rfs(0.25);
+      }
+    }
+  }
+
+  .sort {
+    display: flex;
+    padding: func.rfs(13) func.rfs(39);
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+
+    .sortInfo {
+      color: #8F8E96;
+      font-size: func.rfs(36);
+      font-style: normal;
+      font-weight: 400;
+      line-height: 100%;
+      letter-spacing: func.rfs(0.25);
+    }
+
+    .sortBtn {
+      display: flex;
+      width: func.rfs(300);
+      height: func.rfs(88);
+      justify-content: center;
+      align-items: center;
+
+      .sortBtnItem {
+        display: flex;
+        width: func.rfs(150);
+        height: func.rfs(88);
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        border-radius: func.rfs(44);
+
+        color: #A3A2A8;
+        font-size: func.rfs(36);
+        font-style: normal;
+        font-weight: 400;
+        line-height: 100%;
+        letter-spacing: func.rfs(0.25);
+
+        &.active {
+          border: func.rfs(4) solid #EDEDED;
+          background: #FFF;
+
+          color: #141414;
+        }
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    flex: 1;
+    padding: func.rfs(12) func.rfs(25);
+    flex-direction: column;
+    gap: func.rfs(24);
+    flex-shrink: 0;
+    align-self: stretch;
+
+    // 使其成为可滚动元素
+    overflow-y: auto;
+    // 滚动到顶时，不把滚动动作溢出到外面
+    overscroll-behavior: contain;
+  }
+}

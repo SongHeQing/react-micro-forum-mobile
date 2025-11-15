@@ -6,6 +6,7 @@ import ChannelList from '@/pages/PublishArticle/components/ChannelList/ChannelLi
 import { addArticle } from '@/apis/articleApi';
 import styles from './index.module.scss';
 import { autoResizeTextarea } from '@/utils';
+import { calculateCharCount } from '@/utils/text';
 // import type { ArticleAdd } from '@/types';
 
 
@@ -241,16 +242,6 @@ function PublishArticle() {
   }, []);
 
   /**
-   * @description 计算字符数
-   * @param str 字符串
-   * @returns number: 字符数
-   */
-  const calculateCharCount = (str: string): number => {
-    return Array.from(str).length;
-  }
-
-
-  /**
    * @description 处理文章提交事件
    */
   const handleSubmit = async () => {
@@ -376,6 +367,7 @@ function PublishArticle() {
                   e.stopPropagation(); // 阻止事件冒泡到图片点击，避免同时触发预览
                   handleRemoveImage(index);
                 }}
+                aria-label="删除图片"
               >
                 <svg className={styles.icon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5891" ><path d="M387.082616 507.741938L25.019317 145.678639A85.331911 85.331911 0 0 1 145.678639 25.019316L507.741938 387.082615 869.719905 25.019316a85.331911 85.331911 0 0 1 120.744654 120.659323L628.40126 507.741938l362.063299 361.977967a85.331911 85.331911 0 0 1-120.744654 120.744654L507.741938 628.40126l-362.063299 362.063299a85.331911 85.331911 0 0 1-120.659322-120.744654L387.082616 507.741938z" p-id="5892"></path></svg>
               </button>
@@ -400,6 +392,7 @@ function PublishArticle() {
                 // 或者接受图片和PDF accept="image/*,.pdf"
                 accept="image/*"
                 multiple
+                aria-label="选择图片文件" // 添加无障碍标签
               />
             </div>
           )}

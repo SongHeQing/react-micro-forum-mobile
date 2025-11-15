@@ -1,10 +1,20 @@
+export type ChannelSimple = {
+  id: number;
+  channelname: string;
+  imageUrl?: string | null;
+
+};
+
 export type Channel = {
   id: number;
   channelname: string;
-  image?: string | null;
-  user_conut: number;
-  create_time: string;
-  update_time: string;
-};
+  imageUrl?: string | null;
+  backgroundUrl?: string | null;
+  dominantColor?: string | null;
+  description?: string | null;
+  detail?: string | null;
+  userCount: number;
+  articleCount: number;
+}
 
-export type ChannelList = Channel[]; 
+export type ChannelSimpleList = ChannelSimple[];

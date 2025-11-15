@@ -1,18 +1,3 @@
-@use "sass:math";
-
-// 公共的vw计算函数
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
-}
-
 .settingsPage {
   display: flex;
   flex-direction: column;
@@ -21,37 +6,37 @@
   background-color: #f7f7f8;
 
   .placeholder {
-    height: rfs(151);
+    height: func.rfs(151);
   }
 
   .header {
     position: fixed;
-    height: rfs(151);
+    height: func.rfs(151);
     width: 100%;
     background-color: #fff;
 
     .icon {
       position: absolute;
-      left: rfs(65);
-      margin-top: rfs(42);
-      height: rfs(63);
-      width: rfs(63);
+      left: func.rfs(65);
+      margin-top: func.rfs(42);
+      height: func.rfs(63);
+      width: func.rfs(63);
     }
 
     .title {
       position: absolute;
       left: 50%;
-      top: rfs(42);
+      top: func.rfs(42);
       transform: translateX(-50%);
-      font-size: rfs(49);
+      font-size: func.rfs(49);
       color: #141414;
       line-height: 1;
     }
   }
 
   .settingsSection {
-    width: rfs(1260);
-    margin: rfs(53) auto;
+    width: func.rfs(1260);
+    margin: func.rfs(53) auto;
 
 
     .logout {
@@ -59,9 +44,9 @@
       align-items: center;
       justify-content: center;
       background-color: #fff;
-      height: rfs(169);
+      height: func.rfs(169);
       color: #fd3b2d;
-      font-size: rfs(52);
+      font-size: func.rfs(52);
       line-height: 1;
       cursor: pointer;
     }

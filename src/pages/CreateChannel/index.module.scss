@@ -1,0 +1,414 @@
+.createChannel {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+
+
+  .backgroundDecorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+
+    .gradient1 {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #9EE6F8 0%, #F3F3F5 19.86%);
+    }
+
+  }
+
+  .topSection {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: 100%;
+    height: func.rfs(154);
+    padding: 0 func.rfs(64);
+    align-items: flex-start;
+    gap: func.rfs(10);
+    flex-shrink: 0;
+
+    svg {
+      cursor: pointer;
+      height: 100%;
+      width: func.rfs(63);
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: func.rfs(786);
+
+    .title {
+      position: relative;
+      margin-top: func.rfs(200);
+      margin-bottom: func.rfs(80);
+      width: func.rfs(697);
+      height: func.rfs(71);
+
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .gradient2 {
+        position: absolute;
+        width: func.rfs(1260*2);
+        height: func.rfs(2800);
+        left: calc(#{func.rfs(1538)} * -1);
+        top: calc(#{func.rfs(225)} * -1);
+        background: radial-gradient(38.21% 12.93% at 61.79% 0%, #9CCCF9 0%, rgba(156, 204, 249, 0.00) 100%);
+        pointer-events: none; // 防止遮挡后面元素的点击事件
+      }
+
+      .decorationGroup {
+        position: absolute;
+        top: calc(#{func.rfs(333)} * -1);
+        left: calc(#{func.rfs(287)} * -1);
+        display: flex;
+        flex-wrap: wrap;
+        width: func.rfs(876);
+        height: func.rfs(449);
+        flex-shrink: 0;
+
+        div {
+          width: func.rfs(292);
+          height: func.rfs(224);
+          flex-shrink: 0;
+          border-radius: func.rfs(292);
+          filter: blur(2.049999952316284px);
+        }
+
+        .decorationElement1 {
+          background: radial-gradient(122.32% 122.32% at 50% 100%, rgba(153, 195, 249, 0.40) 0%, rgba(153, 195, 249, 0.00) 100%);
+        }
+
+        .decorationElement2 {
+          background: radial-gradient(116.6% 100.12% at 13.7% 83.93%, rgba(153, 195, 249, 0.40) 0%, rgba(153, 195, 249, 0.00) 100%);
+        }
+
+        .decorationElement3 {
+          background: radial-gradient(123.29% 50% at 50% 0%, rgba(153, 195, 249, 0.40) 0%, rgba(153, 195, 249, 0.00) 100%);
+        }
+
+        .decorationElement4 {
+          background: radial-gradient(123.29% 50% at 50% 0%, rgba(153, 195, 249, 0.40) 0%, rgba(153, 195, 249, 0.00) 100%);
+        }
+
+        .decorationElement5 {
+          background: radial-gradient(67.71% 37.14% at 33.22% -2.68%, rgba(153, 195, 249, 0.40) 0%, rgba(153, 195, 249, 0.00) 100%);
+        }
+      }
+    }
+
+    .stepIndicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: func.rfs(60);
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: func.rfs(12);
+      }
+
+      .stepCircle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: func.rfs(99);
+        height: func.rfs(99);
+        border-radius: 50%;
+        background-color: transparent;
+
+        font-size: func.rfs(36);
+        font-weight: 600;
+        color: #1e88fd;
+
+        .stepDot {
+          width: func.rfs(66);
+          height: func.rfs(66);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #B7D9F8;
+        }
+
+        &.active {
+          background: #B2D7FB;
+
+          .stepDot {
+            background: #1F89FE
+          }
+
+          color: #ffffff;
+        }
+      }
+
+      .stepLabel {
+        font-size: func.rfs(38);
+        font-weight: 600;
+        color: #121514;
+      }
+
+      .stepLine {
+        width: func.rfs(122);
+        height: func.rfs(2);
+        border: func.rfs(1) solid #bbd8f1;
+      }
+    }
+
+    .formContainer {
+      display: flex;
+      flex-direction: column;
+      gap: func.rfs(31);
+      padding: func.rfs(0) func.rfs(24);
+      width: 100%;
+      margin-top: func.rfs(66);
+
+
+      .formSection {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: func.rfs(36);
+        padding: func.rfs(9) func.rfs(40);
+      }
+
+      .sectionTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        align-self: stretch;
+        height: func.rfs(153);
+        font-size: func.rfs(49);
+        font-weight: 600;
+        color: #141414;
+        line-height: 0.7346938775510204em;
+        letter-spacing: 0.5102040816326531%;
+      }
+
+      .inputGroup {
+        display: flex;
+        height: func.rfs(143);
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: func.rfs(1) solid #ededf0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+
+        .label {
+          font-size: func.rfs(43);
+          color: #141414;
+        }
+
+        .input {
+          font-size: func.rfs(38);
+          color: #141414;
+          border: none;
+          outline: none;
+          background: transparent;
+
+          &::placeholder {
+            color: #a3a2a8;
+          }
+        }
+
+        .placeholder {
+          color: #A3A2A8;
+          font-size: func.rfs(38);
+          line-height: func.rfs(38);
+        }
+
+        .avatarUpload {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          position: relative;
+        }
+
+        .uploadPlaceholder {
+          width: func.rfs(97);
+          height: func.rfs(97);
+          border-radius: func.rfs(35);
+          background-color: #d9d9d9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+
+          span {
+            font-size: func.rfs(48);
+            color: #a2a1a7;
+            font-weight: 400;
+          }
+        }
+
+        .fileInput {
+          position: absolute;
+          opacity: 0;
+          width: func.rfs(97);
+          height: func.rfs(97);
+          cursor: pointer;
+        }
+
+        .avatarPreview {
+          width: func.rfs(97);
+          height: func.rfs(97);
+          border-radius: func.rfs(35);
+          object-fit: cover;
+        }
+
+        .backgroundAction {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: func.rfs(26);
+          padding: 0 func.rfs(12) 0 0;
+          cursor: pointer;
+        }
+
+        .backgroundPreview {
+          width: func.rfs(122);
+          height: func.rfs(92);
+          border-radius: func.rfs(15);
+          object-fit: cover;
+        }
+      }
+
+      // 新增的符合Figma设计的表单样式
+      .formItem {
+        display: flex;
+        flex-direction: column;
+        padding: func.rfs(50) 0 func.rfs(29) 0;
+        gap: func.rfs(30);
+        border-bottom: func.rfs(1) solid #EDEDF0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+
+        .formItemLabel {
+          font-size: func.rfs(43);
+          font-weight: 400;
+          color: #141414;
+        }
+
+        .formItemContent {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          width: 100%;
+          align-items: center;
+        }
+
+
+        .formItemHint {
+          align-self: flex-end;
+          font-size: func.rfs(30);
+          line-height: func.rfs(70);
+          color: #A3A2A8;
+        }
+
+        .formTextarea {
+          width: 80%;
+          border: none;
+          outline: none;
+          font-size: func.rfs(40);
+          line-height: func.rfs(80);
+          font-weight: 400;
+          color: #141414;
+          resize: none;
+          background: transparent;
+
+          // 隐藏滚动条
+          ::-webkit-scrollbar {
+            display: none;
+          }
+
+          &::placeholder {
+            color: #A3A2A8;
+          }
+        }
+      }
+
+      .right {
+        display: flex;
+        align-items: center;
+        gap: func.rfs(26);
+        padding: 0 func.rfs(12) 0 0;
+
+        svg {
+          width: func.rfs(19);
+          height: func.rfs(39);
+        }
+      }
+
+      .setBackgroundText {
+        font-size: func.rfs(42);
+        line-height: 1;
+        color: #A2A1A7;
+      }
+
+    }
+  }
+
+  .bottomSection {
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: func.rfs(48) func.rfs(40) func.rfs(90);
+    border-radius: func.rfs(45) func.rfs(45) 0 0;
+    background: #FFF;
+  }
+
+  .nextButton {
+    width: 100%;
+    height: func.rfs(122);
+    background-color: #d2c9ff;
+    border: none;
+    border-radius: func.rfs(61);
+    font-size: func.rfs(38);
+    font-weight: 400;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:active {
+      background-color: #b2a9dd;
+    }
+  }
+
+  .nextButtonActive {
+    background-color: #755afe;
+    cursor: pointer;
+  }
+
+  .nextButtonInactive {
+    background-color: #d2c9ff;
+    cursor: not-allowed;
+  }
+}

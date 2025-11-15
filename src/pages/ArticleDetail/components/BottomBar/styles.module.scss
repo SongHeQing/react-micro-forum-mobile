@@ -1,16 +1,5 @@
-@use "sass:math";
-
-// 公共的vw计算函数
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
+.placeholder {
+  height: func.rfs(168);
 }
 
 .overlay {
@@ -47,28 +36,28 @@
   align-items: center;
   justify-content: center; // 默认居中占位符
 
-  width: clamp(0px, 100vw, 65vh); // 限制最大宽度，防止桌面端过宽
-  height: rfs(168); // 默认高度
+  width: func.rfs(1260, 0px, 1260*1.68); // 限制最大宽度，防止桌面端过宽
+  height: func.rfs(168); // 默认高度
   margin: 0 auto;
-  padding: rfs(29) rfs(36) rfs(29) rfs(40);
-  border-top: rfs(1) solid #ededee;
+  padding: func.rfs(29) func.rfs(36) func.rfs(29) func.rfs(40);
+  border-top: func.rfs(1) solid #ededee;
   background: #fff;
   box-shadow: 0 -2px 8px 0 rgba(0, 0, 0, 0.04);
   // transition: all 0.3s ease-in-out;
 
   .inputPlaceholder {
     flex: 1;
-    height: rfs(110);
-    border-radius: rfs(55);
-    padding: 0 rfs(39);
-    margin-right: rfs(55);
+    height: func.rfs(110);
+    border-radius: func.rfs(55);
+    padding: 0 func.rfs(39);
+    margin-right: func.rfs(55);
     background: #f7f7f7;
     display: flex;
     align-items: center;
     cursor: pointer;
 
     .placeholderText {
-      font-size: rfs(41);
+      font-size: func.rfs(41);
       color: #999;
     }
   }
@@ -92,11 +81,11 @@
   // 评论输入浮层容器
   .activeInputContainer {
     width: 100%; // 占据父容器的全部宽度
-    max-width: clamp(0px, 100vw, 65vh); // 确保在桌面端评论框宽度不会过大
+    width: func.rfs(1260, 0px, 1260*1.68); // 确保在桌面端评论框宽度不会过大
     background: #fff; // 浮层背景为白色
     // 浮层内部 padding 保持，这会在白色区域内部形成间距
-    padding: rfs(29) rfs(36) rfs(29) rfs(40);
-    border-top: rfs(1) solid #ededee; // 浮层顶部边框
+    padding: func.rfs(29) func.rfs(36) func.rfs(29) func.rfs(40);
+    border-top: func.rfs(1) solid #ededee; // 浮层顶部边框
     box-shadow: 0 -2px 8px 0 rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
@@ -111,36 +100,36 @@
   .replyPreview {
     width: 100%;
 
-    margin-bottom: rfs(51); // 与 textarea 之间的间距
+    margin-bottom: func.rfs(51); // 与 textarea 之间的间距
     // background-color: #f0f2f5; // 预览区域背景色
-    // border-radius: rfs(8);
+    // border-radius: mixins.rfs(8);
     // 单行显示，多余内容省略
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: rfs(42); // 字体大小
+    font-size: func.rfs(42); // 字体大小
     color: #a3a3a6; // 字体颜色
   }
 
   .replyPreviewText {
     font-weight: 400;
-    line-height: rfs(60);
+    line-height: func.rfs(60);
     // 文本样式，确保没有额外的换行或间距
     display: inline;
   }
 
   .textarea {
     width: 100%;
-    min-height: rfs(150);
-    max-height: rfs(400);
-    border-radius: rfs(20);
-    padding: rfs(20) rfs(30);
-    font-size: rfs(41);
+    min-height: func.rfs(150);
+    max-height: func.rfs(400);
+    border-radius: func.rfs(20);
+    padding: func.rfs(20) func.rfs(30);
+    font-size: func.rfs(41);
     background: #f3f3f4;
     outline: none;
     border: none;
     resize: vertical;
-    margin-bottom: rfs(20);
+    margin-bottom: func.rfs(20);
 
     // 设置占位符的样式
     &::placeholder {

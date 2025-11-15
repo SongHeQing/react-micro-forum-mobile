@@ -1,4 +1,4 @@
-import styles from './TabBar.module.scss';
+import styles from './index.module.scss';
 
 interface TabBarProps {
   activeTab?: 'home' | 'channels' | 'publish' | 'messages' | 'profile';

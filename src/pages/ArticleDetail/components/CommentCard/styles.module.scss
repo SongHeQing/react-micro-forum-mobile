@@ -1,23 +1,8 @@
-@use "sass:math";
-
-// 公共的vw计算函数
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
-}
-
 .commentCard {
   display: flex;
   flex-direction: column;
 
-  padding: rfs(52) rfs(40) rfs(39);
+  padding: func.rfs(52) func.rfs(40) func.rfs(39);
 
   &+.commentCard {
     border-top: 1px solid #f2f2f2;
@@ -25,12 +10,12 @@
 
 
   .commentAvatarBox {
-    width: rfs(133);
+    width: func.rfs(133);
     height: 100%;
 
     .commentAvatar {
-      width: rfs(110);
-      height: rfs(110);
+      width: func.rfs(110);
+      height: func.rfs(110);
       border-radius: 50%;
       object-fit: cover;
     }
@@ -41,14 +26,14 @@
   .commentMeta {
     display: flex;
     align-items: center;
-    gap: rfs(12);
-    margin-bottom: rfs(28);
+    gap: func.rfs(12);
+    margin-bottom: func.rfs(28);
 
     .commentNickname {
       color: #141414;
       font-weight: 500;
-      font-size: rfs(46);
-      line-height: rfs(46);
+      font-size: func.rfs(46);
+      line-height: func.rfs(46);
     }
 
     .commentLevel {
@@ -60,24 +45,24 @@
     }
 
     .authorTag {
-      height: rfs(46);
-      padding: 0 rfs(10);
-      border: rfs(2) solid #a1b8f7;
-      border-radius: rfs(11);
+      height: func.rfs(46);
+      padding: 0 func.rfs(10);
+      border: func.rfs(2) solid #a1b8f7;
+      border-radius: func.rfs(11);
       color: #3e71ff;
-      font-size: rfs(31);
-      line-height: rfs(46);
+      font-size: func.rfs(31);
+      line-height: func.rfs(46);
     }
 
     .commentLike {
       margin-left: auto;
       display: flex;
       align-items: center;
-      gap: rfs(12);
+      gap: func.rfs(12);
 
       .icon {
-        width: rfs(51);
-        height: rfs(51);
+        width: func.rfs(51);
+        height: func.rfs(51);
         fill: #515152;
         display: flex;
         align-items: center;
@@ -85,7 +70,7 @@
       }
 
       .commentLikeCount {
-        font-size: rfs(38);
+        font-size: func.rfs(38);
         color: #515152;
       }
 
@@ -102,8 +87,8 @@
 
     .commentMore {
       .icon {
-        width: rfs(55);
-        height: rfs(55);
+        width: func.rfs(55);
+        height: func.rfs(55);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -112,46 +97,46 @@
   }
 
   .commentContent {
-    font-size: rfs(50);
+    font-size: func.rfs(50);
     color: #141414;
-    line-height: rfs(88);
-    margin-left: rfs(133);
+    line-height: func.rfs(88);
+    margin-left: func.rfs(133);
     // css进行换行符换行显示
     white-space: pre-wrap;
     word-break: break-all;
-    
+
     .replyToUser {
       color: #8f8e94;
       font-weight: 500;
-      margin-right: rfs(30);
+      margin-right: func.rfs(30);
     }
   }
 
   .commentInfo {
-    margin-left: rfs(133);
+    margin-left: func.rfs(133);
     color: #bdbdbd;
-    font-size: rfs(43);
-    line-height: rfs(73);
+    font-size: func.rfs(43);
+    line-height: func.rfs(73);
     display: flex;
     align-items: center;
-    gap: rfs(14);
+    gap: func.rfs(14);
   }
 
   .replyBox {
-    margin-left: rfs(133);
-    margin-top: rfs(24);
+    margin-left: func.rfs(133);
+    margin-top: func.rfs(24);
     background: #f7f7f8;
-    border-radius: rfs(20);
-    padding: rfs(25) rfs(37);
+    border-radius: func.rfs(20);
+    padding: func.rfs(25) func.rfs(37);
 
     .replyItem {
       // display: flex;
       // align-items: flex-start;
-      gap: rfs(8);
-      font-size: rfs(50);
-      line-height: rfs(80);
+      gap: func.rfs(8);
+      font-size: func.rfs(50);
+      line-height: func.rfs(80);
       color: #3e3e3f;
-      margin-bottom: rfs(10);
+      margin-bottom: func.rfs(10);
 
       word-break: break-all;
       // 限制为4行高度
@@ -167,7 +152,7 @@
       }
 
       .replyNickname {
-        margin-right: rfs(30);
+        margin-right: func.rfs(30);
         color: #8f8e94;
         font-weight: 500;
         white-space: nowrap;
@@ -184,8 +169,8 @@
 
     .viewAllReplies {
       color: #325ace;
-      font-size: rfs(50);
-      line-height: rfs(66);
+      font-size: func.rfs(50);
+      line-height: func.rfs(66);
       cursor: pointer;
 
       &:hover {
@@ -247,7 +232,7 @@
 }
 
 .dragDownPanel {
-  width: clamp(0px, 100vw, 65vh);
+  width: clamp(0px, 100vw, 60*1.3vh);
   background: white;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { fetchChannelList } from "@/apis/channelApi";
-import type { Channel } from "@/types/Channel";
+import type { ChannelSimple } from "@/types/Channel";
 import styles from "./ChannelList.module.scss";
 //导入图片
-import channelImage from "../../../../assets/默认频道图片.jpg";
+import channelImage from "@/assets/默认频道图片.jpg";
 import clsx from "clsx";
 
 const ChannelList = ({ onChannelClick }: { onChannelClick: (id: number) => void }) => {
-  const [channels, setChannels] = useState<Channel[]>([]);
+  const [channels, setChannels] = useState<ChannelSimple[]>([]);
   const [activeId, setActiveId] = useState<number | string | null>(null);
   useEffect(() => {
     fetchChannelList().then(setChannels);
@@ -30,7 +30,7 @@ const ChannelList = ({ onChannelClick }: { onChannelClick: (id: number) => void 
           key={c.id}
           onClick={() => handleClick(c.id)}
         >
-          <img className={styles.channelImg} src={c.image || channelImage} alt={c.channelname} />
+          <img className={styles.channelImg} src={c.imageUrl || channelImage} alt={c.channelname} />
           <span className={styles.channelName}>{c.channelname}</span>
         </div>
       ))}

@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { ArticleDetail, ArticleCardList } from "@/types";
+import type { ArticleDetail, ArticleCardList, ArticleUserCardList } from "@/types";
 
 /**
  * 获取文章列表
@@ -10,10 +10,25 @@ export const getArticleList = (pageNumber: number): Promise<ArticleCardList> => 
   return request.get("/articles", { params: { pageNumber } })
 }
 
-// // 新增：添加文章
-// export function addArticle(article: ArticleAdd) {
-//   return request.post("/articles", article);
-// }
+/**
+ * 根据频道ID获取文章列表
+ * @param params 参数对象
+ * @param params.channelId 频道ID
+ * @param params.pageNumber 页码
+ * @param params.sort 排序方式
+ * @returns 频道文章列表
+ */
+export const getArticlesByChannelId = ({
+  channelId,
+  pageNumber,
+  sort
+}: {
+  channelId: number;
+  pageNumber: number;
+  sort?: string;
+}): Promise<ArticleUserCardList> => {
+  return request.get(`/articles/channel/${channelId}`, { params: { pageNumber, sort } })
+}
 
 /**
  * 添加文章
@@ -23,11 +38,6 @@ export const getArticleList = (pageNumber: number): Promise<ArticleCardList> => 
 export function addArticle(formData: FormData) {
   return request.post("/articles", formData);
 }
-
-// // 获取文章详情
-// export function getArticleDetail(id: number, type: null | number) {
-//   return request.get(`/article/${id}/${type}`);
-// }
 
 /**
  * 获取文章详情

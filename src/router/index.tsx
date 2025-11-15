@@ -12,6 +12,9 @@ const VerifyCode = lazy(() => import('@/pages/VerifyCode'));
 const ArticleDetail = lazy(() => import('@/pages/ArticleDetail'));
 const User = lazy(() => import('@/pages/User'));
 const Settings = lazy(() => import('@/pages/Settings'));
+const Channel = lazy(() => import('@/pages/Channel'));
+const CreateChannel = lazy(() => import('@/pages/CreateChannel'));
+const CompleteChannelInfo = lazy(() => import('@/pages/CompleteChannelInfo'));
 
 const Router = () => (
   <BrowserRouter>
@@ -33,6 +36,9 @@ const Router = () => (
         <Route path="/article/:id" element={<ArticleDetail />} />
         <Route path="/user/:id" element={<User />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/channel/:id" element={<Channel />} />
+        <Route path="/create-channel" element={<CreateChannel />} />
+        <Route path="/complete-channel-info" element={<CompleteChannelInfo />} />
       </Routes>
     </Suspense>
   </BrowserRouter>

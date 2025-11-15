@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import type { ArticleCard, ArticleUserCard } from "@/types";
 import { getLineCount } from "@/utils/lineCount";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
@@ -9,14 +9,15 @@ import { ImageViewer, Toast } from "antd-mobile";
 import clsx from "clsx";
 import { useNavigate } from "react-router";
 import { toggleLike } from "@/apis/articleApi"; // 只保留 toggleLike，不再需要 isArticleLikedByUser
+import { formatRelativeTime } from "@/utils";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface CardProps {
   article: ArticleCard | ArticleUserCard;
+  isChannelCard?: boolean;
 }
 
-const ArticleCard: React.FC<CardProps> = ({ article }) => {
+const ArticleCard: React.FC<CardProps> = ({ article, isChannelCard = false }) => {
 
   // 类型守卫函数
   const isArticleUserCard = (article: ArticleCard | ArticleUserCard): article is ArticleUserCard => {
@@ -37,15 +38,6 @@ const ArticleCard: React.FC<CardProps> = ({ article }) => {
     setContentLineCount(remainingLineCount);
   }, [article.title]);
 
-  // 用 useMemo 处理图片链接
-  const sortedImagesUrl = useMemo(() => {
-    // 判断是否为数组且媒体类型为图片
-    if (!Array.isArray(article.mediaUrls) || article.mediaType !== 1) return [];
-    // 为每个图片URL添加BASE_URL
-    const sortedImagesUrl = article.mediaUrls.map(imgUrl => BASE_URL + imgUrl);
-    // 返回排序后的图片数组
-    return sortedImagesUrl;
-  }, [article.mediaUrls, article.mediaType]);
 
   // 图片预览数量
   const [previewImagesCount, setPreviewImagesCount] = useState<number>(0);
@@ -267,9 +259,12 @@ const ArticleCard: React.FC<CardProps> = ({ article }) => {
       <div className={styles.cardHeader}>
         {!isArticleUserCard(article) &&
           <>
-            <div className={styles.cardHeaderChannel}>
+            <div className={styles.cardHeaderChannel} onClick={e => {
+              e.stopPropagation()
+              navigate(`/channel/${article.channelCard.id}`);
+            }}>
               {/* 频道头像 */}
-              <img className={styles.cardHeaderChannelAvatarImg} src={article.channelCard.image ? (BASE_URL + article.channelCard.image) : defaultChannelAvatar} alt="avatar" loading="lazy" />
+              <img className={styles.cardHeaderChannelAvatarImg} src={article.channelCard.image ? (article.channelCard.image) : defaultChannelAvatar} alt="avatar" loading="lazy" />
               {/* 频道名称和频道描述 */}
               <div className={styles.cardHeaderChannelText}>
                 {/* 频道名称 */}
@@ -314,7 +309,7 @@ const ArticleCard: React.FC<CardProps> = ({ article }) => {
           <>
             <div className={styles.cardHeaderChannel}>
               {/* 用户头像 */}
-              <img className={styles.cardHeaderUserAvatarImg} src={article.user.image ? (BASE_URL + article.user.image) : defaultUserAvatar} alt="avatar" loading="lazy" />
+              <img className={styles.cardHeaderUserAvatarImg} src={article.user.image ? (article.user.image) : defaultUserAvatar} alt="avatar" loading="lazy" />
               <div className={styles.cardHeaderChannelText}>
                 {/* 用户昵称 */}
                 <div className={styles.cardHeaderChannelTextNameBox}>
@@ -324,8 +319,14 @@ const ArticleCard: React.FC<CardProps> = ({ article }) => {
                   </div>
                 </div>
                 <div className={styles.cardHeaderUserTextDesc}>
-                  <span className={styles.channelName}>{article.channel.channelname}</span>
-                  {"频道"}
+                  {!isChannelCard ? (<>
+                    <span className={styles.channelName}>{article.channel.channelname}</span>
+                    {"频道"}
+                  </>) : (<>
+                    <span>{formatRelativeTime(article.lastReplyTime)}</span>
+                  </>
+                  )}
+
                 </div>
               </div>
             </div>
@@ -356,7 +357,7 @@ const ArticleCard: React.FC<CardProps> = ({ article }) => {
           * 复制再排序是为了保证原始数据不被意外修改，避免副作用，符合 React 推荐的"不可变数据"理念。
           * 这样代码更安全、可维护，尤其是在组件复用、状态管理等场景下。
           */}
-          {sortedImagesUrl.slice(0, previewImagesCount).map(imgUrl => (
+          {article.mediaUrls.slice(0, previewImagesCount).map(imgUrl => (
             <div className={styles.imageBox}>
               <img key={imgUrl}
                 src={imgUrl}
@@ -364,8 +365,8 @@ const ArticleCard: React.FC<CardProps> = ({ article }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   ImageViewer.Multi.show({
-                    images: sortedImagesUrl,
-                    defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
+                    images: article.mediaUrls,
+                    defaultIndex: article.mediaUrls.findIndex(image => image === imgUrl),
                   })
                 }}
                 onMouseDown={(e) => {

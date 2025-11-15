@@ -1,3 +1,4 @@
+import { ChannelSimple } from "./Channel";
 
 /**
  * @description 频道卡片
@@ -24,7 +25,6 @@ export type ArticleCard = {
   likeCount: number;
   commentCount: number;
   createTime: string;
-  updateTime: string;
 };
 
 
@@ -59,17 +59,12 @@ export type ArticleDetail = {
   mediaUrls: string[]; // 媒体URLs
   isLiked: boolean; // 是否点赞
   createTime: string;
-  updateTime: string;
   user: {
     id: number;
     nickname: string;
     image: string | null;
   };
-  channel: {
-    id: number;
-    channelname: string;
-    image: string | null;
-  };
+  channel: ChannelSimple;
 }
 
 // 用户文章列表类型定义
@@ -94,6 +89,6 @@ export type ArticleUserCard = {
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
+  lastReplyTime: string;
   createTime: string;
-  updateTime: string;
 }

@@ -1,0 +1,260 @@
+
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #9EE6F8 0%, #F3F3F5 20%);
+  padding: 0 0 func.rfs(108);
+  position: relative;
+}
+
+// 导航栏样式
+.navBar {
+  position: relative;
+  z-index: 100;
+  background: transparent;
+  padding: func.rfs(20) func.rfs(40);
+  
+  :global {
+    .adm-nav-bar-title {
+      font-size: func.rfs(54);
+      font-weight: 700;
+      color: #141414;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .adm-nav-bar-left {
+      position: absolute;
+      left: func.rfs(40);
+    }
+  }
+}
+
+// 步骤指示器
+.stepsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: func.rfs(81) 0 0;
+  gap: func.rfs(60);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: func.rfs(12);
+  padding: func.rfs(10);
+}
+
+.stepNumberContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: func.rfs(99);
+  height: func.rfs(99);
+  background: #B2D7FB;
+  border-radius: 50%;
+}
+
+.stepNumberCompleted {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: func.rfs(66);
+  height: func.rfs(67);
+  background: #B7D9F8;
+  border-radius: 50%;
+}
+
+.stepNumberActive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: func.rfs(66);
+  height: func.rfs(67);
+  background: #1F89FE;
+  border-radius: 50%;
+}
+
+.number {
+  font-size: func.rfs(36);
+  font-weight: 600;
+  color: #1E88FD;
+}
+
+.stepNumberActive .number {
+  color: #FFFFFF;
+}
+
+.stepLabelCompleted {
+  font-size: func.rfs(38);
+  font-weight: 600;
+  color: #8F8E94;
+}
+
+.stepLabelActive {
+  font-size: func.rfs(38);
+  font-weight: 600;
+  color: #121514;
+}
+
+.stepLine {
+  width: func.rfs(122);
+  height: func.rfs(1);
+  background: #BBD8F1;
+  border: func.rfs(1) solid #BBD8F1;
+}
+
+// 表单容器
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: func.rfs(66) func.rfs(24) 0;
+  width: 100%;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: func.rfs(20);
+  padding: func.rfs(9) func.rfs(40);
+}
+
+.sectionTitle {
+  font-size: func.rfs(49);
+  font-weight: 600;
+  color: #141414;
+  margin: 0 0 func.rfs(30);
+  text-align: center;
+}
+
+// 输入组
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-bottom: func.rfs(1) solid #EDEDF0;
+  padding: func.rfs(20) 0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.inputLabel {
+  font-size: func.rfs(43);
+  font-weight: 400;
+  color: #141414;
+  width: func.rfs(173);
+  margin-bottom: func.rfs(15);
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.textarea {
+  width: 100%;
+  min-height: func.rfs(100);
+  border: none;
+  outline: none;
+  font-size: func.rfs(38);
+  font-weight: 400;
+  color: #141414;
+  resize: none;
+  background: transparent;
+  
+  &::placeholder {
+    color: #A3A2A8;
+  }
+}
+
+.textarea.large {
+  min-height: func.rfs(200);
+}
+
+.wordCount {
+  align-self: flex-end;
+  font-size: func.rfs(33);
+  color: #A3A2A8;
+  margin-top: func.rfs(10);
+}
+
+// 背景设置
+.backgroundSetting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: func.rfs(20) 0;
+}
+
+.backgroundLabel {
+  font-size: func.rfs(43);
+  font-weight: 400;
+  color: #141414;
+}
+
+.backgroundAction {
+  display: flex;
+  align-items: center;
+  gap: func.rfs(26);
+  padding: 0 func.rfs(12) 0 0;
+}
+
+.setBackgroundText {
+  font-size: func.rfs(38);
+  color: #A2A1A7;
+}
+
+.arrowIcon {
+  width: func.rfs(19);
+  height: func.rfs(39);
+  border: func.rfs(5) solid #A2A1A7;
+  border-top: none;
+  border-left: none;
+  transform: rotate(-45deg);
+}
+
+// 下一步按钮容器
+.nextButtonContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: func.rfs(48) func.rfs(40) func.rfs(90);
+  width: 100%;
+}
+
+.nextButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: func.rfs(122);
+  background: #D2C9FF;
+  border-radius: func.rfs(61);
+  cursor: pointer;
+}
+
+.buttonText {
+  font-size: func.rfs(38);
+  font-weight: 400;
+  color: #FFFFFF;
+}
+
+// 背景渐变效果
+.gradientBackground {
+  position: absolute;
+  width: func.rfs(2520);
+  height: func.rfs(2800);
+  left: func.rfs(-1538);
+  top: func.rfs(-225);
+  background: radial-gradient(38.21% 12.93% at 61.79% 0%, #9CCCF9 0%, rgba(156, 204, 249, 0.00) 100%);
+  z-index: 0;
+}

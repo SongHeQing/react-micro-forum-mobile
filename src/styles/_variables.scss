@@ -1,0 +1,14 @@
+// src/styles/_variables.scss
+
+// $breakpoint-tablet: 768px;
+// $breakpoint-desktop: 1024px;
+// $breakpoint-large-desktop: 1440px;
+
+// 媒体查询断点
+// (可选但推荐) 使用 map 统一管理
+$breakpoints: (
+  'tablet': 768px,
+  'desktop': 1024px,
+  'large-desktop': 1440px,
+  'hd-screen':1920px
+);

@@ -31,3 +31,6 @@ dist-ssr
 .env.linux-production
 
 dist-*
+*storybook.log
+storybook-static
+git-commit-message.txt

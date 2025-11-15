@@ -1,6 +1,6 @@
 // src/pages/ArticleDetail/index.tsx  
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import styles from "./index.module.scss";
 import { getArticleDetail, toggleLike } from "@/apis/articleApi";
 import type { ArticleDetail } from "@/types/Article";
@@ -10,7 +10,7 @@ import { ImageViewer, Toast } from "antd-mobile";
 import { useClickAnimation } from "@/hooks/useClickAnimation";
 import clsx from "clsx";
 import BottomBar from "./components/BottomBar";
-import DragDownPopup from "./components/DragDownPopup";
+import DragDownPopup from "./components/DragDownPanel";
 import CommentCard from "./components/CommentCard";
 import { DotLoading, InfiniteScroll } from 'antd-mobile';
 import type { CommentReplyVO, CommentVO } from "@/types";
@@ -18,26 +18,12 @@ import { fetchCommentReplies, fetchTopLevelComments } from "@/apis/commentApi";
 import { formatRelativeTime } from "@/utils";
 import useScrollToHash from "@/hooks/useScrollToHash";
 import { throttle } from "@/utils"; // 添加节流函数导入
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-const DESIGN_WIDTH = 1260;
-const DESIGN_HEIGHT = 1260;
-
-function vw(px: number) {
-  return (px / DESIGN_WIDTH) * window.innerWidth;
-}
-function vh(px: number) {
-  return (px / DESIGN_HEIGHT) * window.innerHeight * 0.65;
-}
-function rfs(px: number, min = 0) {
-  return Math.max(min, Math.min(vw(px), vh(px)));
-}
-
+import { rfs } from '@/utils/rfs';
 
 const ArticleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [article, setArticle] = useState<ArticleDetail>();
+  const navigate = useNavigate();
 
   // 吸顶检测相关ref和state
   const headerRef = useRef<HTMLDivElement>(null);
@@ -78,16 +64,6 @@ const ArticleDetail = () => {
       handleScroll.cancel();
     };
   }, []);
-
-  /**图片排序*/
-  const sortedImagesUrl = useMemo(() => {
-    // 判断是否为数组且媒体类型为图片
-    if (!Array.isArray(article?.mediaUrls) || article?.mediaType !== 1) return [];
-    // 为每个图片URL添加BASE_URL
-    const sortedImagesUrl = article?.mediaUrls.map(imgUrl => BASE_URL + imgUrl);
-    // 返回排序后的图片数组
-    return sortedImagesUrl;
-  }, [article?.mediaUrls, article?.mediaType]);
 
   /**使用自定义Hook管理点赞图标点击动画*/
   const { getModuleAnimationClassName: getModuleAnimationClassNameLikeIcon, triggerAnimation: triggerAnimationLikeIcon } = useClickAnimation({
@@ -374,10 +350,13 @@ const ArticleDetail = () => {
           onClick={() => window.history.back()}>
           <svg className={styles.backIcon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4385" ><path d="M376.235 512l356.382-356.382c15.621-15.621 15.621-40.948 0-56.568-15.621-15.621-40.947-15.621-56.568 0L291.383 483.716c-15.621 15.621-15.621 40.947 0 56.568L676.049 924.95c15.621 15.621 40.947 15.621 56.568 0s15.621-40.947 0-56.568L376.235 512z" p-id="4386"></path></svg>
         </div>
-        <div className={styles.channel}>
+        <div className={styles.channel} onClick={e => {
+          e.stopPropagation()
+          navigate(`/channel/${article?.channel.id}`);
+        }}>
           {/* src\assets\默认用户头像.jpg */}
           {/* src\pages\ArticleDetail\index.tsx */}
-          <img className={styles.channelImg} src={article?.channel.image || defaultChannel} alt="channel" loading="lazy" />
+          <img className={styles.channelImg} src={article?.channel.imageUrl || defaultChannel} alt="channel" loading="lazy" />
           <span className={styles.channelName}>{article?.channel.channelname}</span>
           <svg className={styles.channelIcon} viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4873" ><path d="M647.765 512L291.383 155.618c-15.621-15.621-15.621-40.948 0-56.568 15.621-15.621 40.947-15.621 56.568 0l384.666 384.666c15.621 15.621 15.621 40.947 0 56.568L347.951 924.95c-15.621 15.621-40.947 15.621-56.568 0s-15.621-40.947 0-56.568L647.765 512z" p-id="4874"></path></svg>
         </div>
@@ -411,14 +390,14 @@ const ArticleDetail = () => {
         {/* 图片 */}
         {Array.isArray(article?.mediaUrls) && article?.mediaUrls.length > 0 && article?.mediaType === 1 && (
           <div className={styles.images}>
-            {sortedImagesUrl.map(imgUrl => (
+            {article.mediaUrls.map(imgUrl => (
               <div className={styles.imageItem} key={imgUrl}>
                 <div className={styles.imageBox} key={imgUrl}>
                   <img key={imgUrl}
                     src={imgUrl}
                     onClick={() => ImageViewer.Multi.show({
-                      images: sortedImagesUrl,
-                      defaultIndex: sortedImagesUrl.findIndex(image => image === imgUrl),
+                      images: article.mediaUrls,
+                      defaultIndex: article.mediaUrls.findIndex(image => image === imgUrl),
                     })}
                     alt="cover" loading="lazy" />
                   <div className={styles.imageMask}></div>

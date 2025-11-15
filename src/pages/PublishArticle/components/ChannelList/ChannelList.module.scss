@@ -1,31 +1,23 @@
-@use "sass:math";
-
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
-}
-
 .channelList {
   display: flex;
-  gap: rfs(25);
-  padding: rfs(22);
+  gap: func.rfs(25);
+  padding: func.rfs(22);
   // 溢出滚动
   overflow-x: auto;
 
   // 默认隐藏所有浏览器的滚动条
   // 作用：隐藏Firefox 浏览器的滚动条。
   // 只对 Firefox 有效。
-  scrollbar-width: none;
+  // 使用 @supports 来检测浏览器是否支持 scrollbar-width 属性
+  @supports (scrollbar-width: none) {
+    scrollbar-width: none;
+  }
+
   // 作用：隐藏IE 和 Edge（旧版）的滚动条。
   // 只对旧版 IE/Edge 有效。
-  -ms-overflow-style: none;
+  & {
+    -ms-overflow-style: none;
+  }
 
   // 作用：隐藏Chrome、Safari 和 Opera 的滚动条。
   // 只对 Webkit/Blink 浏览器有效。
@@ -35,8 +27,11 @@
 
   // 为精确点击设备显示滚动条
   @media (hover: hover) and (pointer: fine) {
+
     // Firefox
-    scrollbar-width: auto;
+    @supports (scrollbar-width: auto) {
+      scrollbar-width: auto;
+    }
 
     // Webkit/Blink browsers (Chrome, Safari, etc.)
     // 在精确点击设备上显示滚动条
@@ -65,11 +60,11 @@
   display: flex;
   align-items: center;
   flex: 0 0 auto; // 关键：让宽度由内容决定，不被拉伸或压缩
-  padding: rfs(19) rfs(37);
+  padding: func.rfs(19) func.rfs(37);
   color: #141414;
-  font-size: rfs(22);
+  font-size: func.rfs(22);
   background: #f7f7f8;
-  border-radius: rfs(44);
+  border-radius: func.rfs(44);
   transition: background 0.2s, color 0.2s;
   cursor: pointer;
   -webkit-user-select: none;
@@ -84,17 +79,17 @@
 }
 
 .channelImg {
-  width: rfs(50);
-  height: rfs(50);
-  border-radius: rfs(32);
-  margin-right: rfs(10);
+  width: func.rfs(50);
+  height: func.rfs(50);
+  border-radius: func.rfs(32);
+  margin-right: func.rfs(10);
   object-fit: cover;
 }
 
 .channelName {
   font-weight: 500;
-  font-size: rfs(36);
-  line-height: rfs(36);
+  font-size: func.rfs(36);
+  line-height: func.rfs(36);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

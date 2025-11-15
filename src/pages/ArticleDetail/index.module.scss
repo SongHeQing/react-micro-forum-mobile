@@ -1,28 +1,12 @@
 @use "sass:math";
 
-// 公共的vw计算函数
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
-}
-
-
-
-
 .articleDetailPage {
   min-height: 100vh;
   background: #f7f7f8;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: rfs(168);
+  padding-bottom: func.rfs(168);
 
   // 吸顶header
   .header {
@@ -32,44 +16,43 @@
     top: 0;
     display: flex;
     align-items: start;
-    width: clamp(0px, 100vw, 65vh);
-    height: rfs(155);
-    padding: rfs(27) rfs(36) rfs(27);
+    width: func.rfs(1260, 0px, 1260*1.68);
+    height: func.rfs(155);
+    padding: func.rfs(27) func.rfs(36) func.rfs(27);
     background: #fff;
 
-
     .back {
-      margin-right: rfs(16);
-      height: rfs(99);
+      margin-right: func.rfs(16);
+      height: func.rfs(99);
       display: flex;
       align-items: center;
 
       .backIcon {
-        width: rfs(61);
-        height: rfs(59);
+        width: func.rfs(61);
+        height: func.rfs(59);
         fill: #141414;
       }
     }
 
     .channel {
-      height: rfs(99);
-      padding: rfs(18) rfs(40);
+      height: func.rfs(99);
+      padding: func.rfs(18) func.rfs(40);
       background-color: #eff5fe;
-      border-radius: rfs(math.div(99, 2));
+      border-radius: func.rfs(math.div(99, 2));
       display: flex;
       align-items: center;
 
       .channelImg {
-        width: rfs(63);
-        height: rfs(63);
-        border-radius: rfs(26);
-        margin-right: rfs(16);
+        width: func.rfs(63);
+        height: func.rfs(63);
+        border-radius: func.rfs(26);
+        margin-right: func.rfs(16);
         object-fit: cover;
       }
 
       .channelName {
-        font-size: rfs(44);
-        line-height: rfs(63);
+        font-size: func.rfs(44);
+        line-height: func.rfs(63);
         max-width: 9em;
         white-space: nowrap;
         overflow: hidden;
@@ -77,8 +60,8 @@
       }
 
       .channelIcon {
-        // width: rfs(61);
-        height: rfs(36);
+        // width: mixins.rfs(61);
+        height: func.rfs(36);
         fill: #a3a2a8;
       }
     }
@@ -87,31 +70,36 @@
       flex: 1;
       font-weight: 600;
       color: #0f0f0f;
-      font-size: rfs(69);
-      line-height: rfs(104);
+      font-size: func.rfs(69);
+      line-height: func.rfs(104);
     }
   }
 
   .articleCard {
-    width: clamp(0px, 100vw, 65vh);
+    width: func.rfs(1260, 0px, 1260*1.68);
     background: #fff;
     // border-radius: 12px;
-    margin: 0 auto rfs(19) auto;
+    margin: 0 auto func.rfs(19) auto;
     // box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.03);
-    padding: rfs(69) rfs(36);
+    padding: func.rfs(69) func.rfs(36);
+
+    // 在精确点击设备上增大20%
+    // @include mixins.media-up(tablet) {
+    //   width: func.rfs(1260 * 1.5);
+    // }
 
     .userInfo {
-      height: rfs(117);
+      height: func.rfs(117);
       display: flex;
       align-items: center;
-      margin-bottom: rfs(19);
+      margin-bottom: func.rfs(19);
 
       .avatar {
-        width: rfs(108);
-        height: rfs(108);
-        border-radius: rfs(54);
-        margin-left: rfs(-1);
-        margin-right: rfs(20);
+        width: func.rfs(108);
+        height: func.rfs(108);
+        border-radius: func.rfs(54);
+        margin-left: func.rfs(-1);
+        margin-right: func.rfs(20);
         object-fit: cover;
         border: 1.5px solid #f2f2f2;
       }
@@ -121,22 +109,22 @@
         flex-direction: column;
         justify-content: center;
         height: 100%;
-        gap: rfs(16);
+        gap: func.rfs(16);
 
 
 
         .userMeta {
           display: flex;
           align-items: center;
-          gap: rfs(16);
-          height: rfs(46);
+          gap: func.rfs(16);
+          height: func.rfs(46);
 
 
           .nickname {
             font-weight: 500;
             color: #222;
-            font-size: rfs(40);
-            line-height: rfs(46);
+            font-size: func.rfs(40);
+            line-height: func.rfs(46);
           }
 
           // .level {
@@ -160,43 +148,43 @@
 
         .time {
           color: #bdbdbd;
-          font-size: rfs(36);
-          line-height: rfs(36);
+          font-size: func.rfs(36);
+          line-height: func.rfs(36);
         }
       }
 
       .followBtn {
-        width: rfs(205);
-        height: rfs(91);
+        width: func.rfs(205);
+        height: func.rfs(91);
         margin-left: auto;
-        margin-right: rfs(4);
+        margin-right: func.rfs(4);
         background-color: #eff5fe;
-        font-size: rfs(38);
+        font-size: func.rfs(38);
         color: #3f71fd;
-        border-radius: rfs(45.5);
+        border-radius: func.rfs(45.5);
         text-align: center;
-        line-height: rfs(91);
+        line-height: func.rfs(91);
       }
     }
 
     .title {
       flex: 1;
-      margin-bottom: rfs(50);
+      margin-bottom: func.rfs(50);
       font-weight: 600;
       color: #141414;
-      font-size: rfs(69);
-      line-height: rfs(104);
+      font-size: func.rfs(69);
+      line-height: func.rfs(104);
     }
 
     .content {
-      font-size: rfs(55);
-      line-height: rfs(88);
+      font-size: func.rfs(55);
+      line-height: func.rfs(88);
       color: #141414;
-      margin-bottom: rfs(39);
+      margin-bottom: func.rfs(39);
       // white-space: pre-wrap;
 
       p {
-        margin-bottom: rfs(23);
+        margin-bottom: func.rfs(23);
       }
     }
 
@@ -210,17 +198,17 @@
       }
 
       .imageItem {
-        margin-bottom: rfs(37);
+        margin-bottom: func.rfs(37);
 
         .imageBox {
           position: relative;
           display: inline-block;
-          max-height: rfs(4096);
-          border-radius: rfs(23);
+          max-height: func.rfs(4096);
+          border-radius: func.rfs(23);
           overflow: hidden;
 
           img {
-            border-radius: rfs(23);
+            border-radius: func.rfs(23);
             object-fit: cover;
           }
 
@@ -231,8 +219,8 @@
             top: 0;
             right: 0;
             bottom: 0;
-            border-radius: rfs(23);
-            border: rfs(1) solid rgba(0, 0, 0, 0.07);
+            border-radius: func.rfs(23);
+            border: func.rfs(1) solid rgba(0, 0, 0, 0.07);
           }
         }
       }
@@ -242,21 +230,21 @@
       display: flex;
       align-items: center;
       justify-content: space-around;
-      margin-top: rfs(39);
+      margin-top: func.rfs(39);
 
       .cardFooterItem {
         display: flex;
         flex-direction: column;
         // justify-content: center;
         align-items: center;
-        gap: rfs(16);
-        font-size: rfs(37);
+        gap: func.rfs(16);
+        font-size: func.rfs(37);
         color: #49494a;
         text-align: center;
 
         .icon {
-          width: rfs(72);
-          height: rfs(72);
+          width: func.rfs(72);
+          height: func.rfs(72);
           fill: #49494a;
 
           path {
@@ -279,16 +267,8 @@
   }
 
   // 允许双击放大和选择文本
-  .title {
-    -webkit-touch-callout: text;
-    -webkit-user-select: text;
-    -khtml-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-  }
-
-  content {
+  .title,
+  .content p {
     -webkit-touch-callout: text;
     -webkit-user-select: text;
     -khtml-user-select: text;
@@ -298,7 +278,7 @@
   }
 
   .StickyActive {
-    border-bottom: rfs(1) solid #ededed;
+    border-bottom: func.rfs(1) solid #ededed;
   }
 
   // 动画类
@@ -322,24 +302,24 @@
   }
 
   .commentSection {
-    width: clamp(0px, 100vw, 65vh);
+    width: func.rfs(1260, 0px, 1260*1.68);
     margin: 0 auto;
     background: #fff;
-    // padding: 0px rfs(40);
+    // padding: 0px mixins.rfs(40);
     flex: 1;
-    scroll-margin-top: rfs(155);
+    scroll-margin-top: func.rfs(155);
 
     // 评论区标题吸顶
     .commentTitle {
       position: sticky;
-      top: rfs(155);
+      top: func.rfs(155);
 
       display: flex;
       justify-content: space-between;
       align-items: start;
 
-      height: rfs(135);
-      padding: rfs(29) rfs(40) rfs(14);
+      height: func.rfs(135);
+      padding: func.rfs(29) func.rfs(40) func.rfs(14);
       background: #fff;
 
       font-size: 15px;
@@ -350,14 +330,14 @@
       .commentViewFilter {
         display: flex;
         align-items: center;
-        gap: rfs(67);
+        gap: func.rfs(67);
 
-        margin-top: rfs(1);
+        margin-top: func.rfs(1);
 
         .commentViewFilterItem {
           color: #8f8e94;
-          font-size: rfs(47);
-          line-height: rfs(71);
+          font-size: func.rfs(47);
+          line-height: func.rfs(71);
 
           &.active {
             color: #141414;
@@ -368,23 +348,23 @@
       .commentMode {
         display: flex;
         align-items: center;
-        gap: rfs(16);
+        gap: func.rfs(16);
         background-color: #f7f7f8;
-        height: rfs(91);
-        border-radius: rfs(45.5);
+        height: func.rfs(91);
+        border-radius: func.rfs(45.5);
 
         .commentModeItem {
-          width: rfs(150);
+          width: func.rfs(150);
           height: 100%;
           color: #a3a3a6;
-          font-size: rfs(40);
-          line-height: rfs(91);
+          font-size: func.rfs(40);
+          line-height: func.rfs(91);
           text-align: center;
 
           &.active {
-            border: rfs(4) solid #ededee;
+            border: func.rfs(4) solid #ededee;
             background-color: #ffffff;
-            border-radius: rfs(45.5);
+            border-radius: func.rfs(45.5);
             color: #141414;
           }
         }
@@ -396,11 +376,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: rfs(908);
-    padding: rfs(80) 0;
+    min-height: func.rfs(908);
+    padding: func.rfs(80) 0;
     color: #999;
-    font-size: rfs(44);
-    line-height: rfs(49);
+    font-size: func.rfs(44);
+    line-height: func.rfs(49);
   }
 
   // 评论列表样式
@@ -413,19 +393,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: rfs(24);
+    gap: func.rfs(24);
     color: #999;
-    padding: rfs(40) 0;
+    padding: func.rfs(40) 0;
 
     div {
-      width: rfs(97);
-      height: rfs(1);
+      width: func.rfs(97);
+      height: func.rfs(1);
       background-color: #f2f2f2;
     }
 
     span {
-      font-size: rfs(44);
-      line-height: rfs(49);
+      font-size: func.rfs(44);
+      line-height: func.rfs(49);
       color: #888;
       white-space: nowrap;
     }
@@ -435,22 +415,22 @@
   .repliesList {
     display: flex;
     flex-direction: column;
-    gap: rfs(20);
+    gap: func.rfs(20);
   }
 
   .originalCommentWrapper {
-    padding-bottom: rfs(20);
+    padding-bottom: func.rfs(20);
     border-bottom: 1px solid #f0f0f0;
-    margin-bottom: rfs(20);
+    margin-bottom: func.rfs(20);
   }
 
   .repliesContainer {
     display: flex;
     flex-direction: column;
-    gap: rfs(16);
+    gap: func.rfs(16);
   }
 }
 
 .originalCommentWrapper {
-  border-bottom: rfs(21) solid #f7f7f8;
+  border-bottom: func.rfs(21) solid #f7f7f8;
 }

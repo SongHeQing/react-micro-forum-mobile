@@ -1,18 +1,3 @@
-@use "sass:math";
-
-// 公共的vw计算函数
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
-}
-
 .mask {
   position: fixed;
   top: 0;
@@ -31,10 +16,10 @@
   position: relative;
   z-index: 22;
   background-color: white;
-  width: clamp(0px, 100vw, 65vh);
+  width: func.rfs(1260, 0px, 1260*1.68);
   height: 90vh;
-  border-top-left-radius: rfs(34);
-  border-top-right-radius: rfs(34);
+  border-top-left-radius: func.rfs(34);
+  border-top-right-radius: func.rfs(34);
   display: flex;
   flex-direction: column;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
@@ -47,27 +32,27 @@
 }
 
 // .dragHandle {
-//   width: rfs(150);
-//   height: rfs(20);
+//   width: mixins.rfs(150);
+//   height: mixins.rfs(20);
 //   background-color: #f0f0f0;
-//   border-radius: rfs(7);
-//   margin: rfs(28) auto;
+//   border-radius: mixins.rfs(7);
+//   margin: mixins.rfs(28) auto;
 // }
 
 .header {
   position: relative;
-  height: rfs(153);
+  height: func.rfs(153);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 rfs(40);
-  border-bottom: rfs(3) solid #f7f7f7;
+  padding: 0 func.rfs(40);
+  border-bottom: func.rfs(3) solid #f7f7f7;
   flex-shrink: 0;
 
   /* 防止 header 挤压 */
   h3 {
     margin: 0;
-    font-size: rfs(53);
+    font-size: func.rfs(53);
     font-weight: 500;
   }
 }
@@ -76,14 +61,14 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: rfs(40+17);
+  left: func.rfs(40+17);
 
   .icon {
     display: flex;
     text-align: center;
     align-items: center;
-    width: rfs(47);
-    height: rfs(47);
+    width: func.rfs(47);
+    height: func.rfs(47);
     fill: #141414
   }
 }
@@ -91,7 +76,7 @@
 .content {
   flex: 1;
   overflow-y: scroll;
-  padding-bottom: rfs(168);
+
   -webkit-overflow-scrolling: touch;
   /* 增强 iOS 上的滚动体验 */
 

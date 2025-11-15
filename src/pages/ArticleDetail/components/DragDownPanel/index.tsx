@@ -1,8 +1,8 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import styles from './DragDownPopup.module.scss';
+import styles from './index.module.scss';
 import ReactDOM from 'react-dom';
 
-interface DragDownPopupProps {
+interface dragDownPanelProps {
   visible: boolean;
   onClose: () => void;
   title: string;
@@ -10,7 +10,7 @@ interface DragDownPopupProps {
   closeThreshold?: number;
 }
 
-const DragDownPopup: React.FC<DragDownPopupProps> = ({
+const DragDownPanel: React.FC<dragDownPanelProps> = ({
   visible,
   onClose,
   title,
@@ -248,4 +248,4 @@ const DragDownPopup: React.FC<DragDownPopupProps> = ({
   );
 };
 
-export default DragDownPopup;
+export default DragDownPanel;

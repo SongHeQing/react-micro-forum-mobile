@@ -93,6 +93,7 @@ const VerifyCode: React.FC = () => {
               inputMode="numeric"
               autoComplete="one-time-code"
               disabled={isSubmitting}
+              aria-label={`验证码第${i + 1}位`}
             />
           ))}
         </div>

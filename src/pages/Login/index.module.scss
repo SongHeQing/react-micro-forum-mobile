@@ -1,19 +1,3 @@
-@use "sass:math";
-
-// 公共的vw计算函数
-@function vw($px) {
-  @return math.div($px, 1260) * 100vw;
-}
-
-@function vh($px) {
-  @return math.div($px, 1260) * 65vh;
-}
-
-@function rfs($px, $min: 0px) {
-  @return clamp($min, vw($px), vh($px));
-}
-
-
 .LoginPage {
   min-height: 100dvh;
   // background: linear-gradient(180deg, #4e70f1 0%, #4e70f1 math.div(378, 2800 - 104) * 100%, #f5f5f5 math.div(623, 2800 - 104) * 100%, #f5f5f5 100%);
@@ -31,7 +15,7 @@
 
   &>div {
     min-height: 100dvh;
-    padding-top: rfs(349);
+    padding-top: func.rfs(349);
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -40,12 +24,12 @@
 
   .Card {
     background: #fff;
-    // height: rfs(1820);
+    // height: mixins.rfs(1820);
     flex: 1;
-    width: rfs(1200);
-    padding: rfs(125) rfs(70);
-    /* rfs(512)*/
-    border-radius: rfs(67);
+    width: func.rfs(1200);
+    padding: func.rfs(125) func.rfs(70);
+    /* mixins.rfs(512)*/
+    border-radius: func.rfs(67);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
@@ -53,26 +37,26 @@
 
     .Title {
       text-align: center;
-      font-size: rfs(75);
+      font-size: func.rfs(75);
       font-weight: bold;
-      margin-bottom: rfs(175);
+      margin-bottom: func.rfs(175);
       color: #222;
     }
 
     .InputGroup {
       position: relative;
-      margin-bottom: rfs(61);
+      margin-bottom: func.rfs(61);
 
       .Input {
         width: 100%;
-        height: rfs(182);
-        padding: rfs(60) rfs(167);
+        height: func.rfs(182);
+        padding: func.rfs(60) func.rfs(167);
         border: none;
-        border-radius: rfs(91);
+        border-radius: func.rfs(91);
         // 输入框背景色
         background: #f5f5f5;
-        font-size: rfs(61);
-        line-height: rfs(61);
+        font-size: func.rfs(61);
+        line-height: func.rfs(61);
         // 移除默认轮廓
         outline: none;
 
@@ -85,11 +69,11 @@
 
       .icon {
         position: absolute;
-        left: rfs(66);
+        left: func.rfs(66);
         top: 50%;
         transform: translateY(-50%);
-        width: rfs(52);
-        height: rfs(52);
+        width: func.rfs(52);
+        height: func.rfs(52);
         fill: #b9b8be;
       }
     }
@@ -97,26 +81,26 @@
     .Options {
       display: flex;
       justify-content: flex-end;
-      height: rfs(57);
+      height: func.rfs(57);
       color: #111111;
-      margin-bottom: rfs(95);
+      margin-bottom: func.rfs(95);
 
       .Link {
         cursor: pointer;
-        line-height: rfs(57);
-        font-size: rfs(48);
+        line-height: func.rfs(57);
+        font-size: func.rfs(48);
       }
     }
 
     .LoginBtn {
       width: 100%;
-      height: rfs(162);
-      margin-bottom: rfs(80);
+      height: func.rfs(162);
+      margin-bottom: func.rfs(80);
       border: none;
-      border-radius: rfs(81);
+      border-radius: func.rfs(81);
       color: #fffff9;
-      font-size: rfs(53);
-      line-height: rfs(162);
+      font-size: func.rfs(53);
+      line-height: func.rfs(162);
       font-weight: bold;
       letter-spacing: 4px;
       background: #4d6ff0;
@@ -129,7 +113,7 @@
 
     .SmsLogin {
       text-align: center;
-      font-size: rfs(43);
+      font-size: func.rfs(43);
       color: #1f1f1f;
     }
   }
@@ -138,12 +122,12 @@
     left: 0;
     right: 0;
     margin-top: auto;
-    padding-top: rfs(122);
-    padding-bottom: rfs(82);
+    padding-top: func.rfs(122);
+    padding-bottom: func.rfs(82);
     display: flex;
     justify-content: center;
-    gap: rfs(50);
-    font-size: rfs(49);
+    gap: func.rfs(50);
+    font-size: func.rfs(49);
     color: #858585;
   }
 }

@@ -1,0 +1,30 @@
+// src/styles/_mixins.scss
+@use 'variables' as vars;
+
+
+// 一个通用的媒体查询 mixin
+// 用法：@include media-up(tablet) { ... }
+@mixin media-up($name) {
+
+
+  // 检查传入的断点名是否存在于 $breakpoints map 中
+  @if map-has-key(vars.$breakpoints, $name) {
+    // 在 _mixins.scss 或任何导入了 _variables.scss 的文件顶部
+    // 从 vars.$breakpoints Map 中获取值
+    $value: map-get(vars.$breakpoints, $name);
+
+    // 关键检查：防止 $value 为 null 或 0
+    @if $value ==null or $value ==0px {
+      @error "断点 '#{$name}' 的值丢失或为 0px。请检查 _variables.scss 的加载顺序。";
+    }
+
+    @media (min-width: $value) {
+      @content; // 将传入的样式块 (@content) 插入到这里
+    }
+  }
+
+  @else {
+    // 错误处理：如果传入了未定义的断点名称
+    @warn "未知的断点 '#{$name}' .";
+  }
+}

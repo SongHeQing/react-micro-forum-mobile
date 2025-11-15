@@ -1,0 +1,1 @@
+npm run build -- --mode docker-test-local

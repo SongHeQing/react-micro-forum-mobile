@@ -5,19 +5,7 @@ import type { ArticleCardList } from "@/types";
 import ArticleCard from "@/components/ArticleCard";
 import TabBar from '@/pages/Home/components/TabBar';
 import { InfiniteScroll, PullToRefresh } from "antd-mobile";
-
-const DESIGN_WIDTH = 1260;
-const DESIGN_HEIGHT = 1260;
-
-function vw(px: number) {
-  return (px / DESIGN_WIDTH) * window.innerWidth;
-}
-function vh(px: number) {
-  return (px / DESIGN_HEIGHT) * window.innerHeight * 0.4;
-}
-function rfs(px: number, min = 0) {
-  return Math.max(min, Math.min(vw(px), vh(px)));
-}
+import { rfs } from '@/utils/rfs';
 
 const Home = () => {
   const [articleList, setArticleList] = useState<ArticleCardList>([]);
