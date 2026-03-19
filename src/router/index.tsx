@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router';
-import { lazy, Suspense } from 'react';
+import { createBrowserRouter } from 'react-router';
+import { lazy } from 'react';
 
 const Layout = lazy(() => import('@/pages/Layout'));
 const Home = lazy(() => import('@/pages/Home'));
@@ -16,32 +16,27 @@ const Channel = lazy(() => import('@/pages/Channel'));
 const CreateChannel = lazy(() => import('@/pages/CreateChannel'));
 const CompleteChannelInfo = lazy(() => import('@/pages/CompleteChannelInfo'));
 
-const Router = () => (
-  <BrowserRouter>
-    <Suspense fallback={<div>加载中...</div>}>
-      <Routes>
-        {/* 使用Layout作为布局的路由组 */}
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/channels" element={<div>频道</div>} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/messages" element={<div>消息页面</div>} />
-        </Route>
+// 创建路由配置
+const router = createBrowserRouter([
+  {
+    path: "/", element: <Layout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "channels", element: <div>频道</div> },
+      { path: "profile", element: <Profile /> },
+      { path: "messages", element: <div>消息页面</div> }
+    ]
+  },
+  { path: "/publish", element: <PublishArticle /> },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+  { path: "/verify-code", element: <VerifyCode /> },
+  { path: "/article/:id", element: <ArticleDetail /> },
+  { path: "/user/:id", element: <User /> },
+  { path: "/settings", element: <Settings /> },
+  { path: "/channel/:id", element: <Channel /> },
+  { path: "/create-channel", element: <CreateChannel /> },
+  { path: "/complete-channel-info", element: <CompleteChannelInfo /> }
+]);
 
-        {/* 不使用Layout的独立页面 */}
-        <Route path="/publish" element={<PublishArticle />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verify-code" element={<VerifyCode />} />
-        <Route path="/article/:id" element={<ArticleDetail />} />
-        <Route path="/user/:id" element={<User />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/channel/:id" element={<Channel />} />
-        <Route path="/create-channel" element={<CreateChannel />} />
-        <Route path="/complete-channel-info" element={<CompleteChannelInfo />} />
-      </Routes>
-    </Suspense>
-  </BrowserRouter>
-);
-
-export default Router;
+export default router;

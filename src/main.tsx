@@ -6,9 +6,10 @@ import Router from './router'
 import { Provider } from 'react-redux'
 import store from './store'
 import './main.scss';
+import { RouterProvider } from 'react-router'
 
 createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
-    <Router />
+    <RouterProvider router={Router} />
   </Provider>
 )
